@@ -1,0 +1,18 @@
+{
+  "name": "@moderatorix/browser-extension",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "turbo build",
+    "lint": "eslint . --max-warnings 0"
+  },
+  "devDependencies": {
+    "@moderatorix/eslint-config": "*",
+    "@moderatorix/typescript-config": "*",
+    "@types/chrome": "^0.0.268",
+    "@types/eslint": "^8.56.5",
+    "@types/node": "^20.11.24",
+    "eslint": "^8.57.0",
+    "typescript": "^5.3.3"
+  }
+}
