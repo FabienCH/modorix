@@ -1,0 +1,41 @@
+{
+    "manifest_version": 3,
+    "version": "1.0",
+    "name": "Moderatorix",
+    "icons": {
+        "128": "icon/icon-128.png"
+    },
+    "permissions": [
+        "declarativeNetRequest",
+        "declarativeNetRequestWithHostAccess",
+        "scripting",
+        "activeTab",
+        "tabs"
+    ],
+    "host_permissions": [
+        "https://x.com/*"
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "web_accessible_resources": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "resources": [
+                "block-user.js"
+            ]
+        }
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "https://x.com/*"
+            ],
+            "js": [
+                "content.js"
+            ]
+        }
+    ]
+}
