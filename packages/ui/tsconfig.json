@@ -1,5 +1,5 @@
 {
-  "extends": "@moderatorix/typescript-config/base.json",
+  "extends": "@modorix/typescript-config/base.json",
   "include": ["."],
   "exclude": ["node_modules"]
 }

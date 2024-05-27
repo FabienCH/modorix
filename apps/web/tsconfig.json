@@ -1,4 +1,4 @@
 {
-  "extends": "@moderatorix/typescript-config/vite.json",
+  "extends": "@modorix/typescript-config/vite.json",
   "include": ["src"]
 }

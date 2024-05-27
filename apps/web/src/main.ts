@@ -1,6 +1,6 @@
-import { Counter } from "@moderatorix/ui/counter";
-import { Header } from "@moderatorix/ui/header";
-import { setupCounter } from "@moderatorix/ui/setup-counter";
+import { Counter } from "@modorix/ui/counter";
+import { Header } from "@modorix/ui/header";
+import { setupCounter } from "@modorix/ui/setup-counter";
 import "./style.css";
 import typescriptLogo from "/typescript.svg";
 

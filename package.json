@@ -8,7 +8,7 @@
   },
   "devDependencies": {
     "eslint": "^8.57.0",
-    "@moderatorix/eslint-config": "*",
+    "@modorix/eslint-config": "*",
     "prettier": "^3.2.5",
     "turbo": "latest"
   },
