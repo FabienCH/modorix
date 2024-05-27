@@ -19,7 +19,6 @@ async function runBlockUser(
   changesInfos: chrome.tabs.TabChangeInfo
 ) {
   if (tabId === tab?.id && changesInfos.status === "complete") {
-    start = Date.now();
     chrome.tabs.onUpdated.removeListener(runBlockUser);
     await chrome.scripting.executeScript({
       target: { tabId: tab.id },
@@ -74,8 +73,43 @@ async function openNewTab(request: any) {
   chrome.tabs.onUpdated.addListener(runBlockUser);
 }
 
+let lastTabUpdate: { status?: string; url?: string } = {
+  status: undefined,
+  url: undefined,
+};
+chrome.tabs.onUpdated.addListener(
+  (tabId: number, changesInfos: chrome.tabs.TabChangeInfo) => {
+    console.log("tabs.onUpdated.addListener tabId", tabId);
+    console.log(
+      "tabs.onUpdated.addListener changesInfos url",
+      changesInfos.url
+    );
+    console.log(
+      "tabs.onUpdated.addListener changesInfos status",
+      changesInfos.status
+    );
+    if (changesInfos.status) {
+      lastTabUpdate.status = changesInfos.status;
+    }
+    if (changesInfos.url) {
+      lastTabUpdate.url = changesInfos.url;
+    }
+    console.log("🚀 ~ lastTabUpdate:", lastTabUpdate);
+
+    if (
+      lastTabUpdate.status === "complete" &&
+      lastTabUpdate.url?.startsWith("https://x.com/home")
+    ) {
+      lastTabUpdate = { status: undefined, url: undefined };
+      chrome.tabs.sendMessage(tabId, {
+        id: MessageIds.HOME_LOADED,
+      });
+      console.log("HOME_LOADED message SNET");
+    }
+  }
+);
+
 let tab: chrome.tabs.Tab | null = null;
-let start: number = 0;
 chrome.runtime.onMessage.addListener(async (request) => {
   if (request.id === MessageIds.OPEN_TAB) {
     await openNewTab(request);
@@ -83,6 +117,16 @@ chrome.runtime.onMessage.addListener(async (request) => {
 
   if (request.id === MessageIds.USER_BLOCKED) {
     if (request.data.status === "FAILURE") {
+      console.warn(request.data.message);
+    }
+    if (request.data.status === "SUCCESS") {
+      await fetch("http://localhost:3000/api/block-user", {
+        method: "POST",
+        body: JSON.stringify({
+          id: request.data.userId,
+          blockedAt: new Date().toISOString(),
+        }),
+      });
       console.warn(request.data.message);
     }
 

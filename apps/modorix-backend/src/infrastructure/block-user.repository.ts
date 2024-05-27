@@ -3,10 +3,10 @@ import { XUser } from '../domain/x-user';
 
 @Injectable()
 export class BlockUserRepository {
-
-  private readonly blockedUsers: XUser[] = []
+  private readonly blockedUsers: XUser[] = [];
 
   blockUser(user: XUser): void {
-    this.blockedUsers.push(user)
+    console.log('🚀 ~ BlockUserRepository ~ blockUser ~ user:', user);
+    this.blockedUsers.push(user);
   }
 }

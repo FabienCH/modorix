@@ -2,6 +2,13 @@ import { lookForHtmlElement } from "../core/look-for-html-element";
 import { MessageIds } from "../core/message-ids.enum";
 
 (async () => {
+  const userNameContainer = await lookForHtmlElement(
+    "[data-testid='UserName']"
+  );
+  const userName = [...(userNameContainer.querySelectorAll("span") ?? [])].find(
+    (spanElem) => spanElem?.innerText.startsWith("@")
+  )?.innerText;
+
   try {
     const plusBtn = await lookForHtmlElement("[data-testid='userActions']");
     plusBtn.click();
@@ -16,17 +23,9 @@ import { MessageIds } from "../core/message-ids.enum";
 
     await chrome.runtime.sendMessage("", {
       id: MessageIds.USER_BLOCKED,
-      data: { status: "SUCCESS" },
+      data: { status: "SUCCESS", userId: userName },
     });
   } catch (_) {
-    const userNameContainer = await lookForHtmlElement(
-      "[data-testid='UserName']"
-    );
-
-    const userName = [
-      ...(userNameContainer.querySelectorAll("span") ?? []),
-    ].find((spanElem) => spanElem?.innerText.startsWith("@"))?.innerText;
-
     await chrome.runtime.sendMessage("", {
       id: MessageIds.USER_BLOCKED,
       data: {

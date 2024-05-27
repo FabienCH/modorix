@@ -4,7 +4,6 @@
   "version": "1.0",
   "name": "Modorix",
   "icons": {
-  
     "128": "icon/128.png"
   },
   "permissions": [
@@ -12,6 +11,7 @@
     "declarativeNetRequestWithHostAccess",
     "scripting",
     "activeTab",
+    "webNavigation",
     "tabs"
   ],
   "host_permissions": [
@@ -32,7 +32,7 @@
   "web_accessible_resources": [
     {
       "matches": [
-        "<all_urls>"
+        "https://x.com/*"
       ],
       "resources": [
         "scripts/block-user.js"

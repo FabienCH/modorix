@@ -15,13 +15,15 @@ function generateManifest() {
 
 export default defineConfig({
   build: {
-    outDir: process.env.TARGET === "chrome" ? "dist/chrome" : "dist/firefox",
+    outDir: process.env.TARGET === "firefox" ? "dist/firefox" : "dist/chrome",
   },
   plugins: [
     react(),
     webExtension({
       manifest: generateManifest,
       additionalInputs: ["src/scripts/block-user.ts"],
+      disableAutoLaunch: true,
+      watchFilePaths: ["src", "public"],
       browser: process.env.TARGET || "chrome",
     }),
   ],
