@@ -6,7 +6,6 @@ export class BlockUserRepository {
   private readonly blockedUsers: XUser[] = [];
 
   blockUser(user: XUser): void {
-    console.log('🚀 ~ BlockUserRepository ~ blockUser ~ user:', user);
     this.blockedUsers.push(user);
   }
 }

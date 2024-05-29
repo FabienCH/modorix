@@ -4,28 +4,38 @@ import { lookForHtmlElement } from "./core/look-for-html-element";
 import { lookForHtmlElements } from "./core/look-for-html-elements";
 import { MessageIds } from "./core/message-ids.enum";
 
-chrome.runtime.onMessage.addListener((message) => {
-  console.log("🚀 ~ chrome.runtime.onMessage.addListener ~ message:", message);
-  if (message.id === MessageIds.HOME_LOADED) {
-    listenForUsernameEnter();
-  }
-});
+let userNameLinksElements: HTMLElement[];
+
+function removeLinkMouseEnterListener() {
+  userNameLinksElements.forEach((linkElement) => {
+    linkElement.removeEventListener("mouseenter", () => {
+      addButton(linkElement as HTMLLinkElement);
+      addMouseEnterListenerOnCardsDisappear(linkElement as HTMLLinkElement);
+    });
+  });
+}
 
 async function addButton(linkElement: HTMLLinkElement) {
   console.log(
     "🚀 ~ linkElement.addEventListener MOUSEENETER ~ linkElement:",
     linkElement
   );
-  const cardElement = await lookForHtmlElement("[data-testid='HoverCard']");
-  console.log("🚀 ~ linkElement.addEventListener ~ cardElements:", cardElement);
+
+  const cardElement = await lookForHtmlElement("[data-testid='HoverCard']", {
+    intervalDelay: 50,
+  });
   console.log("🚀 ~ linkElement.addEventListener ~ cardElement:", cardElement);
+  console.log(
+    "🚀 ~ linkElement.addEventListener ~ cardElement id:",
+    cardElement.id
+  );
 
   const buttons = cardElement.getElementsByTagName("button");
   const buttonsContainer = buttons[0].parentElement;
   const button = document.createElement("button");
   button.style.borderColor = "rgba(0, 0, 0, 0)";
   button.style.backgroundColor = "rgba(244, 33, 46)";
-  button.style.padding = "9px 24px";
+  button.style.padding = "9px 12px";
   button.style.marginTop = "12px";
   button.style.borderRadius = "24px";
   button.style.fontSize = "14px";
@@ -58,6 +68,10 @@ async function addMouseEnterListenerOnCardsDisappear(
     "🚀 ~ addMouseEnterListenerOnCardsDisappear ~ cardElement:",
     cardElement
   );
+  console.log(
+    "🚀 ~ addMouseEnterListenerOnCardsDisappear ~ cardElement .parentNode?.childNodes:",
+    cardElement.parentNode?.childNodes
+  );
   const lookupInterval = setInterval(async () => {
     cardElement = document.querySelector("[data-testid='HoverCard']");
     if (!cardElement) {
@@ -79,7 +93,7 @@ function listenToUserNameLinkMouseEnter(linkElement: HTMLLinkElement) {
   );
 }
 
-async function listenForUsernameEnter() {
+async function listenForUsernamesEnter() {
   const userNameLinksElements = await lookForHtmlElements(
     "[data-testid='User-Name'][id] a:not(:has(> time))"
   );
@@ -95,16 +109,21 @@ async function listenForUsernameEnter() {
   return userNameLinksElements;
 }
 
+chrome.runtime.onMessage.addListener(async (message) => {
+  console.log("🚀 ~ chrome.runtime.onMessage.addListener ~ message:", message);
+  if (message.id === MessageIds.HOME_LOADED) {
+    if (userNameLinksElements?.length) {
+      removeLinkMouseEnterListener();
+    }
+    userNameLinksElements = await listenForUsernamesEnter();
+  }
+});
+
 (async () => {
-  let userNameLinksElements = await listenForUsernameEnter();
+  userNameLinksElements = await listenForUsernamesEnter();
   document.addEventListener("scrollend", async (event) => {
     console.log("🚀 ~ document.addEventListener ~ scrollend  event:", event);
-    userNameLinksElements.forEach((linkElement) => {
-      linkElement.removeEventListener("mouseenter", () => {
-        addButton(linkElement as HTMLLinkElement);
-        addMouseEnterListenerOnCardsDisappear(linkElement as HTMLLinkElement);
-      });
-    });
-    userNameLinksElements = await listenForUsernameEnter();
+    removeLinkMouseEnterListener();
+    userNameLinksElements = await listenForUsernamesEnter();
   });
 })();

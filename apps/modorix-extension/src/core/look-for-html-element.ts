@@ -2,7 +2,7 @@ export function lookForHtmlElement(
   querySelector: string,
   options?: { timeout?: number; intervalDelay?: number }
 ): Promise<HTMLElement> {
-  const timeout = options?.timeout ?? 1000;
+  const timeout = options?.timeout ?? 10000;
   const intervalDelay = options?.intervalDelay ?? 200;
   return new Promise((resolve, reject) => {
     let elem: HTMLElement | null;
