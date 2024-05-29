@@ -53,7 +53,6 @@ chrome.tabs.onUpdated.addListener(
       chrome.tabs.sendMessage(tabId, {
         id: MessageIds.HOME_LOADED,
       });
-      console.log("HOME_LOADED message SNET");
     }
   }
 );
@@ -78,7 +77,6 @@ chrome.runtime.onMessage.addListener(async (request) => {
           }),
         });
       } catch (error) {
-        console.log("🚀 ~ try ~ error:", error);
         console.error(
           `Modorix: Could not saved blocked user ${request.data.userId}`
         );
