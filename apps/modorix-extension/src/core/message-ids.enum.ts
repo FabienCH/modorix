@@ -1,5 +1,5 @@
 export enum MessageIds {
-  HOME_LOADED = "homeLoaded",
-  OPEN_TAB = "openTab",
-  USER_BLOCKED = "userBlocked",
+  PAGE_TO_LISTEN_LOADED = 'pageToListenLoaded',
+  OPEN_TAB = 'openTab',
+  USER_BLOCKED = 'userBlocked',
 }
