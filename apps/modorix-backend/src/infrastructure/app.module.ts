@@ -8,4 +8,4 @@ import { BlockUserRepository } from './block-user.repository';
   controllers: [BlockUserController],
   providers: [BlockUserService, BlockUserRepository],
 })
-export class AppModule { }
+export class AppModule {}

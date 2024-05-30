@@ -1,8 +1,5 @@
-export function lookForHtmlElements(
-  querySelector: string,
-  timeout = 10000
-): Promise<HTMLElement[]> {
-  return new Promise((resolve, reject) => {
+export function lookForHtmlElements(querySelector: string, timeout = 10000): Promise<HTMLElement[]> {
+  return new Promise((resolve) => {
     let elems: NodeListOf<HTMLElement>;
     const lookupInterval = setInterval(() => {
       elems = findElements(querySelector);
@@ -16,9 +13,7 @@ export function lookForHtmlElements(
     setTimeout(() => {
       if (!elems.length) {
         clearInterval(lookupInterval);
-        console.warn(
-          `Elements with querySelector ${querySelector} not found in ${timeout / 1000} secondes`
-        );
+        console.warn(`Elements with querySelector ${querySelector} not found in ${timeout / 1000} secondes`);
         resolve([...elems]);
       }
     }, timeout);
