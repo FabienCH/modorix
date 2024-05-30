@@ -34,7 +34,7 @@ function addBlockButton(cardElement: HTMLElement, linkElement: HTMLAnchorElement
   button.style.fontWeight = '700';
   button.style.fontFamily = 'TwitterChirp, Roboto, Helvetica, Arial, sans-serif';
 
-  button.addEventListener('click', async (_) => {
+  button.addEventListener('click', async () => {
     await chrome.runtime.sendMessage('', {
       id: MessageIds.OPEN_TAB,
       data: {

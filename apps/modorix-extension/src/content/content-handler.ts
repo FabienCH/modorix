@@ -29,7 +29,7 @@ function removeUsernamesMouseEnterListener() {
   userNameListenerHandlers = [];
 }
 
-function debounceUpdateUsernamesListener(callback: Function) {
+function debounceUpdateUsernamesListener(callback: () => Promise<void>) {
   lastEventToUpdateUsernamesListenerAt = Date.now();
 
   setTimeout(() => {

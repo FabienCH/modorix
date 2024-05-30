@@ -1,4 +1,4 @@
 export interface XUser {
-  id: string
-  blockedAt: string
+  id: string;
+  blockedAt: string;
 }
