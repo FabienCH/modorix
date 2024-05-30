@@ -1,0 +1,25 @@
+name: Lint and Tests
+
+on: [push]
+
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - run: npm i
+      - run: npm run lint
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - run: npm i
+      - run: npm run test:ci
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          files: ./modorix-backend/coverage/coverage-final.json
+          flags: backend
+          token: ${{ secrets.CODECOV_TOKEN }}

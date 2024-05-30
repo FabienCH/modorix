@@ -4,8 +4,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite build --watch",
-    "build": "tsc && TARGET=chrome vite build && TARGET=firefox vite build"
+    "dev": "tsc --watch && vite build --watch",
+    "build": "tsc && TARGET=chrome vite build && TARGET=firefox vite build",
+    "lint": "eslint \"src/**/*.ts\""
   },
   "dependencies": {
     "react": "^18.2.0",
