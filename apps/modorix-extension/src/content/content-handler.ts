@@ -1,38 +1,30 @@
-import { lookForHtmlElements } from "../core/look-for-html-elements";
-import { addButtonToCard } from "./add-button";
+import { lookForHtmlElements } from '../core/look-for-html-elements';
+import { addBlockButtonToCard } from './add-block-button';
 
+let userNameLinksElements: HTMLElement[] = [];
 let userNameListenerHandlers: Array<() => Promise<void>> = [];
 let lastEventToUpdateUsernamesListenerAt: number;
 
-export function updateUsernamesListener(userNameLinksElements: HTMLElement[]) {
+export function updateUsernamesListener() {
   debounceUpdateUsernamesListener(async () => {
-    if (userNameLinksElements?.length) {
-      removeUsernamesMouseEnterListener(userNameLinksElements);
+    if (userNameLinksElements.length) {
+      removeUsernamesMouseEnterListener();
     }
-    userNameLinksElements = await listenForUsernamesMouseEnter();
+    await listenForUsernamesMouseEnter();
   });
 }
 
 export async function listenForUsernamesMouseEnter() {
-  const userNameLinksElements = await lookForHtmlElements(
-    "[data-testid='User-Name'][id] a:not(:has(> time))"
-  );
+  userNameLinksElements = await lookForHtmlElements("[data-testid='User-Name'][id] a:not(:has(> time))");
 
   userNameLinksElements.forEach((linkElement) => {
     listenToUserNameLinkMouseEnter(linkElement as HTMLAnchorElement);
   });
-
-  return userNameLinksElements;
 }
 
-function removeUsernamesMouseEnterListener(
-  userNameLinksElements: HTMLElement[]
-) {
+function removeUsernamesMouseEnterListener() {
   userNameLinksElements.forEach((linkElement, index) => {
-    linkElement.removeEventListener(
-      "mouseenter",
-      userNameListenerHandlers[index]
-    );
+    linkElement.removeEventListener('mouseenter', userNameListenerHandlers[index]);
   });
   userNameListenerHandlers = [];
 }
@@ -49,7 +41,7 @@ function debounceUpdateUsernamesListener(callback: Function) {
 }
 
 const listenToUserNameLinkMouseEnter = (linkElement: HTMLAnchorElement) => {
-  const functionWrapper = addButtonToCard.bind(this, linkElement);
+  const functionWrapper = addBlockButtonToCard.bind(this, linkElement);
   userNameListenerHandlers.push(functionWrapper);
-  linkElement.addEventListener("mouseenter", functionWrapper);
+  linkElement.addEventListener('mouseenter', functionWrapper);
 };

@@ -1,14 +1,14 @@
+import {
+  OpenTabMessageData,
+  UserBlockedMessageData,
+  isOpenTabMessage,
+  isUserBlockedFailureData,
+  isUserBlockedMessage,
+  isUserBlockedSuccessData,
+} from './core/event-message';
 import { MessageIds } from './core/message-ids.enum';
 
 console.log('background loaded !');
-
-let blockUserTab: chrome.tabs.Tab | null = null;
-
-function terminateBlockUser(tabId: number | undefined) {
-  if (tabId) {
-    chrome.tabs.remove(tabId);
-  }
-}
 
 async function runBlockUser(tabId: number, changeInfo: chrome.tabs.TabChangeInfo) {
   if (tabId === blockUserTab?.id && changeInfo?.status === 'complete') {
@@ -20,16 +20,46 @@ async function runBlockUser(tabId: number, changeInfo: chrome.tabs.TabChangeInfo
   }
 }
 
-async function openNewTab(request: any) {
+async function openNewTab(data: OpenTabMessageData) {
   blockUserTab = await chrome.tabs.create({
-    url: request.data.url,
-    active: request.data.active,
+    url: data.url,
+    active: data.active,
   });
 
   chrome.tabs.onUpdated.addListener(runBlockUser);
 }
 
+async function handleBlockedUser(data: UserBlockedMessageData) {
+  if (isUserBlockedSuccessData(data)) {
+    try {
+      await fetch('http://localhost:3000/api/block-user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: data.userId,
+          blockedAt: new Date().toISOString(),
+        }),
+      });
+    } catch (error) {
+      console.error(`Modorix: Could not saved blocked user ${data.userId}`);
+    }
+  }
+  if (isUserBlockedFailureData(data)) {
+    console.warn(data.message);
+  }
+
+  terminateBlockUser(blockUserTab?.id);
+}
+
+function terminateBlockUser(tabId: number | undefined) {
+  if (tabId) {
+    chrome.tabs.remove(tabId);
+  }
+}
+
+let blockUserTab: chrome.tabs.Tab | null = null;
 let lastTabStatus: string = '';
+
 chrome.tabs.onUpdated.addListener((tabId: number, changeInfo: chrome.tabs.TabChangeInfo) => {
   if (changeInfo.status) {
     lastTabStatus = changeInfo.status;
@@ -43,30 +73,12 @@ chrome.tabs.onUpdated.addListener((tabId: number, changeInfo: chrome.tabs.TabCha
   }
 });
 
-chrome.runtime.onMessage.addListener(async (request) => {
-  if (request.id === MessageIds.OPEN_TAB) {
-    await openNewTab(request);
+chrome.runtime.onMessage.addListener(async (message) => {
+  if (isOpenTabMessage(message)) {
+    await openNewTab(message.data);
   }
 
-  if (request.id === MessageIds.USER_BLOCKED) {
-    if (request.data.status === 'FAILURE') {
-      console.warn(request.data.message);
-    }
-    if (request.data.status === 'SUCCESS') {
-      try {
-        await fetch('http://localhost:3000/api/block-user', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            id: request.data.userId,
-            blockedAt: new Date().toISOString(),
-          }),
-        });
-      } catch (error) {
-        console.error(`Modorix: Could not saved blocked user ${request.data.userId}`);
-      }
-    }
-
-    terminateBlockUser(blockUserTab?.id);
+  if (isUserBlockedMessage(message)) {
+    await handleBlockedUser(message.data);
   }
 });
