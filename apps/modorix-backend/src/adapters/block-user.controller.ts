@@ -7,7 +7,7 @@ export class BlockUserController {
   constructor(private readonly blockUserService: BlockUserService) {}
 
   @Post('block-user')
-  @HttpCode(204)
+  @HttpCode(201)
   blockUser(@Body() user: XUserDto): void {
     return this.blockUserService.blockUser(user);
   }
