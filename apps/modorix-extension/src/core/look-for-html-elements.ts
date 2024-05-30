@@ -16,9 +16,10 @@ export function lookForHtmlElements(
     setTimeout(() => {
       if (!elems.length) {
         clearInterval(lookupInterval);
-        const message = `Elements with querySelector ${querySelector} not found in ${timeout / 1000} secondes`;
-        console.warn(message);
-        reject(message);
+        console.warn(
+          `Elements with querySelector ${querySelector} not found in ${timeout / 1000} secondes`
+        );
+        resolve([...elems]);
       }
     }, timeout);
   });

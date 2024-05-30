@@ -1,7 +1,9 @@
 export function lookForHtmlElement(
   querySelector: string,
-  timeout = 10000
-): Promise<HTMLElement> {
+  options?: { timeout?: number; intervalDelay?: number }
+): Promise<HTMLElement | null> {
+  const timeout = options?.timeout ?? 10000;
+  const intervalDelay = options?.intervalDelay ?? 200;
   return new Promise((resolve, reject) => {
     let elem: HTMLElement | null;
     const lookupInterval = setInterval(() => {
@@ -9,16 +11,17 @@ export function lookForHtmlElement(
       if (elem) {
         clearInterval(lookupInterval);
         setTimeout(() => {
-          resolve(elem as HTMLElement);
-        }, 200);
+          resolve(elem);
+        }, intervalDelay);
       }
-    }, 200);
+    }, intervalDelay);
     setTimeout(() => {
       if (!elem) {
         clearInterval(lookupInterval);
-        const message = `Element with querySelector ${querySelector} not found in ${timeout / 1000} secondes`;
-        console.warn(message);
-        reject(message);
+        console.warn(
+          `Element with querySelector ${querySelector} not found in ${timeout / 1000} secondes`
+        );
+        resolve(elem);
       }
     }, timeout);
   });

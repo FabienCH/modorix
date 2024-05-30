@@ -1,5 +1,5 @@
 {
-  "name": "@moderatorix/ui",
+  "name": "@modorix/ui",
   "version": "0.0.0",
   "exports": {
     "./counter": "./components/counter.ts",
@@ -11,8 +11,8 @@
     "lint": "eslint \"**/*.ts\""
   },
   "devDependencies": {
-    "@moderatorix/eslint-config": "*",
-    "@moderatorix/typescript-config": "*",
+    "@modorix/eslint-config": "*",
+    "@modorix/typescript-config": "*",
     "eslint": "^8.57.0",
     "typescript": "^5.3.3"
   }

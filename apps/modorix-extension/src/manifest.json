@@ -2,7 +2,7 @@
   "{{chrome}}.manifest_version": 3,
   "{{firefox}}.manifest_version": 3,
   "version": "1.0",
-  "name": "Moderatorix",
+  "name": "Modorix",
   "icons": {
     "16": "icon/16.png",
     "32": "icon/32.png",
@@ -15,6 +15,7 @@
     "declarativeNetRequestWithHostAccess",
     "scripting",
     "activeTab",
+    "webNavigation",
     "tabs"
   ],
   "host_permissions": [
@@ -35,7 +36,7 @@
   "web_accessible_resources": [
     {
       "matches": [
-        "<all_urls>"
+        "https://x.com/*"
       ],
       "resources": [
         "scripts/block-user.js"
