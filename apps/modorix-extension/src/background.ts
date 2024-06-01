@@ -1,3 +1,4 @@
+import { saveBlockUser } from './background/block-user-gateway';
 import {
   OpenTabMessageData,
   UserBlockedMessageData,
@@ -32,14 +33,7 @@ async function openNewTab(data: OpenTabMessageData) {
 async function handleBlockedUser(data: UserBlockedMessageData) {
   if (isUserBlockedSuccessData(data)) {
     try {
-      await fetch('http://localhost:3000/api/block-user', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id: data.userId,
-          blockedAt: new Date().toISOString(),
-        }),
-      });
+      await saveBlockUser(data.userId);
     } catch (error) {
       console.error(`Modorix: Could not saved blocked user ${data.userId}`);
     }

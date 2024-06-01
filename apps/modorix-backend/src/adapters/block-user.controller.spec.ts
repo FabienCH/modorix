@@ -1,21 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BlockUserService } from '../domain/block-user.service';
-import { BlockUserRepository } from '../infrastructure/block-user.repository';
-import { BlockUserController } from './block-user.controller';
+import { BlockUsersService } from '../domain/block-user.service';
+import { BlockUsersRepository } from '../infrastructure/block-user.repository';
+import { BlockUsersController } from './block-user.controller';
 
 describe('BlockUserController', () => {
-  let blockUserController: BlockUserController;
-  let blockUserRepository: BlockUserRepository;
+  let blockUserController: BlockUsersController;
+  let blockUserRepository: BlockUsersRepository;
   let blockUserSpy: jest.SpyInstance;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
-      controllers: [BlockUserController],
-      providers: [BlockUserService, BlockUserRepository],
+      controllers: [BlockUsersController],
+      providers: [BlockUsersService, BlockUsersRepository],
     }).compile();
 
-    blockUserController = app.get<BlockUserController>(BlockUserController);
-    blockUserRepository = app.get<BlockUserRepository>(BlockUserRepository);
+    blockUserController = app.get<BlockUsersController>(BlockUsersController);
+    blockUserRepository = app.get<BlockUsersRepository>(BlockUsersRepository);
     blockUserSpy = jest.spyOn(blockUserRepository, 'blockUser');
   });
 

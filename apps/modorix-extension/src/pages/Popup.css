@@ -5,6 +5,7 @@ div {
     gap: 16px;
     align-items: center;
     justify-content: center;
+    background-color: #002857;
 }
   
 img {
@@ -28,6 +29,5 @@ p {
 code {
     font-size: 12px;
     padding: 2px 4px;
-    background-color: #ffffff24;
     border-radius: 2px;
 }
