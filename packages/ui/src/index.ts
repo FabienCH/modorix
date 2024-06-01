@@ -1,4 +1,3 @@
 // components
-export { Button } from './components/button';
+export { ModorixTable } from './components/modorix-table';
 export { Table } from './components/table';
-export { Tabs } from './components/tabs';
