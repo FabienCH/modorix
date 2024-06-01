@@ -1,6 +1,6 @@
 import "./Popup.css";
 
-export default function() {
+export default function Popup() {
   return (
     <div>
       <img src="/icon-with-shadow.svg" />
