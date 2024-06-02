@@ -1,12 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { BlockUserRepository } from '../infrastructure/block-user.repository';
+import { BlockUsersRepository } from '../infrastructure/block-user.repository';
 import { XUser } from './x-user';
 
 @Injectable()
-export class BlockUserService {
-  constructor(private readonly blockUserRepository: BlockUserRepository) {}
+export class BlockUsersService {
+  constructor(private readonly blockUsersRepository: BlockUsersRepository) {}
 
   blockUser(user: XUser): void {
-    this.blockUserRepository.blockUser(user);
+    this.blockUsersRepository.blockUser(user);
+  }
+
+  blockedUsersList(): XUser[] {
+    return this.blockUsersRepository.blockedUsersList();
   }
 }

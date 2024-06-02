@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { BlockUserController } from '../adapters/block-user.controller';
-import { BlockUserService } from '../domain/block-user.service';
-import { BlockUserRepository } from './block-user.repository';
+import { BlockUsersController } from '../adapters/block-user.controller';
+import { BlockUsersService } from '../domain/block-user.service';
+import { BlockUsersRepository } from './block-user.repository';
 
 @Module({
   imports: [],
-  controllers: [BlockUserController],
-  providers: [BlockUserService, BlockUserRepository],
+  controllers: [BlockUsersController],
+  providers: [BlockUsersService, BlockUsersRepository],
 })
 export class AppModule {}

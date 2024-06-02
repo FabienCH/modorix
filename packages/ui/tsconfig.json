@@ -1,5 +1,13 @@
 {
-  "extends": "@modorix/typescript-config/base.json",
-  "include": ["."],
-  "exclude": ["node_modules"]
+  "extends": "@modorix/typescript-config/react-library.json",
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"],
+    "compilerOptions": {
+      "baseUrl": ".",
+      "outDir": "dist",
+      "paths": {
+        "@ui/*": [ "./src/*"]
+      },
+    }
 }
+
