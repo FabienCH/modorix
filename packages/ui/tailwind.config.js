@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-undef
 import tailwindcssAnimate from 'tailwindcss-animate';
+import plugin from 'tailwindcss/plugin';
 
 const config = {
   darkMode: ['class'],
@@ -18,18 +19,6 @@ const config = {
       screens: {
         '2xl': '1400px',
       },
-    },
-    colors: {
-      transparent: 'transparent',
-      current: 'currentColor',
-      white: '#ffffff',
-      purple: '#3f3cbb',
-      midnight: '#121063',
-      metal: '#565584',
-      tahiti: '#3ab7bf',
-      silver: '#ecebff',
-      'bubble-gum': '#ff77e9',
-      bermuda: '#78dcca',
     },
     extend: {
       colors: {
@@ -80,6 +69,10 @@ const config = {
           '950': '#082949',
         },
       },
+      brightness: {
+        102: '1.02',
+      },
+      textShadow: { DEFAULT: '1px 0 0' },
       borderRadius: {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
@@ -101,6 +94,16 @@ const config = {
       },
     },
   },
-  plugins: [tailwindcssAnimate],
-}  ;
+  plugins: [tailwindcssAnimate,
+    plugin(function ({ matchUtilities, theme }) {
+      matchUtilities(
+        {
+          'text-shadow': (value) => ({
+            textShadow: value,
+          }),
+        },
+        { values: theme('textShadow') }
+      )
+    }),],
+};
 export default config;

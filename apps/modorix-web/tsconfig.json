@@ -1,24 +1,26 @@
 {
   "extends": "@modorix/typescript-config/react-library.json",
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "ES2020",
     "useDefineForClassFields": true,
     "lib": [
+      "ES2020",
       "DOM",
-      "DOM.Iterable",
-      "ESNext"
+      "DOM.Iterable"
     ],
-    "allowJs": false,
-    "skipLibCheck": true,
-    "esModuleInterop": false,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "skipLibCheck": true,
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
     "paths": {
       "@modorix-ui/*": [
         "../../packages/ui/src/*"
@@ -32,5 +34,5 @@
     {
       "path": "./tsconfig.node.json"
     }
-  ],
+  ]
 }

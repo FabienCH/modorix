@@ -13,7 +13,7 @@ export const ModorixTable = ({ columns, data, emptyDataMessage }: ModorixTablePr
         <TableHeader>
           <TableRow>
             {columns.map((col) => (
-              <TableHead>{col}</TableHead>
+              <TableHead className="bg-modorix-50 filter brightness-102 first:rounded-tl-md last:rounded-tr-md">{col}</TableHead>
             ))}
           </TableRow>
         </TableHeader>
