@@ -1,6 +1,6 @@
+import { XUser } from '@modorix-commons/models/x-user';
 import { Injectable } from '@nestjs/common';
 import { BlockUsersRepository } from '../infrastructure/block-user.repository';
-import { XUser } from './x-user';
 
 @Injectable()
 export class BlockUsersService {

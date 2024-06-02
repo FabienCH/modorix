@@ -24,6 +24,9 @@
     "paths": {
       "@modorix-ui/*": [
         "../../packages/ui/src/*"
+      ],
+      "@modorix-commons/*": [
+        "../../packages/modorix-commons/src/*"
       ]
     }
   },
