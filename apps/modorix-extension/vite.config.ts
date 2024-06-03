@@ -28,6 +28,10 @@ export default defineConfig({
         find: '@modorix-ui',
         replacement: path.resolve(__dirname, '../../packages/ui/src'),
       },
+      {
+        find: '@modorix-commons',
+        replacement: path.resolve(__dirname, '../../packages/modorix-commons/src'),
+      },
     ],
   },
   plugins: [

@@ -1,5 +1,5 @@
-import { IsString, IsNotEmpty, IsDateString } from 'class-validator';
-import { XUser } from 'src/domain/x-user';
+import { XUser } from '@modorix-commons/models/x-user';
+import { IsDateString, IsNotEmpty, IsString } from 'class-validator';
 
 export class XUserDto implements XUser {
   @IsNotEmpty()

@@ -1,8 +1,3 @@
-export interface XUser {
-  id: string;
-  blockedAt: string;
-}
-
 export function saveBlockUser(userId: string): Promise<Response> {
   return fetch('http://localhost:3000/api/block-users', {
     method: 'POST',
@@ -12,12 +7,4 @@ export function saveBlockUser(userId: string): Promise<Response> {
       blockedAt: new Date().toISOString(),
     }),
   });
-}
-
-export async function getBlockedUsers(): Promise<XUser[]> {
-  return (
-    await fetch('http://localhost:3000/api/block-users', {
-      method: 'GET',
-    })
-  ).json();
 }

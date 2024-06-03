@@ -12,17 +12,19 @@ export const ModorixTable = ({ columns, data, emptyDataMessage }: ModorixTablePr
       <Table>
         <TableHeader>
           <TableRow>
-            {columns.map((col) => (
-              <TableHead>{col}</TableHead>
+            {columns.map((col, idx) => (
+              <TableHead key={`col-${idx}`} className="bg-modorix-50 filter brightness-102 first:rounded-tl-md last:rounded-tr-md">
+                {col}
+              </TableHead>
             ))}
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.length ? (
-            data.map((row) => (
-              <TableRow>
-                {row.map((cell) => (
-                  <TableCell>{cell}</TableCell>
+            data.map((row, idx) => (
+              <TableRow key={`row-${idx}`}>
+                {row.map((cell, idx) => (
+                  <TableCell key={`cell-${idx}`}>{cell}</TableCell>
                 ))}
               </TableRow>
             ))
