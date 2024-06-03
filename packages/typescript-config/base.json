@@ -10,12 +10,11 @@
     "inlineSources": false,
     "isolatedModules": true,
     "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitAny": true,
     "preserveWatchOutput": true,
     "skipLibCheck": true,
     "strict": true
-  },
-  "exclude": ["node_modules"]
+  }
 }

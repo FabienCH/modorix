@@ -1,38 +1,5 @@
 {
-  "extends": "@modorix/typescript-config/react-library.json",
-  "compilerOptions": {
-    "target": "ES2020",
-    "useDefineForClassFields": true,
-    "lib": [
-      "ES2020",
-      "DOM",
-      "DOM.Iterable"
-    ],
-    "module": "ESNext",
-    "skipLibCheck": true,
-    /* Bundler mode */
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    /* Linting */
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "paths": {
-      "@modorix-ui/*": [
-        "../../packages/ui/src/*"
-      ],
-      "@modorix-commons/*": [
-        "../../packages/modorix-commons/src/*"
-      ]
-    }
-  },
-  "include": [
-    "src"
-  ],
+  "extends": "@modorix/typescript-config/vite-react.json",
   "references": [
     {
       "path": "./tsconfig.node.json"
