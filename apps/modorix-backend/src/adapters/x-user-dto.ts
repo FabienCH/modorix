@@ -4,9 +4,9 @@ import { IsDateString, IsNotEmpty, IsString } from 'class-validator';
 export class XUserDto implements XUser {
   @IsNotEmpty()
   @IsString()
-  id: string;
+  id!: string;
 
   @IsNotEmpty()
   @IsDateString()
-  blockedAt: string;
+  blockedAt!: string;
 }

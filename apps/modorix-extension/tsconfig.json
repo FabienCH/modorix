@@ -1,39 +1,8 @@
 {
-  "extends": "@modorix/typescript-config/react-library.json",
-  "compilerOptions": {
-    "target": "ESNext",
-    "useDefineForClassFields": true,
-    "lib": [
-      "DOM",
-      "DOM.Iterable",
-      "ESNext"
-    ],
-    "allowJs": false,
-    "skipLibCheck": true,
-    "esModuleInterop": false,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "paths": {
-      "@modorix-ui/*": [
-        "../../packages/ui/src/*"
-      ],
-      "@modorix-commons/*": [
-        "../../packages/modorix-commons/src/*"
-      ]
-    }
-  },
-  "include": [
-    "src"
-  ],
+  "extends": "@modorix/typescript-config/vite-react.json",
   "references": [
     {
       "path": "./tsconfig.node.json"
     }
-  ],
+  ]
 }

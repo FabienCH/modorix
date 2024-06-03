@@ -1,0 +1,23 @@
+{
+  "extends": "./react-library.json",
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "sourceMap": true,
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "paths": {
+      "@modorix-ui/*": ["../../packages/ui/src/*"],
+      "@modorix-commons/*": ["../../packages/modorix-commons/src/*"]
+    }
+  }
+}
