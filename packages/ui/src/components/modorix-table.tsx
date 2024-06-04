@@ -4,11 +4,12 @@ interface ModorixTableProps {
   columns: string[];
   data: string[][];
   emptyDataMessage: string;
+  className?: string;
 }
 
-export const ModorixTable = ({ columns, data, emptyDataMessage }: ModorixTableProps) => {
+export const ModorixTable = ({ columns, data, emptyDataMessage, className }: ModorixTableProps) => {
   return (
-    <div className="rounded-md border">
+    <div className={`${className} rounded-md border`}>
       <Table>
         <TableHeader>
           <TableRow>

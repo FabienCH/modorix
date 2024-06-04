@@ -4,7 +4,7 @@ import { getBlockedUsers } from '../gateways/block-user-gateway';
 
 const columns = ['X username', 'Blocked on'];
 
-export const XUsersTable = () => {
+export const XUsersTable = ({ className }: { className?: string }) => {
   const [blockedUsersData, setBlockedUsersData] = useState<string[][]>([]);
 
   useEffect(() => {
@@ -17,6 +17,11 @@ export const XUsersTable = () => {
     setBlockedUsersData(blockedUserData);
   }
   return (
-    <ModorixTable columns={columns} data={blockedUsersData} emptyDataMessage="You haven't blocked any user with Modorix yet"></ModorixTable>
+    <ModorixTable
+      className={className}
+      columns={columns}
+      data={blockedUsersData}
+      emptyDataMessage="You haven't blocked any user with Modorix yet"
+    ></ModorixTable>
   );
 };

@@ -1,5 +1,6 @@
 {
   "extends": "@modorix/typescript-config/vite-react.json",
+  "compilerOptions": { "types": ["vite-plugin-svgr/client"] },
   "references": [
     {
       "path": "./tsconfig.node.json"

@@ -26,9 +26,7 @@
     --ring: 204.17 87.55% 52.75%;
     --radius: 1rem;
 
-    button.rounded-md {
-      border-radius: 2rem;
-    }
+
   }
 
   .dark {
@@ -62,6 +60,12 @@
 
   body {
     @apply bg-background text-foreground;
-    background: radial-gradient(circle at 50% 0, #e8f4ff 0, #ffffff var(--bg-gradient-end-position, 100%))
+    background: radial-gradient(circle at 50% 0, #f4f9ff 0, #ffffff var(--bg-gradient-end-position, 100%));
+  }
+
+  button.rounded-md,
+  a.rounded-md {
+    border-radius: 2rem;
+
   }
 }
