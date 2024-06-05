@@ -1,6 +1,5 @@
 import { Group } from '@modorix-commons/models/group';
 import { Button } from '@modorix-ui/components/button';
-import '@modorix-ui/globals.css';
 import { LeaveGroupDialog } from './leave-group-dialog';
 
 interface MembershipCellProps {

@@ -1,22 +1,20 @@
 import { Group } from '@modorix-commons/models/group';
 
+const groupBaseUrl = 'http://localhost:3000/api/groups';
+
 export async function getGroups(): Promise<Group[]> {
-  return (
-    await fetch('http://localhost:3000/api/groups', {
-      method: 'GET',
-    })
-  ).json();
+  return (await fetch(groupBaseUrl, { method: 'GET' })).json();
 }
 
 export async function joinGroup(groupId: string): Promise<void> {
-  await fetch(`http://localhost:3000/api/groups/join/${groupId}`, {
+  await fetch(`${groupBaseUrl}/join/${groupId}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
   });
 }
 
 export async function leaveGroup(groupId: string): Promise<void> {
-  await fetch(`http://localhost:3000/api/groups/leave/${groupId}`, {
+  await fetch(`${groupBaseUrl}/leave/${groupId}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
   });

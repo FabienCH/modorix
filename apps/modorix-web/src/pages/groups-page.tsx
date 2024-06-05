@@ -1,6 +1,5 @@
 import { Group } from '@modorix-commons/models/group';
 import { ModorixTable } from '@modorix-ui/components/modorix-table';
-import '@modorix-ui/globals.css';
 import { useCallback, useEffect, useState } from 'react';
 import { getGroups } from '../adapters/gateways/group-gateway';
 import MembershipCell from '../components/membership-cell';

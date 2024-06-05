@@ -23,19 +23,19 @@ describe('GroupsController', () => {
   });
 
   describe('Get groups list', () => {
-    it('should get a list of group"', () => {
+    it('should get a list of group', () => {
       groupsController.groupsList();
       expect(groupsListSpy).toHaveBeenCalledWith();
     });
   });
 
   describe('Join a group', () => {
-    it('should join the given group"', () => {
+    it('should join the given group', () => {
       groupsController.joinGroup({ groupId: 'UK' });
       expect(updateIsJoinedGroupSpy).toHaveBeenCalledWith('UK', true);
     });
 
-    it('should not join a non existing group"', () => {
+    it('should not join a non existing group', () => {
       expect(() => {
         groupsController.joinGroup({ groupId: 'non existing id' });
       }).toThrow(new NotFoundException('group with id "non existing id" was not found'));
@@ -43,12 +43,12 @@ describe('GroupsController', () => {
   });
 
   describe('Join a group', () => {
-    it('should join the given group"', () => {
+    it('should join the given group', () => {
       groupsController.leaveGroup({ groupId: 'UK' });
       expect(updateIsJoinedGroupSpy).toHaveBeenCalledWith('UK', false);
     });
 
-    it('should not join a non existing group"', () => {
+    it('should not join a non existing group', () => {
       expect(() => {
         groupsController.leaveGroup({ groupId: 'non existing id' });
       }).toThrow(new NotFoundException('group with id "non existing id" was not found'));

@@ -1,5 +1,4 @@
 import { XUsersTable } from '@modorix-commons/components/x-users-table';
-import '@modorix-ui/globals.css';
 
 export default function BlocksPage() {
   return (
