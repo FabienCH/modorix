@@ -13,3 +13,5 @@ public/dist
 # Tests
 coverage
 .nyc_output
+
+vite.config.ts.timestamp-*

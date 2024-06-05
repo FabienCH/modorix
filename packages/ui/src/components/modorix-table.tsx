@@ -2,13 +2,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 
 interface ModorixTableProps {
   columns: string[];
-  data: string[][];
+  data: (JSX.Element | string)[][];
   emptyDataMessage: string;
+  className?: string;
 }
 
-export const ModorixTable = ({ columns, data, emptyDataMessage }: ModorixTableProps) => {
+export const ModorixTable = ({ columns, data, emptyDataMessage, className }: ModorixTableProps) => {
   return (
-    <div className="rounded-md border">
+    <div className={`${className} rounded-md border`}>
       <Table>
         <TableHeader>
           <TableRow>
@@ -24,7 +25,9 @@ export const ModorixTable = ({ columns, data, emptyDataMessage }: ModorixTablePr
             data.map((row, idx) => (
               <TableRow key={`row-${idx}`}>
                 {row.map((cell, idx) => (
-                  <TableCell key={`cell-${idx}`}>{cell}</TableCell>
+                  <TableCell className={typeof cell === 'string' ? 'table-cell' : 'flex'} key={`cell-${idx}`}>
+                    {cell}
+                  </TableCell>
                 ))}
               </TableRow>
             ))
