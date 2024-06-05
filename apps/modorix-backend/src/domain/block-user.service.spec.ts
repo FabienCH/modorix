@@ -5,6 +5,7 @@ import { BlockUsersService } from './block-user.service';
 
 describe('BlockUsersService', () => {
   let blockUsersService: BlockUsersService;
+  let blockUsersRepository: BlockUsersRepository;
   let groupsRepository: GroupsRepository;
 
   beforeEach(async () => {
@@ -13,6 +14,7 @@ describe('BlockUsersService', () => {
     }).compile();
 
     blockUsersService = app.get<BlockUsersService>(BlockUsersService);
+    blockUsersRepository = app.get<BlockUsersRepository>(BlockUsersRepository);
     groupsRepository = app.get<GroupsRepository>(GroupsRepository);
   });
 
@@ -20,7 +22,7 @@ describe('BlockUsersService', () => {
     it('should add user to the block list', () => {
       blockUsersService.blockUser({ id: '@userId', blockedAt: '2024-05-27T18:01:45Z' });
 
-      const blockedUser = blockUsersService.blockedUsersList().find((user) => user.id === '@userId');
+      const blockedUser = blockUsersRepository.blockedUsersList().find((user) => user.id === '@userId');
 
       expect(blockedUser).toEqual({ id: '@userId', blockedAt: '2024-05-27T18:01:45Z' });
     });

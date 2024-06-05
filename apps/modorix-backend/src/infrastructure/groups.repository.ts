@@ -62,7 +62,7 @@ export class GroupsRepository {
     }
   }
 
-  addBlockedUser(groupId: string, blockedUserId: string): void | null {
+  addBlockedUser(groupId: string, blockedUserId: string): void {
     this.groups.forEach((group) => {
       if (group.id === groupId) {
         group.blockedXUserIds.push(blockedUserId);
