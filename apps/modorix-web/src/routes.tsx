@@ -1,7 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom';
-import Layout from './Layout';
-import BlocksPage from './blocks-page';
-import GroupsPage from './groups-page';
+import Layout from './components/Layout';
+import BlocksPage from './pages/blocks-page';
+import GroupsPage from './pages/groups-page';
 
 export enum ROUTES {
   Home = '/',

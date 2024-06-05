@@ -2,7 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 
 interface ModorixTableProps {
   columns: string[];
-  data: string[][];
+  data: (JSX.Element | string)[][];
   emptyDataMessage: string;
   className?: string;
 }
@@ -25,7 +25,9 @@ export const ModorixTable = ({ columns, data, emptyDataMessage, className }: Mod
             data.map((row, idx) => (
               <TableRow key={`row-${idx}`}>
                 {row.map((cell, idx) => (
-                  <TableCell key={`cell-${idx}`}>{cell}</TableCell>
+                  <TableCell className={typeof cell === 'string' ? 'table-cell' : 'flex'} key={`cell-${idx}`}>
+                    {cell}
+                  </TableCell>
                 ))}
               </TableRow>
             ))

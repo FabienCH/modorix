@@ -1,8 +1,8 @@
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList, navigationMenuTriggerStyle } from '@modorix-ui/components/navigation-menu';
 import { NavLink } from 'react-router-dom';
-import BanLogo from '../public/icon/ban-solid.svg?react';
-import GroupLogo from '../public/icon/people-group-solid.svg?react';
-import { ROUTES } from './routes';
+import BanLogo from '../../public/icon/ban-solid.svg?react';
+import GroupLogo from '../../public/icon/people-group-solid.svg?react';
+import { ROUTES } from '../routes';
 
 export default function Header() {
   function getNavLinkClassName(isActive: boolean): string {
