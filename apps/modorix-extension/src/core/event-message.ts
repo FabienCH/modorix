@@ -5,16 +5,18 @@ interface Message<Data> {
   data: Data;
 }
 
-export interface OpenTabMessageData {
+export interface BlockUserMessageData {
   url: string;
   active: boolean;
+  blockReasonIds: string[];
 }
 
-type OpenTabMessage = Message<OpenTabMessageData>;
+type BlockUserMessage = Message<BlockUserMessageData>;
 
 export interface UserBlockedMessageSuccessData {
   status: 'SUCCESS';
   userId: string;
+  blockReasonIds: string[];
 }
 
 export interface UserBlockedMessageFailureData {
@@ -26,8 +28,8 @@ export type UserBlockedMessageData = UserBlockedMessageSuccessData | UserBlocked
 
 type UserBlockedMessage = Message<UserBlockedMessageData>;
 
-export function isOpenTabMessage(message: Message<unknown>): message is OpenTabMessage {
-  return message.id === MessageIds.OPEN_TAB;
+export function isBlockUserMessage(message: Message<unknown>): message is BlockUserMessage {
+  return message.id === MessageIds.BLOCK_USER;
 }
 
 export function isUserBlockedMessage(message: Message<unknown>): message is UserBlockedMessage {

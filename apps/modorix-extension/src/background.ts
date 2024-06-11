@@ -1,8 +1,8 @@
 import { saveBlockUser } from './background/block-user-gateway';
 import {
-  OpenTabMessageData,
+  BlockUserMessageData,
   UserBlockedMessageData,
-  isOpenTabMessage,
+  isBlockUserMessage,
   isUserBlockedFailureData,
   isUserBlockedMessage,
   isUserBlockedSuccessData,
@@ -21,19 +21,19 @@ async function runBlockUser(tabId: number, changeInfo: chrome.tabs.TabChangeInfo
   }
 }
 
-async function openNewTab(data: OpenTabMessageData) {
+async function blockInNewTab(data: BlockUserMessageData) {
   blockUserTab = await chrome.tabs.create({
     url: data.url,
     active: data.active,
   });
-
+  chrome.storage.local.set({ blockReasonIds: JSON.stringify(data.blockReasonIds) });
   chrome.tabs.onUpdated.addListener(runBlockUser);
 }
 
 async function handleBlockedUser(data: UserBlockedMessageData) {
   if (isUserBlockedSuccessData(data)) {
     try {
-      await saveBlockUser(data.userId);
+      await saveBlockUser(data.userId, data.blockReasonIds);
     } catch (error) {
       console.error(`Modorix: Could not saved blocked user ${data.userId}`);
     }
@@ -46,12 +46,14 @@ async function handleBlockedUser(data: UserBlockedMessageData) {
 }
 
 function terminateBlockUser(tabId: number | undefined) {
+  blockReasonIds = [];
   if (tabId) {
     chrome.tabs.remove(tabId);
   }
 }
 
 let blockUserTab: chrome.tabs.Tab | null = null;
+let blockReasonIds: string[] = [];
 let lastTabStatus: string = '';
 
 chrome.tabs.onUpdated.addListener((tabId: number, changeInfo: chrome.tabs.TabChangeInfo) => {
@@ -68,8 +70,8 @@ chrome.tabs.onUpdated.addListener((tabId: number, changeInfo: chrome.tabs.TabCha
 });
 
 chrome.runtime.onMessage.addListener(async (message) => {
-  if (isOpenTabMessage(message)) {
-    await openNewTab(message.data);
+  if (isBlockUserMessage(message)) {
+    await blockInNewTab(message.data);
   }
 
   if (isUserBlockedMessage(message)) {
