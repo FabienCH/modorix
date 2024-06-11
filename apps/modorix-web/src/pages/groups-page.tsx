@@ -5,7 +5,7 @@ import { getGroups } from '../adapters/gateways/group-gateway';
 import MembershipCell from '../components/membership-cell';
 import { toggleMemberShip } from '../domain/toggle-group-membership-usecase';
 
-const columns = ['Group', 'Description', 'Membership'];
+const columns = ['Group', 'Description', 'Blocked Users', 'Membership'];
 
 export default function GroupsPage() {
   const [groupsData, setGroupsData] = useState<(string | JSX.Element)[][]>([]);
@@ -24,15 +24,16 @@ export default function GroupsPage() {
     const groupsData = groups.map((group) => [
       group.name,
       group.description,
+      group.blockedXUserIds.length.toString(),
       <MembershipCell group={group} onClick={() => handleClickFn(group)} />,
     ]);
     setGroupsData(groupsData);
   }
 
   return (
-    <>
+    <section className="w-full mx-auto max-w-screen-lg">
       <h1 className="text-xl pb-3 text-modorix-950">Groups</h1>
       <ModorixTable columns={columns} data={groupsData} emptyDataMessage="There is no groups yet"></ModorixTable>
-    </>
+    </section>
   );
 }
