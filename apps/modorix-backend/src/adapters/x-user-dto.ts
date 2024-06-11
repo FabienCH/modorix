@@ -1,5 +1,5 @@
 import { XUser } from '@modorix-commons/models/x-user';
-import { IsDateString, IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsDateString, IsNotEmpty, IsString } from 'class-validator';
 
 export class XUserDto implements XUser {
   @IsNotEmpty()
@@ -9,4 +9,8 @@ export class XUserDto implements XUser {
   @IsNotEmpty()
   @IsDateString()
   blockedAt!: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  blockReasonIds!: string[];
 }
