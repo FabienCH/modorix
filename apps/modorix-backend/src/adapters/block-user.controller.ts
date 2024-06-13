@@ -1,6 +1,6 @@
 import { Body, Controller, Get, HttpCode, Post } from '@nestjs/common';
 import { BlockUsersService } from '../domain/block-user.service';
-import { XUserDto } from './x-user-dto';
+import { BlockXUserRequestDto, XUserDto } from './x-user-dto';
 
 @Controller()
 export class BlockUsersController {
@@ -8,7 +8,7 @@ export class BlockUsersController {
 
   @Post('block-users')
   @HttpCode(201)
-  blockUser(@Body() user: XUserDto): void {
+  blockUser(@Body() user: BlockXUserRequestDto): void {
     return this.blockUsersService.blockUser(user);
   }
 

@@ -26,7 +26,16 @@ describe('BlockUsersService', () => {
 
       const blockedUser = blockUsersRepository.blockedUsersList().find((user) => user.id === '@userId');
 
-      expect(blockedUser).toEqual({ id: '@userId', blockedAt: '2024-05-27T18:01:45Z', blockReasonIds: ['1'] });
+      expect(blockedUser).toEqual({
+        id: '@userId',
+        blockedAt: '2024-05-27T18:01:45Z',
+        blockReasons: [
+          {
+            id: '1',
+            label: 'Racism, Xenophobia',
+          },
+        ],
+      });
     });
 
     it('should add the blocked user too all groups', () => {
@@ -43,7 +52,24 @@ describe('BlockUsersService', () => {
 
       const blockedUser = blockUsersService.blockedUsersList().find((user) => user.id === '@userId');
 
-      expect(blockedUser).toEqual({ id: '@userId', blockedAt: '2024-05-27T18:01:45Z', blockReasonIds: ['1', '3', '6'] });
+      expect(blockedUser).toEqual({
+        id: '@userId',
+        blockedAt: '2024-05-27T18:01:45Z',
+        blockReasons: [
+          {
+            id: '1',
+            label: 'Racism, Xenophobia',
+          },
+          {
+            id: '3',
+            label: 'Homophobia Transphobia',
+          },
+          {
+            id: '6',
+            label: 'Scamming',
+          },
+        ],
+      });
     });
 
     it('should not add user to the block list if no reasons', () => {

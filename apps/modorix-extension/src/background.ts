@@ -46,14 +46,12 @@ async function handleBlockedUser(data: UserBlockedMessageData) {
 }
 
 function terminateBlockUser(tabId: number | undefined) {
-  blockReasonIds = [];
   if (tabId) {
     chrome.tabs.remove(tabId);
   }
 }
 
 let blockUserTab: chrome.tabs.Tab | null = null;
-let blockReasonIds: string[] = [];
 let lastTabStatus: string = '';
 
 chrome.tabs.onUpdated.addListener((tabId: number, changeInfo: chrome.tabs.TabChangeInfo) => {

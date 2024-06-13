@@ -1,7 +1,7 @@
-import { XUser } from '@modorix-commons/models/x-user';
+import { BlockXUserRequest } from '@modorix-commons/models/x-user';
 
 export function saveBlockUser(userId: string, blockReasonIds: string[]): Promise<Response> {
-  const bodyData: XUser = {
+  const bodyData: BlockXUserRequest = {
     id: userId,
     blockedAt: new Date().toISOString(),
     blockReasonIds,

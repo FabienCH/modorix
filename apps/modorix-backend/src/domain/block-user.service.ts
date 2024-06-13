@@ -1,4 +1,4 @@
-import { XUser } from '@modorix-commons/models/x-user';
+import { BlockXUserRequest, XUser } from '@modorix-commons/models/x-user';
 import { Injectable } from '@nestjs/common';
 import { BlockReasonsRepository } from '../infrastructure/block-reason.repository';
 import { BlockUsersRepository } from '../infrastructure/block-user.repository';
@@ -13,20 +13,20 @@ export class BlockUsersService {
     private readonly blockReasonsRepository: BlockReasonsRepository,
   ) {}
 
-  blockUser(user: XUser): void {
-    if (!user.blockReasonIds.length) {
-      throw new BlockReasonError(user.id, 'empty');
+  blockUser(blockUserRequest: BlockXUserRequest): void {
+    if (!blockUserRequest.blockReasonIds.length) {
+      throw new BlockReasonError(blockUserRequest.id, 'empty');
     }
     const blockReasonsIds = this.blockReasonsRepository.blockedReasonsList().flatMap((reason) => reason.id);
-    const notFoundReason = user.blockReasonIds.find((reasonId) => !blockReasonsIds.includes(reasonId));
+    const notFoundReason = blockUserRequest.blockReasonIds.find((reasonId) => !blockReasonsIds.includes(reasonId));
     if (notFoundReason) {
-      throw new BlockReasonError(user.id, 'notFound');
+      throw new BlockReasonError(blockUserRequest.id, 'notFound');
     }
 
-    this.blockUsersRepository.blockUser(user);
+    this.blockUsersRepository.blockUser(blockUserRequest);
     const groups = this.groupsRepository.groupsList();
     groups.forEach((group) => {
-      this.groupsRepository.addBlockedUser(group.id, user.id);
+      this.groupsRepository.addBlockedUser(group.id, blockUserRequest.id);
     });
   }
 

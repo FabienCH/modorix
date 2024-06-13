@@ -10,6 +10,7 @@ const config = {
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
     '../../packages/ui/src/**/*.{ts,tsx}',
+    '../../packages/modorix-commons/src/components/**/*.{ts,tsx}',
   ],
   important: '#modorix-root',
   prefix: '',
