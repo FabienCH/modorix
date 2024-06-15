@@ -32,7 +32,7 @@ describe('BlockUsersService', () => {
         blockReasons: [
           {
             id: '1',
-            label: 'Racism, Xenophobia',
+            label: 'Racism / Xenophobia',
           },
         ],
       });
@@ -58,11 +58,11 @@ describe('BlockUsersService', () => {
         blockReasons: [
           {
             id: '1',
-            label: 'Racism, Xenophobia',
+            label: 'Racism / Xenophobia',
           },
           {
             id: '3',
-            label: 'Homophobia Transphobia',
+            label: 'Homophobia / Transphobia',
           },
           {
             id: '6',

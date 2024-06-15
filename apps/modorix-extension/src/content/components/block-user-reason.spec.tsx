@@ -24,7 +24,7 @@ describe('Block user reasons', () => {
     },
     {
       id: '1',
-      label: 'Racism, Xenophobia',
+      label: 'Racism / Xenophobia',
     },
     {
       id: '2',
@@ -33,13 +33,11 @@ describe('Block user reasons', () => {
   ];
   let getBlockReasonsSpy: jest.SpyInstance;
   let selectedBlockReasonIds: string[] | undefined;
-  let submitCalledCount: number;
 
   beforeEach(async () => {
     getBlockReasonsSpy = jest.spyOn(BlockReasonsGateway, 'getBlockReasons');
     getBlockReasonsSpy.mockReturnValue(await blockReasons);
     selectedBlockReasonIds = undefined;
-    submitCalledCount = 0;
 
     render(
       <BlockReasonDialog
@@ -68,7 +66,7 @@ describe('Block user reasons', () => {
 
     it('should block a user with mulitple reasons', async () => {
       await clickOnCheckbox('Harassment');
-      await clickOnCheckbox('Racism, Xenophobia');
+      await clickOnCheckbox('Racism / Xenophobia');
 
       clickToSubmitForm();
 
@@ -79,7 +77,6 @@ describe('Block user reasons', () => {
       clickToSubmitForm();
 
       expect(selectedBlockReasonIds).toBeUndefined();
-      expect(submitCalledCount).toEqual(0);
     });
 
     it('should not display an error message if no reason selected but the form has not been submitted', async () => {
@@ -89,7 +86,7 @@ describe('Block user reasons', () => {
       const errorMessage = screen.queryByText('Please select at least one reason.');
 
       expect(errorMessage).not.toBeInTheDocument();
-      expect(submitCalledCount).toEqual(0);
+      expect(selectedBlockReasonIds).toBeUndefined();
     });
 
     it('should display an error message if no reason selected and the form has been submitted', async () => {
@@ -98,7 +95,7 @@ describe('Block user reasons', () => {
       const errorMessage = screen.queryByText('Please select at least one reason.');
 
       expect(errorMessage).toBeInTheDocument();
-      expect(submitCalledCount).toEqual(0);
+      expect(selectedBlockReasonIds).toBeUndefined();
     });
 
     it('should display an error message if form has been submitted and no reason is selected ', async () => {
