@@ -15,6 +15,7 @@ import {
 import { useState } from 'react';
 import { FormBlockReason } from '../../core/form-block-reason';
 import { getBlockReasons } from '../block-reasons-gateway';
+import { validateSelectedReasons } from '../validate-block-reasons';
 import { BlockReasonForm } from './block-reason-form';
 
 interface BlockReasonDialogProps {
@@ -44,21 +45,18 @@ export function BlockReasonDialog({ container, username, onSubmit }: BlockReason
       setHasSubmit(true);
     }
 
-    const selectedBlockReasonIds = validateSelectedReasons();
-    if (selectedBlockReasonIds.length === 0) {
+    const blockReasonError = validateSelectedReasons(blockReasonsData);
+    setNoReasonSelected(blockReasonError instanceof Error);
+    if (blockReasonError) {
       return;
     }
 
-    onSubmit(selectedBlockReasonIds);
+    onSubmit(getSelectedReasons());
     setOpen(false);
   }
 
-  function validateSelectedReasons(updatedBlockReasons?: FormBlockReason[]) {
-    const selectedBlockReasonIds = (updatedBlockReasons ?? blockReasonsData)
-      .filter((blockReason) => blockReason.checked)
-      .map((blockReason) => blockReason.id);
-    setNoReasonSelected(selectedBlockReasonIds.length === 0);
-    return selectedBlockReasonIds;
+  function getSelectedReasons(updatedBlockReasons?: FormBlockReason[]): string[] {
+    return (updatedBlockReasons ?? blockReasonsData).filter((blockReason) => blockReason.checked).map((blockReason) => blockReason.id);
   }
 
   function handleCheckedChange(blockReason: FormBlockReason): void {
@@ -72,7 +70,8 @@ export function BlockReasonDialog({ container, username, onSubmit }: BlockReason
     setBlockReasonsData(updatedBlockReasons);
 
     if (hasSubmit) {
-      validateSelectedReasons(updatedBlockReasons);
+      const blockReasonError = validateSelectedReasons(updatedBlockReasons);
+      setNoReasonSelected(blockReasonError instanceof Error);
     }
   }
 
