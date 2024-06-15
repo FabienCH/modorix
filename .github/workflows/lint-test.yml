@@ -4,22 +4,37 @@ on: [push]
 
 jobs:
   lint:
-    name: lint
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
       - run: npm i
       - run: npm run lint
-  test:
-    name: test
+  backend-tests:
+    name: Backend Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
       - run: npm i
+      - run: cd apps/modorix-backend
       - run: npm run test:ci
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
         with:
-          files: ./modorix-backend/coverage/coverage-final.json
+          files: ./coverage/coverage-final.json
           flags: backend
+          token: ${{ secrets.CODECOV_TOKEN }}
+  extension-tests:
+    name: Extension Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - run: npm i
+      - run: cd apps/modorix-extension
+      - run: npm run test:ci
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          files: ./src/coverage/coverage-final.json
+          flags: extension
           token: ${{ secrets.CODECOV_TOKEN }}
