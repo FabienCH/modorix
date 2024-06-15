@@ -13,11 +13,10 @@
     "scripting",
     "activeTab",
     "webNavigation",
-    "tabs"
+    "tabs",
+    "storage"
   ],
-  "host_permissions": [
-    "https://x.com/*"
-  ],
+  "host_permissions": ["https://x.com/*"],
   "{{chrome}}.action": {
     "default_popup": "src/popup.html"
   },
@@ -26,28 +25,18 @@
   },
   "background": {
     "{{chrome}}.service_worker": "src/background.ts",
-    "{{firefox}}.scripts": [
-      "src/background.ts"
-    ]
+    "{{firefox}}.scripts": ["src/background.ts"]
   },
   "web_accessible_resources": [
     {
-      "matches": [
-        "https://x.com/*"
-      ],
-      "resources": [
-        "scripts/block-user.js"
-      ]
+      "matches": ["https://x.com/*"],
+      "resources": ["scripts/block-user.js"]
     }
   ],
   "content_scripts": [
     {
-      "matches": [
-        "https://x.com/*"
-      ],
-      "js": [
-        "src/content.ts"
-      ]
+      "matches": ["https://x.com/*"],
+      "js": ["src/content.ts"]
     }
   ]
 }

@@ -4,17 +4,20 @@ interface ModorixTableProps {
   columns: string[];
   data: (JSX.Element | string)[][];
   emptyDataMessage: string;
-  className?: string;
+  rowClassName?: string;
 }
 
-export const ModorixTable = ({ columns, data, emptyDataMessage, className }: ModorixTableProps) => {
+export const ModorixTable = ({ columns, data, emptyDataMessage, rowClassName }: ModorixTableProps) => {
   return (
-    <div className={`${className} rounded-md border`}>
+    <div className="rounded-md border">
       <Table>
         <TableHeader>
-          <TableRow>
+          <TableRow className={rowClassName}>
             {columns.map((col, idx) => (
-              <TableHead key={`col-${idx}`} className="bg-modorix-50 filter brightness-102 first:rounded-tl-md last:rounded-tr-md">
+              <TableHead
+                key={`col-${idx}`}
+                className={`bg-modorix-50 filter brightness-102 content-center first:rounded-tl-md last:rounded-tr-md`}
+              >
                 {col}
               </TableHead>
             ))}
@@ -23,9 +26,12 @@ export const ModorixTable = ({ columns, data, emptyDataMessage, className }: Mod
         <TableBody>
           {data.length ? (
             data.map((row, idx) => (
-              <TableRow key={`row-${idx}`}>
+              <TableRow key={`row-${idx}`} className={rowClassName}>
                 {row.map((cell, idx) => (
-                  <TableCell className={typeof cell === 'string' ? 'table-cell' : 'flex'} key={`cell-${idx}`}>
+                  <TableCell
+                    className={typeof cell === 'string' ? 'truncate table-cell ' : 'truncate flex ' + columns[idx]}
+                    key={`cell-${idx}`}
+                  >
                     {cell}
                   </TableCell>
                 ))}

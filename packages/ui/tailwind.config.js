@@ -10,7 +10,9 @@ const config = {
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
     '../../packages/ui/src/**/*.{ts,tsx}',
+    '../../packages/modorix-commons/src/components/**/*.{ts,tsx}',
   ],
+  important: '#modorix-root',
   prefix: '',
   theme: {
     container: {
@@ -56,17 +58,17 @@ const config = {
           foreground: 'hsl(var(--card-foreground))',
         },
         modorix: {
-          '50': '#f0f8ff',
-          '100': '#e0effe',
-          '200': '#bae0fd',
-          '300': '#7ec8fb',
-          '400': '#39acf7',
-          '500': '#1d9cf0',
-          '600': '#0373c6',
-          '700': '#045ba0',
-          '800': '#084e84',
-          '900': '#0d426d',
-          '950': '#082949',
+          50: '#f0f8ff',
+          100: '#e0effe',
+          200: '#bae0fd',
+          300: '#7ec8fb',
+          400: '#39acf7',
+          500: '#1d9cf0',
+          600: '#0373c6',
+          700: '#045ba0',
+          800: '#084e84',
+          900: '#0d426d',
+          950: '#082949',
         },
       },
       brightness: {
@@ -94,7 +96,8 @@ const config = {
       },
     },
   },
-  plugins: [tailwindcssAnimate,
+  plugins: [
+    tailwindcssAnimate,
     plugin(function ({ matchUtilities, theme }) {
       matchUtilities(
         {
@@ -102,8 +105,9 @@ const config = {
             textShadow: value,
           }),
         },
-        { values: theme('textShadow') }
-      )
-    }),],
+        { values: theme('textShadow') },
+      );
+    }),
+  ],
 };
 export default config;

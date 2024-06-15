@@ -7,7 +7,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.setGlobalPrefix('api');
   app.enableCors({
-    origin: ['chrome-extension://ohmnoaaknihgcbkflfjonahofjhjnofb', 'http://localhost:5173'],
+    origin: ['chrome-extension://ohmnoaaknihgcbkflfjonahofjhjnofb', 'http://localhost:5173', 'https://x.com'],
   });
   await app.listen(3000);
 }

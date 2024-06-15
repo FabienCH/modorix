@@ -1,5 +1,8 @@
+import '@modorix-ui/globals.css';
+import { BlockUserMessageData } from '../core/event-message';
 import { lookForHtmlElement } from '../core/look-for-html-element';
 import { MessageIds } from '../core/message-ids.enum';
+import { renderBlockButton } from './components/render-block-button';
 
 export async function addBlockButtonToCard(linkElement: HTMLAnchorElement) {
   const cardElement = await lookForHtmlElement("[data-testid='HoverCard']", {
@@ -14,7 +17,7 @@ export async function addBlockButtonToCard(linkElement: HTMLAnchorElement) {
 }
 
 function addBlockButton(cardElement: HTMLElement, linkElement: HTMLAnchorElement) {
-  const modorixBlockButton = cardElement.querySelector('#modorix-block-button');
+  const modorixBlockButton = cardElement.querySelector('#modorix-root');
   const cardLink = cardElement.children[0]?.children[0]?.children[1]?.querySelector('a');
 
   if (modorixBlockButton || cardLink?.href !== linkElement.href) {
@@ -23,29 +26,24 @@ function addBlockButton(cardElement: HTMLElement, linkElement: HTMLAnchorElement
 
   const buttons = cardElement.getElementsByTagName('button');
   const buttonsContainer = buttons[0]?.parentElement;
-  const button = document.createElement('button');
-  button.id = 'modorix-block-button';
-  button.style.borderColor = 'rgba(0, 0, 0, 0)';
-  button.style.backgroundColor = 'rgba(244, 33, 46)';
-  button.style.padding = '9px 12px';
-  button.style.marginTop = '12px';
-  button.style.borderRadius = '24px';
-  button.style.fontSize = '14px';
-  button.style.fontWeight = '700';
-  button.style.fontFamily = 'TwitterChirp, Roboto, Helvetica, Arial, sans-serif';
 
-  button.addEventListener('click', async () => {
+  if (!buttonsContainer) {
+    return;
+  }
+
+  const handleConfirmModal = async (blockReasonIds: string[]) => {
+    const data: BlockUserMessageData = {
+      url: linkElement.href,
+      active: true,
+      blockReasonIds,
+    };
     await chrome.runtime.sendMessage('', {
-      id: MessageIds.OPEN_TAB,
-      data: {
-        url: linkElement.href,
-        active: true,
-      },
+      id: MessageIds.BLOCK_USER,
+      data,
     });
-  });
+  };
 
-  button.appendChild(document.createTextNode('Block with Modorix'));
-  buttonsContainer?.appendChild(button);
+  renderBlockButton(buttonsContainer, linkElement, handleConfirmModal);
 }
 
 function addButtonIfCardChanges(cardElement: HTMLElement, linkElement: HTMLAnchorElement) {
