@@ -1,7 +1,7 @@
+import { BlockUserReasonsTooltip } from '@modorix-commons/components/block-user-reasons-tooltip';
+import { BlockReason } from '@modorix-commons/models/block-reason';
 import { Badge } from '@modorix-ui/components/badge';
-import { RefObject, useLayoutEffect, useRef, useState } from 'react';
-import { BlockReason } from '../models/block-reason';
-import { BlockUserReasonsTooltip } from './block-user-reasons-tooltip';
+import { useLayoutEffect, useRef, useState } from 'react';
 
 interface BadgeDisplayConfig {
   visibleItems: BlockReason[];
@@ -11,14 +11,14 @@ interface BadgeDisplayConfig {
 
 export const BlockUserReasons = ({ blockReasons }: { blockReasons: BlockReason[] }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const badgeRefs = blockReasons.map(() => useRef<HTMLSpanElement>(null));
+  const badgeRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const [displayedBlockReasons, setDisplayedBlockReasons] = useState(blockReasons);
   const [remainingItems, setRemainingItems] = useState(0);
   const [mustTruncate, setMustTruncate] = useState(false);
 
   useLayoutEffect(() => {
     const containerWidth = ref.current?.offsetWidth ?? 0;
-    const { visibleItems, badgesWidth, remainingItems } = badgeRefs.reduce<BadgeDisplayConfig>(
+    const { visibleItems, badgesWidth, remainingItems } = badgeRefs.current.reduce<BadgeDisplayConfig>(
       (config, badgeRef, idx) => getBadgeDisplayConfig(config, idx, containerWidth, blockReasons, badgeRef),
       {
         visibleItems: [],
@@ -29,21 +29,21 @@ export const BlockUserReasons = ({ blockReasons }: { blockReasons: BlockReason[]
     setDisplayedBlockReasons(visibleItems);
     setRemainingItems(remainingItems);
     setMustTruncate(badgesWidth > containerWidth);
-  }, []);
+  }, [blockReasons]);
 
   function getBadgeDisplayConfig(
     config: BadgeDisplayConfig,
     idx: number,
     containerWidth: number,
     blockReasons: BlockReason[],
-    badgeRef: RefObject<HTMLSpanElement>,
+    badgeRef: HTMLSpanElement | null,
   ) {
     if (config.badgesWidth < containerWidth) {
       config.visibleItems.push(blockReasons[idx]);
     } else {
       config.remainingItems++;
     }
-    config.badgesWidth += badgeRef.current?.offsetWidth ?? 0;
+    config.badgesWidth += badgeRef?.offsetWidth ?? 0;
 
     return config;
   }
@@ -53,19 +53,21 @@ export const BlockUserReasons = ({ blockReasons }: { blockReasons: BlockReason[]
       {displayedBlockReasons.map((blockReason, idx) =>
         mustTruncate ? (
           <BlockUserReasonsTooltip
-            buttonLabelRef={badgeRefs[idx]}
-            buttonClassName={'truncate'}
-            buttonLabel={blockReason.label}
+            buttonOptions={{ labelElem: badgeRefs.current[idx], className: 'truncate', label: blockReason.label }}
             blockReasons={[blockReason]}
           ></BlockUserReasonsTooltip>
         ) : (
           <Badge variant={'secondary'} key={blockReason.id}>
-            <span ref={badgeRefs[idx]}>{blockReason.label}</span>
+            <span ref={(el) => (badgeRefs.current[idx] = el)}>{blockReason.label}</span>
           </Badge>
         ),
       )}
       {remainingItems ? (
-        <BlockUserReasonsTooltip buttonLabel={`+${remainingItems}`} blockReasons={blockReasons}></BlockUserReasonsTooltip>
+        <BlockUserReasonsTooltip
+          buttonOptions={{ label: `+${remainingItems}` }}
+          blockReasons={blockReasons}
+          contentClassName="max-w-[min(400px,40vw)]"
+        ></BlockUserReasonsTooltip>
       ) : null}
     </div>
   );

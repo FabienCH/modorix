@@ -1,4 +1,5 @@
 import { XUsersTable } from '@modorix-commons/components/x-users-table';
+import { BlockUserReasons } from '../content/components/block-user-reasons';
 
 export default function Popup() {
   return (
@@ -8,7 +9,7 @@ export default function Popup() {
         Your Modorix blocked users
       </h1>
       <div className="p-4">
-        <XUsersTable />
+        <XUsersTable BlockReasonComponent={BlockUserReasons} rowGridCols="grid-cols-[1fr_107px_122px]" />
       </div>
     </>
   );

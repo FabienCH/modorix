@@ -5,9 +5,9 @@ import * as BlockReasonsGateway from '../block-reasons-gateway';
 import { BlockReasonDialog } from './block-reason-dialog';
 
 async function clickOnCheckbox(name: string) {
-  const harassmentCheckbox = await screen.findByRole('checkbox', { name });
+  const checkbox = await screen.findByRole('checkbox', { name });
   act(() => {
-    fireEvent.click(harassmentCheckbox);
+    fireEvent.click(checkbox);
   });
 }
 

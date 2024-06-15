@@ -50,7 +50,7 @@ describe('BlockUsersService', () => {
     it('should add user to the block list with multiple reasons', () => {
       blockUsersService.blockUser({ id: '@userId', blockedAt: '2024-05-27T18:01:45Z', blockReasonIds: ['1', '3', '6'] });
 
-      const blockedUser = blockUsersService.blockedUsersList().find((user) => user.id === '@userId');
+      const blockedUser = blockUsersRepository.blockedUsersList().find((user) => user.id === '@userId');
 
       expect(blockedUser).toEqual({
         id: '@userId',

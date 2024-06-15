@@ -12,7 +12,7 @@ export const ModorixTable = ({ columns, data, emptyDataMessage, rowClassName }: 
     <div className="rounded-md border">
       <Table>
         <TableHeader>
-          <TableRow className={`${rowClassName}`}>
+          <TableRow className={rowClassName}>
             {columns.map((col, idx) => (
               <TableHead
                 key={`col-${idx}`}
@@ -26,7 +26,7 @@ export const ModorixTable = ({ columns, data, emptyDataMessage, rowClassName }: 
         <TableBody>
           {data.length ? (
             data.map((row, idx) => (
-              <TableRow key={`row-${idx}`} className={`${rowClassName}`}>
+              <TableRow key={`row-${idx}`} className={rowClassName}>
                 {row.map((cell, idx) => (
                   <TableCell
                     className={typeof cell === 'string' ? 'truncate table-cell ' : 'truncate flex ' + columns[idx]}
