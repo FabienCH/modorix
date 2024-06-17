@@ -1,4 +1,4 @@
-import { Group } from '@modorix-commons/models/group';
+import { Group, GroupDetails } from '@modorix-commons/models/group';
 import { Injectable } from '@nestjs/common';
 import { GroupsRepository } from '../infrastructure/groups.repository';
 import { GroupNotFoundError } from './errors/group-not-found-error';
@@ -9,6 +9,14 @@ export class GroupsService {
 
   groupsList(): Group[] {
     return this.groupsRepository.groupsList();
+  }
+
+  findGroupById(groupId: string): GroupDetails {
+    const group = this.groupsRepository.findGroupById(groupId);
+    if (group === null) {
+      throw new GroupNotFoundError(groupId);
+    }
+    return group;
   }
 
   joinGroup(groupId: string): void {

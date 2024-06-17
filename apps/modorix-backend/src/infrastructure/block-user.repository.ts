@@ -21,4 +21,8 @@ export class BlockUsersRepository {
   blockedUsersList(): XUser[] {
     return this.blockedUsers;
   }
+
+  blockedUsersByIds(ids: string[]): XUser[] {
+    return this.blockedUsers.filter((blockedUser) => ids.includes(blockedUser.id));
+  }
 }

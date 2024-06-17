@@ -1,4 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { BlockReasonsRepository } from '../infrastructure/block-reason.repository';
+import { BlockUsersRepository } from '../infrastructure/block-user.repository';
 import { GroupsRepository } from '../infrastructure/groups.repository';
 import { GroupNotFoundError } from './errors/group-not-found-error';
 import { GroupsService } from './group.service';
@@ -6,14 +8,16 @@ import { GroupsService } from './group.service';
 describe('GroupsService', () => {
   let groupsService: GroupsService;
   let groupsRepository: GroupsRepository;
+  let blockUsersRepository: BlockUsersRepository;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
-      providers: [GroupsService, GroupsRepository],
+      providers: [GroupsService, GroupsRepository, BlockUsersRepository, BlockReasonsRepository],
     }).compile();
 
     groupsService = app.get<GroupsService>(GroupsService);
     groupsRepository = app.get<GroupsRepository>(GroupsRepository);
+    blockUsersRepository = app.get<BlockUsersRepository>(BlockUsersRepository);
   });
 
   describe('Get all groups', () => {
@@ -65,11 +69,42 @@ describe('GroupsService', () => {
     });
   });
 
+  describe('Finding a group by id', () => {
+    beforeEach(() => {
+      blockUsersRepository.blockUser({ id: '@userId', blockedAt: '2024-06-14T19:01:45Z', blockReasonIds: ['2'] });
+      groupsRepository.addBlockedUser('UK', '@userId');
+    });
+
+    it('give the expected group', () => {
+      const ukGroup = groupsService.findGroupById('UK');
+
+      expect(ukGroup).toEqual({
+        id: 'UK',
+        name: 'United Kingdom',
+        description: 'For people living in Uk',
+        isJoined: false,
+        blockedXUsers: [
+          {
+            id: '@userId',
+            blockedAt: '2024-06-14T19:01:45Z',
+            blockReasons: [{ id: '2', label: 'Spreading fake news' }],
+          },
+        ],
+      });
+    });
+
+    it('should not give a non existing group', () => {
+      expect(() => {
+        groupsService.findGroupById('non existing id');
+      }).toThrow(new GroupNotFoundError('non existing id'));
+    });
+  });
+
   describe('Join a group', () => {
     it('should change joined group status to joined', () => {
       groupsService.joinGroup('UK');
 
-      const ukGroup = groupsService.groupsList().find((group) => group.id === 'UK');
+      const ukGroup = groupsRepository.groupsList().find((group) => group.id === 'UK');
       expect(ukGroup?.isJoined).toBe(true);
     });
 
@@ -86,7 +121,7 @@ describe('GroupsService', () => {
 
       groupsService.leaveGroup('ES');
 
-      const esGroup = groupsService.groupsList().find((group) => group.id === 'ES');
+      const esGroup = groupsRepository.groupsList().find((group) => group.id === 'ES');
       expect(esGroup?.isJoined).toBe(false);
     });
 

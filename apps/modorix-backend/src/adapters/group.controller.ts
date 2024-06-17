@@ -1,4 +1,4 @@
-import { Group } from '@modorix-commons/models/group';
+import { Group, GroupDetails } from '@modorix-commons/models/group';
 import { Controller, Get, HttpCode, HttpException, HttpStatus, NotFoundException, Param, Post } from '@nestjs/common';
 import { GroupNotFoundError } from '../domain/errors/group-not-found-error';
 import { GroupsService } from '../domain/group.service';
@@ -11,6 +11,12 @@ export class GroupsController {
   @HttpCode(200)
   groupsList(): Group[] {
     return this.groupsService.groupsList();
+  }
+
+  @Get('groups/:groupId')
+  @HttpCode(200)
+  groupById(@Param() { groupId }: { groupId: string }): GroupDetails {
+    return this.groupsService.findGroupById(groupId);
   }
 
   @Post('groups/join/:groupId')

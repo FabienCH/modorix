@@ -1,5 +1,6 @@
-import { Group } from '@modorix-commons/models/group';
+import { Group, GroupDetails } from '@modorix-commons/models/group';
 import { Injectable } from '@nestjs/common';
+import { BlockUsersRepository } from './block-user.repository';
 
 @Injectable()
 export class GroupsRepository {
@@ -48,6 +49,28 @@ export class GroupsRepository {
     },
   ];
 
+  constructor(private readonly blockUsersRepository: BlockUsersRepository) {}
+
+  groupsList(): Group[] {
+    return this.groups;
+  }
+
+  findGroupById(groupId: string): GroupDetails | null {
+    const group = this.groups.find((group) => group.id === groupId);
+    if (!group) {
+      return null;
+    }
+
+    const blockedXUsers = this.blockUsersRepository.blockedUsersByIds(group.blockedXUserIds);
+    return {
+      id: group.id,
+      name: group.name,
+      description: group.description,
+      isJoined: group.isJoined,
+      blockedXUsers,
+    };
+  }
+
   updateIsJoined(groupId: string, isJoined: boolean): void | null {
     this.groupNotFound = true;
     this.groups.forEach((group) => {
@@ -68,9 +91,5 @@ export class GroupsRepository {
         group.blockedXUserIds.push(blockedUserId);
       }
     });
-  }
-
-  groupsList(): Group[] {
-    return this.groups;
   }
 }
