@@ -6,25 +6,19 @@ import { BlockReason } from '../models/block-reason';
 
 interface BlockUserReasonsTooltipProps {
   blockReasons: BlockReason[];
-  buttonOptions: { label: string; className?: string; labelElem?: HTMLSpanElement | null };
+  buttonOptions: { label: string; className?: string; setLabelElem?: (el: HTMLSpanElement) => void };
   contentClassName?: string;
 }
 
 export const BlockUserReasonsTooltip = ({ blockReasons, buttonOptions, contentClassName }: BlockUserReasonsTooltipProps) => {
-  const { label: buttonLabel, className: buttonClassName } = buttonOptions;
-
-  function setRef(el: HTMLSpanElement) {
-    if (buttonOptions.labelElem !== undefined) {
-      buttonOptions.labelElem = el;
-    }
-  }
+  const { label: buttonLabel, className: buttonClassName, setLabelElem } = buttonOptions;
 
   return (
     <TooltipProvider>
       <Tooltip delayDuration={400}>
         <TooltipTrigger asChild>
           <Button variant="secondary" className={cn('px-2.5 py-1 h-auto text-xs', buttonClassName)}>
-            <span ref={setRef} className={buttonClassName}>
+            <span ref={setLabelElem} className={buttonClassName}>
               {buttonLabel}
             </span>
           </Button>
