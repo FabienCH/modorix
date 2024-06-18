@@ -1,4 +1,4 @@
-import { Group } from '@modorix-commons/models/group';
+import { Group, GroupDetails } from '@modorix-commons/models/group';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,7 +13,7 @@ import {
 import { Button, buttonVariants } from '@modorix-ui/components/button';
 
 interface LeaveGroupDialogProps {
-  group: Group;
+  group: Group | GroupDetails;
   onClick: () => void;
 }
 

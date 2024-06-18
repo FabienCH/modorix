@@ -1,7 +1,7 @@
-import { Group } from '@modorix-commons/models/group';
+import { Group, GroupDetails } from '@modorix-commons/models/group';
 import { joinGroup, leaveGroup } from '../adapters/gateways/group-gateway';
 
-export async function toggleMemberShip(group: Group): Promise<void> {
+export async function toggleMemberShip(group: Group | GroupDetails): Promise<void> {
   if (group.isJoined) {
     await leaveGroup(group.id);
   } else {

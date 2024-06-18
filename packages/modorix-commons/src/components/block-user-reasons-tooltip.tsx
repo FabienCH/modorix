@@ -1,5 +1,4 @@
 import { Badge } from '@modorix-ui/components/badge';
-import { Button } from '@modorix-ui/components/button';
 import { Tooltip, TooltipContent, TooltipPortal, TooltipProvider, TooltipTrigger } from '@modorix-ui/components/tooltip';
 import { cn } from '@modorix-ui/utils/utils';
 import { BlockReason } from '../models/block-reason';
@@ -17,11 +16,11 @@ export const BlockUserReasonsTooltip = ({ blockReasons, buttonOptions, contentCl
     <TooltipProvider>
       <Tooltip delayDuration={400}>
         <TooltipTrigger asChild>
-          <Button variant="secondary" className={cn('px-2.5 py-1 h-auto text-xs', buttonClassName)}>
+          <Badge variant="secondary" className={cn('px-2.5 py-1 h-auto text-xs cursor-pointer', buttonClassName)}>
             <span ref={setLabelElem} className={buttonClassName}>
               {buttonLabel}
             </span>
-          </Button>
+          </Badge>
         </TooltipTrigger>
         <TooltipPortal>
           <TooltipContent className={blockReasons.length === 1 ? 'p-0' : `p-2 ${contentClassName}`}>
