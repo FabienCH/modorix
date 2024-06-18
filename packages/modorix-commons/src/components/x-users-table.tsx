@@ -16,18 +16,16 @@ export const XUsersTable = ({ BlockReasonComponent, rowGridCols }: XUsersTablePr
   const [blockedUsersData, setBlockedUsersData] = useState<XUserData>([]);
 
   useEffect(() => {
-    retrieveBlockedUsersList();
-  }, []);
-
-  async function retrieveBlockedUsersList() {
-    const blockedUsers = await getBlockedUsers();
-    const blockedUserData: XUserData = blockedUsers.map((user) => [
-      user.id,
-      new Date(user.blockedAt).toLocaleDateString(),
-      <BlockReasonComponent blockReasons={user.blockReasons}></BlockReasonComponent>,
-    ]);
-    setBlockedUsersData(blockedUserData);
-  }
+    (async () => {
+      const blockedUsers = await getBlockedUsers();
+      const blockedUserData: XUserData = blockedUsers.map((user) => [
+        user.id,
+        new Date(user.blockedAt).toLocaleDateString(),
+        <BlockReasonComponent blockReasons={user.blockReasons}></BlockReasonComponent>,
+      ]);
+      setBlockedUsersData(blockedUserData);
+    })();
+  }, [BlockReasonComponent]);
 
   return (
     <ModorixTable
