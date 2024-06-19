@@ -1,17 +1,17 @@
 import { BadRequestException, Body, Controller, Get, HttpCode, HttpException, HttpStatus, Post } from '@nestjs/common';
-import { BlockUsersService } from '../domain/block-user.service';
+import { BlockXUsersService } from '../domain/block-x-user.service';
 import { BlockReasonError } from '../domain/errors/block-reason-error';
 import { BlockXUserRequestDto, XUserDto } from './x-user-dto';
 
 @Controller()
-export class BlockUsersController {
-  constructor(private readonly blockUsersService: BlockUsersService) {}
+export class BlockXUsersController {
+  constructor(private readonly blockXUsersService: BlockXUsersService) {}
 
-  @Post('block-users')
+  @Post('block-x-users')
   @HttpCode(201)
-  blockUser(@Body() user: BlockXUserRequestDto): void {
+  blockXUser(@Body() xUser: BlockXUserRequestDto): void {
     try {
-      return this.blockUsersService.blockUser(user);
+      return this.blockXUsersService.blockXUser(xUser);
     } catch (error) {
       if (error instanceof BlockReasonError) {
         throw new BadRequestException(error.message);
@@ -20,9 +20,9 @@ export class BlockUsersController {
     }
   }
 
-  @Get('block-users')
+  @Get('block-x-users')
   @HttpCode(200)
-  blockedUsersList(): XUserDto[] {
-    return this.blockUsersService.blockedUsersList();
+  blockedXUsersList(): XUserDto[] {
+    return this.blockXUsersService.blockedXUsersList();
   }
 }

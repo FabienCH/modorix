@@ -1,23 +1,22 @@
 import { BlockXUserRequest, XUser } from '@modorix-commons/models/x-user';
 import { Injectable } from '@nestjs/common';
 import { BlockReasonsRepository } from '../infrastructure/block-reason.repository';
-import { BlockUsersRepository } from '../infrastructure/block-user.repository';
+import { BlockXUsersRepository } from '../infrastructure/block-x-user.repository';
 import { GroupsRepository } from '../infrastructure/groups.repository';
 import { BlockReasonError } from './errors/block-reason-error';
 
 @Injectable()
-export class BlockUsersService {
+export class BlockXUsersService {
   constructor(
-    private readonly blockUsersRepository: BlockUsersRepository,
+    private readonly blockXUsersRepository: BlockXUsersRepository,
     private readonly groupsRepository: GroupsRepository,
     private readonly blockReasonsRepository: BlockReasonsRepository,
   ) {}
 
-  blockUser(blockUserRequest: BlockXUserRequest): void {
-    const { id, blockedAt, blockReasonIds } = blockUserRequest;
-
+  blockXUser(blockXUserRequest: BlockXUserRequest): void {
+    const { id, blockedAt, blockReasonIds } = blockXUserRequest;
     if (!blockReasonIds.length) {
-      throw new BlockReasonError(blockUserRequest.id, 'empty');
+      throw new BlockReasonError(id, 'empty');
     }
 
     const blockReasons = this.blockReasonsRepository.blockedReasonsList().filter((blockReason) => blockReasonIds.includes(blockReason.id));
@@ -26,15 +25,14 @@ export class BlockUsersService {
     }
 
     const xUser = { id, blockedAt, blockReasons };
-    this.blockUsersRepository.blockUser(xUser);
-
+    this.blockXUsersRepository.blockXUser(xUser);
     const groups = this.groupsRepository.groupsList();
     groups.forEach((group) => {
-      this.groupsRepository.addBlockedUser(group.id, blockUserRequest.id);
+      this.groupsRepository.addBlockedUser(group.id, blockXUserRequest.id);
     });
   }
 
-  blockedUsersList(): XUser[] {
-    return this.blockUsersRepository.blockedUsersList();
+  blockedXUsersList(): XUser[] {
+    return this.blockXUsersRepository.blockedXUsersList();
   }
 }
