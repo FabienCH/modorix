@@ -9,8 +9,10 @@ export interface BlockXUserRequest extends BaseXUser {
   id: string;
   blockedAt: string;
   blockReasonIds: string[];
+  blockingUserId: string;
 }
 
 export interface XUser extends BaseXUser {
   blockReasons: BlockReason[];
+  blockingUserIds: string[];
 }

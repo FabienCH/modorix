@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, HttpCode, HttpException, HttpStatus, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, HttpCode, HttpException, HttpStatus, Param, Post } from '@nestjs/common';
 import { BlockXUsersService } from '../domain/block-x-user.service';
 import { BlockReasonError } from '../domain/errors/block-reason-error';
 import { BlockXUserRequestDto, XUserDto } from './x-user-dto';
@@ -20,9 +20,15 @@ export class BlockXUsersController {
     }
   }
 
-  @Get('block-x-users')
+  @Get('block-x-users/:modorixUserId')
   @HttpCode(200)
-  blockedXUsersList(): XUserDto[] {
-    return this.blockXUsersService.blockedXUsersList();
+  blockedXUsersList(@Param() { modorixUserId }: { modorixUserId: string }): XUserDto[] {
+    return this.blockXUsersService.blockedXUsersList(modorixUserId);
+  }
+
+  @Get('block-x-users/queue/candidates/:modorixUserId')
+  @HttpCode(200)
+  blockQueueCandidates(@Param() { modorixUserId }: { modorixUserId: string }): XUserDto[] {
+    return this.blockXUsersService.blockQueueCandidates(modorixUserId);
   }
 }

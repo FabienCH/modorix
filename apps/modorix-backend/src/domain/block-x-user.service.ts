@@ -14,7 +14,7 @@ export class BlockXUsersService {
   ) {}
 
   blockXUser(blockXUserRequest: BlockXUserRequest): void {
-    const { id, blockedAt, blockReasonIds } = blockXUserRequest;
+    const { id, blockedAt, blockReasonIds, blockingUserId } = blockXUserRequest;
     if (!blockReasonIds.length) {
       throw new BlockReasonError(id, 'empty');
     }
@@ -25,14 +25,18 @@ export class BlockXUsersService {
     }
 
     const xUser = { id, blockedAt, blockReasons };
-    this.blockXUsersRepository.blockXUser(xUser);
+    this.blockXUsersRepository.blockXUser({ ...xUser, blockingUserIds: [blockingUserId] });
     const groups = this.groupsRepository.groupsList();
     groups.forEach((group) => {
       this.groupsRepository.addBlockedUser(group.id, blockXUserRequest.id);
     });
   }
 
-  blockedXUsersList(): XUser[] {
-    return this.blockXUsersRepository.blockedXUsersList();
+  blockedXUsersList(modorixUserId: string): XUser[] {
+    return this.blockXUsersRepository.blockedXUsersList(modorixUserId);
+  }
+
+  blockQueueCandidates(modorixUserId: string): XUser[] {
+    return this.blockXUsersRepository.blockQueueCandidates(modorixUserId);
   }
 }
