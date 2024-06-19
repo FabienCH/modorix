@@ -21,7 +21,7 @@ export class GroupsService {
       throw new GroupNotFoundError(groupId);
     }
 
-    const blockedXUsers = this.blockXUsersRepository.blockedUsersByIds(group.blockedXUserIds);
+    const blockedXUsers = this.blockXUsersRepository.blockedXUsersByIds(group.blockedXUserIds);
     return {
       id: group.id,
       name: group.name,

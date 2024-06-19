@@ -5,8 +5,9 @@ export function saveBlockUser(userId: string, blockReasonIds: string[]): Promise
     id: userId,
     blockedAt: new Date().toISOString(),
     blockReasonIds,
+    blockingUserId: '1',
   };
-  return fetch('http://localhost:3000/api/block-users', {
+  return fetch('http://localhost:3000/api/block-x-users', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(bodyData),

@@ -27,7 +27,7 @@ export class BlockXUsersRepository {
     return this.blockedXUsers.filter((blockedXUser) => blockedXUser.blockingUserIds.includes(modorixUserId));
   }
 
-  blockedUsersByIds(ids: string[]): XUser[] {
+  blockedXUsersByIds(ids: string[]): XUser[] {
     return this.blockedXUsers.filter((blockedUser) => ids.includes(blockedUser.id));
   }
 

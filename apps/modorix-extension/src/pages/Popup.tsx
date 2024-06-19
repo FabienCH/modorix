@@ -9,7 +9,7 @@ export default function Popup() {
 
   useEffect(() => {
     (async () => {
-      setBlockedUsers(await getBlockedUsers());
+      setBlockedUsers(await getBlockedUsers('1'));
     })();
   }, []);
 
