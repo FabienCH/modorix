@@ -1,9 +1,11 @@
 import { Group } from '@modorix-commons/models/group';
 import { ModorixTable } from '@modorix-ui/components/modorix-table';
 import { useCallback, useEffect, useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import { getGroups } from '../adapters/gateways/group-gateway';
-import MembershipCell from '../components/membership-cell';
+import MembershipButton from '../components/membership-button';
 import { toggleMemberShip } from '../domain/toggle-group-membership-usecase';
+import { ROUTES } from '../routes';
 
 const columns = ['Group', 'Description', 'Blocked Users', 'Membership'];
 
@@ -22,17 +24,17 @@ export default function GroupsPage() {
   async function retrieveGroupsList(handleClickFn: (group: Group) => Promise<void>) {
     const groups = await getGroups();
     const groupsData = groups.map((group) => [
-      group.name,
+      <NavLink to={`${ROUTES.Groups}/${group.id}`}>{group.name}</NavLink>,
       group.description,
       group.blockedXUserIds.length.toString(),
-      <MembershipCell group={group} onClick={() => handleClickFn(group)} />,
+      <MembershipButton group={group} onClick={() => handleClickFn(group)} />,
     ]);
     setGroupsData(groupsData);
   }
 
   return (
     <section className="w-full mx-auto max-w-screen-lg">
-      <h1 className="text-xl pb-3 text-modorix-950">Groups</h1>
+      <h1 className="main-title">Groups</h1>
       <ModorixTable columns={columns} data={groupsData} emptyDataMessage="There is no groups yet"></ModorixTable>
     </section>
   );

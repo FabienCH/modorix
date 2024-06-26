@@ -1,4 +1,4 @@
-import { Group } from '@modorix-commons/models/group';
+import { Group, GroupDetails } from '@modorix-commons/models/group';
 import { Controller, Get, HttpCode, HttpException, HttpStatus, NotFoundException, Param, Post } from '@nestjs/common';
 import { GroupNotFoundError } from '../domain/errors/group-not-found-error';
 import { GroupsService } from '../domain/group.service';
@@ -13,13 +13,23 @@ export class GroupsController {
     return this.groupsService.groupsList();
   }
 
+  @Get('groups/:groupId')
+  @HttpCode(200)
+  groupById(@Param() { groupId }: { groupId: string }): GroupDetails {
+    try {
+      return this.groupsService.findGroupById(groupId);
+    } catch (error) {
+      throw this.getGroupError(error);
+    }
+  }
+
   @Post('groups/join/:groupId')
   @HttpCode(201)
   joinGroup(@Param() { groupId }: { groupId: string }): void {
     try {
       return this.groupsService.joinGroup(groupId);
     } catch (error) {
-      this.handleGroupError(error);
+      throw this.getGroupError(error);
     }
   }
 
@@ -29,14 +39,14 @@ export class GroupsController {
     try {
       return this.groupsService.leaveGroup(groupId);
     } catch (error) {
-      this.handleGroupError(error);
+      throw this.getGroupError(error);
     }
   }
 
-  private handleGroupError(error: unknown): void {
+  private getGroupError(error: unknown): HttpException {
     if (error instanceof GroupNotFoundError) {
-      throw new NotFoundException(error.message);
+      return new NotFoundException(error.message);
     }
-    throw new HttpException('An unexpected error occurred', HttpStatus.INTERNAL_SERVER_ERROR);
+    return new HttpException('An unexpected error occurred', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }

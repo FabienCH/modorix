@@ -1,38 +1,33 @@
 import { ModorixTable } from '@modorix-ui/components/modorix-table';
 import { useEffect, useState } from 'react';
-import { getBlockedUsers } from '../gateways/block-user-gateway';
 import { BlockReason } from '../models/block-reason';
+import { XUser } from '../models/x-user';
+import { XUsersData, mapToXUsersData } from './x-users-table-data';
 
 const columns = ['X Username', 'Blocked On', 'Block Reasons'];
 
-type XUserData = [string, string, JSX.Element][];
-
 interface XUsersTableProps {
   BlockReasonComponent: ({ blockReasons }: { blockReasons: BlockReason[] }) => JSX.Element;
+  blockedUsers: XUser[];
   rowGridCols: `grid-cols-${string}`;
 }
 
-export const XUsersTable = ({ BlockReasonComponent, rowGridCols }: XUsersTableProps) => {
-  const [blockedUsersData, setBlockedUsersData] = useState<XUserData>([]);
+export const XUsersTable = ({ BlockReasonComponent, blockedUsers, rowGridCols }: XUsersTableProps) => {
+  const [blockedUsersData, setBlockedUsersData] = useState<XUsersData>([]);
 
   useEffect(() => {
     (async () => {
-      const blockedUsers = await getBlockedUsers();
-      const blockedUserData: XUserData = blockedUsers.map((user) => [
-        user.id,
-        new Date(user.blockedAt).toLocaleDateString(),
-        <BlockReasonComponent blockReasons={user.blockReasons}></BlockReasonComponent>,
-      ]);
+      const blockedUserData: XUsersData = mapToXUsersData({ BlockReasonComponent, blockedUsers });
       setBlockedUsersData(blockedUserData);
     })();
-  }, [BlockReasonComponent]);
+  }, [blockedUsers, BlockReasonComponent]);
 
   return (
     <ModorixTable
       rowClassName={`grid ${rowGridCols} align-middle`}
       columns={columns}
       data={blockedUsersData}
-      emptyDataMessage="You haven't blocked any user with Modorix yet"
+      emptyDataMessage="No users blocked here"
     ></ModorixTable>
   );
 };

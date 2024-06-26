@@ -48,6 +48,14 @@ export class GroupsRepository {
     },
   ];
 
+  groupsList(): Group[] {
+    return this.groups;
+  }
+
+  findGroupById(groupId: string): Group | null {
+    return this.groups.find((group) => group.id === groupId) ?? null;
+  }
+
   updateIsJoined(groupId: string, isJoined: boolean): void | null {
     this.groupNotFound = true;
     this.groups.forEach((group) => {
@@ -68,9 +76,5 @@ export class GroupsRepository {
         group.blockedXUserIds.push(blockedUserId);
       }
     });
-  }
-
-  groupsList(): Group[] {
-    return this.groups;
   }
 }
