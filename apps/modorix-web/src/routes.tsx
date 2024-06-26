@@ -1,18 +1,15 @@
-import { LoaderFunctionArgs, createBrowserRouter } from 'react-router-dom';
-import { getGroup } from './adapters/gateways/group-gateway';
+import { createBrowserRouter } from 'react-router-dom';
 import Layout from './components/Layout';
 import BlocksPage from './pages/blocks-page';
 import GroupPage from './pages/group-page';
 import GroupsPage from './pages/groups-page';
-
-async function groupLoader({ params }: LoaderFunctionArgs) {
-  return await getGroup(params.groupId as string);
-}
+import { groupLoader } from './routes-loaders';
 
 export enum ROUTES {
   Home = '/',
   Groups = '/groups',
 }
+
 export const router = createBrowserRouter([
   {
     path: ROUTES.Home,

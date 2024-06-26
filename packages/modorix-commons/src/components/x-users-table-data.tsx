@@ -6,9 +6,9 @@ interface XUsersRowProps {
   blockedUsers: XUser[];
 }
 
-export type XUserData = [string, string, JSX.Element][];
+export type XUsersData = [string, string, JSX.Element][];
 
-export const xUsersData = ({ BlockReasonComponent, blockedUsers }: XUsersRowProps): XUserData => {
+export const mapToXUsersData = ({ BlockReasonComponent, blockedUsers }: XUsersRowProps): XUsersData => {
   return blockedUsers.map((user) => [
     user.id,
     new Date(user.blockedAt).toLocaleDateString(),

@@ -1,6 +1,6 @@
 import { BlockReason } from './block-reason';
 
-export interface BaseXUser {
+interface BaseXUser {
   id: string;
   blockedAt: string;
 }

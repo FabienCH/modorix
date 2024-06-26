@@ -1,17 +1,16 @@
 import { XUser } from './x-user';
 
-export interface Group {
+interface BaseGroup {
   id: string;
   name: string;
   description: string;
   isJoined: boolean;
+}
+
+export interface Group extends BaseGroup {
   blockedXUserIds: string[];
 }
 
-export interface GroupDetails {
-  id: string;
-  name: string;
-  description: string;
-  isJoined: boolean;
+export interface GroupDetails extends BaseGroup {
   blockedXUsers: XUser[];
 }
