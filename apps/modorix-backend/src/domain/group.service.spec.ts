@@ -1,5 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BlockReasonsRepository } from '../infrastructure/block-reason.repository';
 import { BlockUsersRepository } from '../infrastructure/block-user.repository';
 import { GroupsRepository } from '../infrastructure/groups.repository';
 import { GroupNotFoundError } from './errors/group-not-found-error';
@@ -12,7 +11,7 @@ describe('GroupsService', () => {
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
-      providers: [GroupsService, GroupsRepository, BlockUsersRepository, BlockReasonsRepository],
+      providers: [GroupsService, GroupsRepository, BlockUsersRepository],
     }).compile();
 
     groupsService = app.get<GroupsService>(GroupsService);
@@ -71,7 +70,11 @@ describe('GroupsService', () => {
 
   describe('Finding a group by id', () => {
     beforeEach(() => {
-      blockUsersRepository.blockUser({ id: '@userId', blockedAt: '2024-06-14T19:01:45Z', blockReasonIds: ['2'] });
+      blockUsersRepository.blockUser({
+        id: '@userId',
+        blockedAt: '2024-06-14T19:01:45Z',
+        blockReasons: [{ id: '2', label: 'Spreading fake news' }],
+      });
       groupsRepository.addBlockedUser('UK', '@userId');
     });
 

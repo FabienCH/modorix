@@ -8,7 +8,7 @@ import { BlockUsersController } from './block-user.controller';
 
 describe('BlockUserController', () => {
   let blockUserController: BlockUsersController;
-  let blockUserRepository: BlockUsersRepository;
+  let blockUsersService: BlockUsersService;
   let blockUserSpy: jest.SpyInstance;
 
   beforeEach(async () => {
@@ -18,8 +18,8 @@ describe('BlockUserController', () => {
     }).compile();
 
     blockUserController = app.get<BlockUsersController>(BlockUsersController);
-    blockUserRepository = app.get<BlockUsersRepository>(BlockUsersRepository);
-    blockUserSpy = jest.spyOn(blockUserRepository, 'blockUser');
+    blockUsersService = app.get<BlockUsersService>(BlockUsersService);
+    blockUserSpy = jest.spyOn(blockUsersService, 'blockUser');
   });
 
   describe('Block X user', () => {

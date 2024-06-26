@@ -21,7 +21,7 @@ export default function GroupPage() {
   return (
     <section className="w-full mx-auto max-w-screen-md">
       <NavLink className={cn(buttonVariants({ variant: 'outline' }), 'mr-2')} to={ROUTES.Groups}>
-        <BackIcon className="w-[14px] mr-2" /> Back
+        <BackIcon className="w-[12px] mr-2" /> Back
       </NavLink>
       <div className="flex justify-between items-center	my-3">
         <h1 className="main-title pb-0">{group.name}</h1>
