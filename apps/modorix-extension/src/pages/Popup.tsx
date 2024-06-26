@@ -20,7 +20,7 @@ export default function Popup() {
         Your Modorix blocked users
       </h1>
       <div className="p-4">
-        <XUsersTable BlockReasonComponent={BlockUserReasons} blockedUsers={blockedUsers} rowGridCols="grid-cols-[1fr_107px_122px]" />
+        <XUsersTable BadgesComponent={BlockUserReasons} blockedUsers={blockedUsers} rowGridCols="grid-cols-[1fr_107px_122px]" />
       </div>
     </>
   );

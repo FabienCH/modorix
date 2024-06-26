@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { NavLink, useLoaderData } from 'react-router-dom';
 import BackIcon from '../../public/icon/back-arrow.svg?react';
 import { getGroup } from '../adapters/gateways/group-gateway';
-import { BlockUserReasons } from '../components/block-user-reasons';
+import { AutoResizeBadgesWithTooltip } from '../components/auto-resize-badges-with-tooltip';
 import MembershipButton from '../components/membership-button';
 import { toggleMemberShip } from '../domain/toggle-group-membership-usecase';
 import { ROUTES } from '../routes';
@@ -28,7 +28,7 @@ export default function GroupPage() {
         <MembershipButton group={group} onClick={() => handleClick(group)} />
       </div>
       <p className="mb-4">{group.description}</p>
-      <XUsersTable BlockReasonComponent={BlockUserReasons} blockedUsers={group.blockedXUsers} rowGridCols="grid-cols-[1fr_1fr_2fr]" />
+      <XUsersTable BadgesComponent={AutoResizeBadgesWithTooltip} blockedUsers={group.blockedXUsers} rowGridCols="grid-cols-[1fr_1fr_2fr]" />
     </section>
   );
 }

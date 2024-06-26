@@ -1,4 +1,4 @@
-import { BlockUserReasonsTooltip } from '@modorix-commons/components/block-user-reasons-tooltip';
+import { BadgesTooltip } from '@modorix-commons/components/badges-tooltip';
 import { BlockReason } from '@modorix-commons/models/block-reason';
 import { Badge } from '@modorix-ui/components/badge';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -9,66 +9,72 @@ interface UpdatedBadgeDisplayConfig {
   newRemainingItems: number;
 }
 
-export const BlockUserReasons = ({ blockReasons }: { blockReasons: BlockReason[] }) => {
+interface AutoResizeBadgesWithTooltipProps {
+  items: { id: string; label: string }[];
+  badgeVariant: 'outline' | 'secondary';
+}
+
+export const AutoResizeBadgesWithTooltip = ({ items, badgeVariant }: AutoResizeBadgesWithTooltipProps) => {
   const ref = useRef<HTMLDivElement>(null);
-  const badgeRefs = useRef<(HTMLSpanElement | null)[]>([]);
-  const [displayedBlockReasons, setDisplayedBlockReasons] = useState(blockReasons);
-  const [isDisplayedReasonsUpToDate, setIsDisplayedReasonsUpToDate] = useState(false);
+  const badgeRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [displayedItems, setDisplayedItems] = useState(items);
+  const [areItemsUpToDate, setAreItemsUpToDate] = useState(false);
   const [remainingItems, setRemainingItems] = useState(0);
   const [badgeWidths, setBadgeWidths] = useState<number[]>([]);
   const [containerWidth, setContainerWidth] = useState(0);
   const [mustTruncate, setMustTruncate] = useState(false);
 
   useEffect(() => {
-    setDisplayedBlockReasons(blockReasons);
+    setDisplayedItems(items);
     setRemainingItems(0);
     setMustTruncate(false);
-    setIsDisplayedReasonsUpToDate(false);
-  }, [blockReasons]);
+    setAreItemsUpToDate(false);
+  }, [items]);
 
   useLayoutEffect(() => {
-    if (isDisplayedReasonsUpToDate) {
+    if (areItemsUpToDate) {
       return;
     }
     setContainerWidth(ref.current?.offsetWidth ?? 0);
     setBadgeWidths(badgeRefs.current.map((badgeRef) => badgeRef?.offsetWidth ?? 0));
 
     const { newVisibleItems, newBadgesWidth, newRemainingItems } = badgeWidths.reduce<UpdatedBadgeDisplayConfig>(
-      (config, badgeWidth, idx) => getBadgeDisplayConfig(config, idx, containerWidth, blockReasons, badgeWidth),
+      (config, badgeWidth, idx) => getBadgeDisplayConfig(config, idx, containerWidth, items, badgeWidth),
       {
         newVisibleItems: [],
         newBadgesWidth: 0,
         newRemainingItems: 0,
       },
     );
-    setDisplayedBlockReasons(newVisibleItems);
+    setDisplayedItems(newVisibleItems);
     setRemainingItems(newRemainingItems);
     setMustTruncate(newBadgesWidth > containerWidth);
-    setIsDisplayedReasonsUpToDate(true);
-  }, [blockReasons, isDisplayedReasonsUpToDate, badgeWidths, containerWidth]);
+    setAreItemsUpToDate(true);
+  }, [items, areItemsUpToDate, badgeWidths, containerWidth]);
 
   function getBadgeDisplayConfig(
     config: UpdatedBadgeDisplayConfig,
     idx: number,
     containerWidth: number,
-    blockReasons: BlockReason[],
+    items: BlockReason[],
     badgeWidth: number,
   ) {
     if (config.newBadgesWidth < containerWidth) {
-      config.newVisibleItems.push(blockReasons[idx]);
+      config.newVisibleItems.push(items[idx]);
     } else {
       config.newRemainingItems++;
     }
-    config.newBadgesWidth += badgeWidth;
+    const badgePadding = 8;
+    config.newBadgesWidth += badgeWidth + (idx < items.length - 1 ? badgePadding : 0);
 
     return config;
   }
 
   return (
     <div ref={ref} className="truncate flex flex-nowrap [&>*:not(:last-child)]:mr-2">
-      {displayedBlockReasons.map((blockReason, idx) =>
+      {displayedItems.map((blockReason, idx) =>
         mustTruncate ? (
-          <BlockUserReasonsTooltip
+          <BadgesTooltip
             key={blockReason.id}
             buttonOptions={{
               setLabelElem: (el) => {
@@ -79,28 +85,30 @@ export const BlockUserReasons = ({ blockReasons }: { blockReasons: BlockReason[]
               className: 'truncate',
               label: blockReason.label,
             }}
-            blockReasons={[blockReason]}
-          ></BlockUserReasonsTooltip>
+            items={[blockReason]}
+            badgeVariant={badgeVariant}
+          ></BadgesTooltip>
         ) : (
-          <Badge variant={'secondary'} key={blockReason.id}>
-            <span
-              ref={(el) => {
-                if (el) {
-                  badgeRefs.current[idx] = el;
-                }
-              }}
-            >
-              {blockReason.label}
-            </span>
+          <Badge
+            ref={(el) => {
+              if (el) {
+                badgeRefs.current[idx] = el;
+              }
+            }}
+            variant={badgeVariant}
+            key={blockReason.id}
+          >
+            <span>{blockReason.label}</span>
           </Badge>
         ),
       )}
       {remainingItems ? (
-        <BlockUserReasonsTooltip
+        <BadgesTooltip
           buttonOptions={{ label: `+${remainingItems}` }}
-          blockReasons={blockReasons}
+          items={items}
+          badgeVariant={badgeVariant}
           contentClassName="max-w-[min(400px,40vw)]"
-        ></BlockUserReasonsTooltip>
+        ></BadgesTooltip>
       ) : null}
     </div>
   );

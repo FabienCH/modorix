@@ -75,7 +75,9 @@ describe('GroupsService', () => {
         blockedAt: '2024-06-14T19:01:45Z',
         blockReasons: [{ id: '2', label: 'Spreading fake news' }],
         blockingUserIds: ['1'],
+        blockedInGroups: [{ id: 'UK', name: 'United Kingdom' }],
       });
+
       groupsRepository.addBlockedUser('UK', '@userId');
     });
 
@@ -93,6 +95,7 @@ describe('GroupsService', () => {
             blockedAt: '2024-06-14T19:01:45Z',
             blockReasons: [{ id: '2', label: 'Spreading fake news' }],
             blockingUserIds: ['1'],
+            blockedInGroups: [{ id: 'UK', name: 'United Kingdom' }],
           },
         ],
       });

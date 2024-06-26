@@ -4,7 +4,7 @@ import { cn } from '../utils/utils';
 
 const TooltipProvider = TooltipPrimitive.Provider;
 
-const Tooltip = TooltipPrimitive.Root;
+const Tooltips = TooltipPrimitive.Root;
 
 const TooltipTrigger = TooltipPrimitive.Trigger;
 
@@ -26,4 +26,4 @@ const TooltipContent = React.forwardRef<
 ));
 TooltipContent.displayName = TooltipPrimitive.Content.displayName;
 
-export { Tooltip, TooltipContent, TooltipPortal, TooltipProvider, TooltipTrigger };
+export { TooltipContent, TooltipPortal, TooltipProvider, TooltipTrigger, Tooltips };

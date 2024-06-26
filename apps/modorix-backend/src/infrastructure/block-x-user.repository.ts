@@ -14,6 +14,10 @@ export class BlockXUsersRepository {
           { id: '0', label: 'Harassment' },
           { id: '2', label: 'Spreading fake news' },
         ],
+        blockedInGroups: [
+          { id: 'GE', name: 'Germany' },
+          { id: 'scientists', name: 'Scientists' },
+        ],
         blockingUserIds: ['2'],
       },
     ];
