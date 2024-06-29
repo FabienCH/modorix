@@ -14,6 +14,10 @@ export class BlockXUserRequestDto implements BlockXUserRequest {
   @IsArray()
   @IsString({ each: true })
   blockReasonIds!: string[];
+
+  @IsNotEmpty()
+  @IsString()
+  blockingUserId!: string;
 }
 
 export class XUserDto implements XUser {
@@ -27,4 +31,8 @@ export class XUserDto implements XUser {
 
   @IsArray()
   blockReasons!: BlockReason[];
+
+  @IsArray()
+  @IsString({ each: true })
+  blockingUserIds!: string[];
 }

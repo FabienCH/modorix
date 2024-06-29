@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BlockUsersRepository } from '../infrastructure/block-user.repository';
+import { BlockXUsersRepository } from '../infrastructure/block-x-user.repository';
 import { GroupsRepository } from '../infrastructure/groups.repository';
 import { GroupNotFoundError } from './errors/group-not-found-error';
 import { GroupsService } from './group.service';
@@ -7,16 +7,16 @@ import { GroupsService } from './group.service';
 describe('GroupsService', () => {
   let groupsService: GroupsService;
   let groupsRepository: GroupsRepository;
-  let blockUsersRepository: BlockUsersRepository;
+  let blockUsersRepository: BlockXUsersRepository;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
-      providers: [GroupsService, GroupsRepository, BlockUsersRepository],
+      providers: [GroupsService, GroupsRepository, BlockXUsersRepository],
     }).compile();
 
     groupsService = app.get<GroupsService>(GroupsService);
     groupsRepository = app.get<GroupsRepository>(GroupsRepository);
-    blockUsersRepository = app.get<BlockUsersRepository>(BlockUsersRepository);
+    blockUsersRepository = app.get<BlockXUsersRepository>(BlockXUsersRepository);
   });
 
   describe('Get all groups', () => {
@@ -70,10 +70,11 @@ describe('GroupsService', () => {
 
   describe('Finding a group by id', () => {
     beforeEach(() => {
-      blockUsersRepository.blockUser({
+      blockUsersRepository.blockXUser({
         id: '@userId',
         blockedAt: '2024-06-14T19:01:45Z',
         blockReasons: [{ id: '2', label: 'Spreading fake news' }],
+        blockingUserIds: ['1'],
       });
       groupsRepository.addBlockedUser('UK', '@userId');
     });
@@ -91,6 +92,7 @@ describe('GroupsService', () => {
             id: '@userId',
             blockedAt: '2024-06-14T19:01:45Z',
             blockReasons: [{ id: '2', label: 'Spreading fake news' }],
+            blockingUserIds: ['1'],
           },
         ],
       });

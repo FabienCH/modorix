@@ -1,6 +1,6 @@
 import { Group, GroupDetails } from '@modorix-commons/models/group';
 import { Injectable } from '@nestjs/common';
-import { BlockUsersRepository } from '../infrastructure/block-user.repository';
+import { BlockXUsersRepository } from '../infrastructure/block-x-user.repository';
 import { GroupsRepository } from '../infrastructure/groups.repository';
 import { GroupNotFoundError } from './errors/group-not-found-error';
 
@@ -8,7 +8,7 @@ import { GroupNotFoundError } from './errors/group-not-found-error';
 export class GroupsService {
   constructor(
     private readonly groupsRepository: GroupsRepository,
-    private readonly blockUsersRepository: BlockUsersRepository,
+    private readonly blockXUsersRepository: BlockXUsersRepository,
   ) {}
 
   groupsList(): Group[] {
@@ -21,7 +21,7 @@ export class GroupsService {
       throw new GroupNotFoundError(groupId);
     }
 
-    const blockedXUsers = this.blockUsersRepository.blockedUsersByIds(group.blockedXUserIds);
+    const blockedXUsers = this.blockXUsersRepository.blockedXUsersByIds(group.blockedXUserIds);
     return {
       id: group.id,
       name: group.name,
