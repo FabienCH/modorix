@@ -28,10 +28,7 @@ export const ModorixTable = ({ columns, data, emptyDataMessage, rowClassName }: 
             data.map((row, idx) => (
               <TableRow key={`row-${idx}`} className={rowClassName}>
                 {row.map((cell, idx) => (
-                  <TableCell
-                    className={typeof cell === 'string' ? 'truncate table-cell ' : 'truncate flex ' + columns[idx]}
-                    key={`cell-${idx}`}
-                  >
+                  <TableCell className={typeof cell === 'string' ? 'truncate table-cell ' : 'truncate flex'} key={`cell-${idx}`}>
                     {cell}
                   </TableCell>
                 ))}

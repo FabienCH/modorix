@@ -14,7 +14,8 @@ export class BlockXUsersService {
   ) {}
 
   blockXUser(blockXUserRequest: BlockXUserRequest): void {
-    const { id, blockedAt, blockReasonIds, blockingUserId } = blockXUserRequest;
+    const { id, blockedAt, blockReasonIds, blockedInGroupsIds, blockingUserId } = blockXUserRequest;
+
     if (!blockReasonIds.length) {
       throw new BlockReasonError(id, 'empty');
     }
@@ -23,11 +24,13 @@ export class BlockXUsersService {
     if (blockReasons.length !== blockReasonIds.length) {
       throw new BlockReasonError(id, 'notFound');
     }
+    const blockedInGroups = this.groupsRepository.groupsList().filter((group) => blockedInGroupsIds?.includes(group.id));
 
-    const xUser = { id, blockedAt, blockReasons };
-    this.blockXUsersRepository.blockXUser({ ...xUser, blockingUserIds: [blockingUserId] });
-    const groups = this.groupsRepository.groupsList();
-    groups.forEach((group) => {
+    const xUser: XUser = { id, blockedAt, blockReasons, blockingUserIds: [blockingUserId], blockedInGroups };
+    this.blockXUsersRepository.blockXUser(xUser);
+
+    const groupsToBlockXUser = blockedInGroupsIds ? blockedInGroups : this.groupsRepository.groupsList();
+    groupsToBlockXUser.forEach((group) => {
       this.groupsRepository.addBlockedUser(group.id, blockXUserRequest.id);
     });
   }

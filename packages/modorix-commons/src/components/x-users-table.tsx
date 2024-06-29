@@ -4,23 +4,34 @@ import { BlockReason } from '../models/block-reason';
 import { XUser } from '../models/x-user';
 import { XUsersData, mapToXUsersData } from './x-users-table-data';
 
-const columns = ['X Username', 'Blocked On', 'Block Reasons'];
+const defaultColumns = ['X Username', 'Blocked On', 'Block Reasons'];
 
 interface XUsersTableProps {
-  BlockReasonComponent: ({ blockReasons }: { blockReasons: BlockReason[] }) => JSX.Element;
+  BadgesComponent: ({ items, badgeVariant }: { items: BlockReason[]; badgeVariant: 'outline' | 'secondary' }) => JSX.Element;
   blockedUsers: XUser[];
   rowGridCols: `grid-cols-${string}`;
+  optionalCol?: 'blockedInGroups';
 }
 
-export const XUsersTable = ({ BlockReasonComponent, blockedUsers, rowGridCols }: XUsersTableProps) => {
+export const XUsersTable = ({ BadgesComponent, blockedUsers, rowGridCols, optionalCol }: XUsersTableProps) => {
   const [blockedUsersData, setBlockedUsersData] = useState<XUsersData>([]);
+  const [columns, setColumns] = useState<string[]>(defaultColumns);
 
   useEffect(() => {
     (async () => {
-      const blockedUserData: XUsersData = mapToXUsersData({ BlockReasonComponent, blockedUsers });
+      const blockedUserData: XUsersData = mapToXUsersData({ BadgesComponent, blockedUsers, optionalCol });
       setBlockedUsersData(blockedUserData);
     })();
-  }, [blockedUsers, BlockReasonComponent]);
+  }, [blockedUsers, optionalCol, BadgesComponent]);
+
+  useEffect(() => {
+    const newColumns = [...defaultColumns];
+    if (optionalCol === 'blockedInGroups') {
+      newColumns.splice(2, 0, 'Blocked in');
+    }
+
+    setColumns(newColumns);
+  }, [optionalCol]);
 
   return (
     <ModorixTable

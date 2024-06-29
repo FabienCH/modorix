@@ -30,6 +30,7 @@ describe('BlockUserController', () => {
         blockedAt: '2024-05-27T18:01:45Z',
         blockReasons: [{ id: '1', label: 'Racism / Xenophobia' }],
         blockingUserIds: ['1'],
+        blockedInGroups: [],
       });
     });
 

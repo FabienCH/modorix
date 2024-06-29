@@ -3,7 +3,7 @@ import { getBlockedUsers, getBlockQueueCandidates } from '@modorix-commons/gatew
 import { XUser } from '@modorix-commons/models/x-user';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@modorix-ui/components/tabs';
 import { useEffect, useState } from 'react';
-import { BlockUserReasons } from '../components/block-user-reasons';
+import { AutoResizeBadgesWithTooltip } from '../components/auto-resize-badges-with-tooltip';
 
 export default function BlocksPage() {
   const [blockedUsers, setBlockedUsers] = useState<XUser[]>([]);
@@ -17,17 +17,27 @@ export default function BlocksPage() {
   }, []);
 
   return (
-    <section className="w-full mx-auto max-w-screen-md">
+    <section className="w-full mx-auto max-w-screen-lg">
       <Tabs defaultValue="add-to-blocks-queue">
         <TabsList className="mx-auto mb-4">
           <TabsTrigger value="add-to-blocks-queue">Add to blocks queue</TabsTrigger>
           <TabsTrigger value="my-blocks-list">My blocks list</TabsTrigger>
         </TabsList>
         <TabsContent value="add-to-blocks-queue">
-          <XUsersTable BlockReasonComponent={BlockUserReasons} blockedUsers={blockQueueCandidates} rowGridCols="grid-cols-[1fr_1fr_2fr]" />
+          <XUsersTable
+            BadgesComponent={AutoResizeBadgesWithTooltip}
+            blockedUsers={blockQueueCandidates}
+            optionalCol="blockedInGroups"
+            rowGridCols="grid-cols-[1fr_1fr_2fr_2fr]"
+          />
         </TabsContent>
         <TabsContent value="my-blocks-list">
-          <XUsersTable BlockReasonComponent={BlockUserReasons} blockedUsers={blockedUsers} rowGridCols="grid-cols-[1fr_1fr_2fr]" />
+          <XUsersTable
+            BadgesComponent={AutoResizeBadgesWithTooltip}
+            blockedUsers={blockedUsers}
+            optionalCol="blockedInGroups"
+            rowGridCols="grid-cols-[1fr_1fr_2fr_2fr]"
+          />
         </TabsContent>
       </Tabs>
     </section>

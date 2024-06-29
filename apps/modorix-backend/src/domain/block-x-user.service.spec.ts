@@ -22,7 +22,13 @@ describe('BlockXUsersService', () => {
 
   describe('Block a X user', () => {
     it('should add X user to the block list', () => {
-      blockXUsersService.blockXUser({ id: '@userId', blockedAt: '2024-05-27T18:01:45Z', blockReasonIds: ['1'], blockingUserId: '1' });
+      blockXUsersService.blockXUser({
+        id: '@userId',
+        blockedAt: '2024-05-27T18:01:45Z',
+        blockReasonIds: ['1'],
+        blockingUserId: '1',
+        blockedInGroupsIds: ['0'],
+      });
 
       const blockedXUser = blockXUsersRepository.blockedXUsersList('1').find((xUser) => xUser.id === '@userId');
 
@@ -36,11 +42,18 @@ describe('BlockXUsersService', () => {
           },
         ],
         blockingUserIds: ['1'],
+        blockedInGroups: [],
       });
     });
 
     it('should add the blocked X user too all groups', () => {
-      blockXUsersService.blockXUser({ id: '@userId', blockedAt: '2024-05-27T18:01:45Z', blockReasonIds: ['1'], blockingUserId: '1' });
+      blockXUsersService.blockXUser({
+        id: '@userId',
+        blockedAt: '2024-05-27T18:01:45Z',
+        blockReasonIds: ['1'],
+        blockingUserId: '1',
+        blockedInGroupsIds: ['0'],
+      });
 
       const groupsBlockedXUserIds = groupsRepository.groupsList().flatMap((group) => group.blockedXUserIds);
       const expectedIds = groupsBlockedXUserIds.map(() => '@userId');
@@ -54,6 +67,7 @@ describe('BlockXUsersService', () => {
         blockedAt: '2024-05-27T18:01:45Z',
         blockReasonIds: ['1', '3', '6'],
         blockingUserId: '1',
+        blockedInGroupsIds: ['0'],
       });
 
       const blockedXUser = blockXUsersRepository.blockedXUsersList('1').find((user) => user.id === '@userId');
@@ -76,12 +90,19 @@ describe('BlockXUsersService', () => {
           },
         ],
         blockingUserIds: ['1'],
+        blockedInGroups: [],
       });
     });
 
     it('should not add X user to the block list if no reasons', () => {
       expect(() => {
-        blockXUsersService.blockXUser({ id: '@userId', blockedAt: '2024-05-27T18:01:45Z', blockReasonIds: [], blockingUserId: '1' });
+        blockXUsersService.blockXUser({
+          id: '@userId',
+          blockedAt: '2024-05-27T18:01:45Z',
+          blockReasonIds: [],
+          blockingUserId: '1',
+          blockedInGroupsIds: ['0'],
+        });
       }).toThrow(new BlockReasonError('@userId', 'empty'));
     });
 
@@ -92,6 +113,7 @@ describe('BlockXUsersService', () => {
           blockedAt: '2024-05-27T18:01:45Z',
           blockReasonIds: ['1', 'non existing reason'],
           blockingUserId: '1',
+          blockedInGroupsIds: ['0'],
         });
       }).toThrow(new BlockReasonError('@userId', 'notFound'));
     });
@@ -104,6 +126,7 @@ describe('BlockXUsersService', () => {
         blockedAt: '2024-05-27T18:01:45Z',
         blockReasons: [{ id: '1', label: 'Racism / Xenophobia' }],
         blockingUserIds: ['1'],
+        blockedInGroups: [{ id: 'US', name: 'United States' }],
       });
     });
 
@@ -117,6 +140,10 @@ describe('BlockXUsersService', () => {
           blockReasons: [
             { id: '0', label: 'Harassment' },
             { id: '2', label: 'Spreading fake news' },
+          ],
+          blockedInGroups: [
+            { id: 'GE', name: 'Germany' },
+            { id: 'scientists', name: 'Scientists' },
           ],
           blockingUserIds: ['2'],
         },

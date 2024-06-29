@@ -1,6 +1,6 @@
 import { BlockReason } from '@modorix-commons/models/block-reason';
 import { BlockXUserRequest, XUser } from '@modorix-commons/models/x-user';
-import { IsArray, IsDateString, IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsDateString, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class BlockXUserRequestDto implements BlockXUserRequest {
   @IsNotEmpty()
@@ -18,6 +18,11 @@ export class BlockXUserRequestDto implements BlockXUserRequest {
   @IsNotEmpty()
   @IsString()
   blockingUserId!: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  blockedInGroupsIds?: string[];
 }
 
 export class XUserDto implements XUser {
@@ -35,4 +40,9 @@ export class XUserDto implements XUser {
   @IsArray()
   @IsString({ each: true })
   blockingUserIds!: string[];
+
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  blockedInGroups?: { id: string; name: string }[];
 }
