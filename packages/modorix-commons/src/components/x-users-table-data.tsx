@@ -3,7 +3,7 @@ import { XUser } from '../models/x-user';
 interface XUsersRowProps {
   BadgesComponent: (props: { items: { id: string; label: string }[]; badgeVariant: 'outline' | 'secondary' }) => JSX.Element;
   blockedUsers: XUser[];
-  optionalCol: 'groups' | undefined;
+  optionalCol: 'blockedInGroups' | undefined;
 }
 
 export type XUserRow =
@@ -15,13 +15,13 @@ export type XUsersData = XUserRow[];
 
 export const mapToXUsersData = ({ BadgesComponent, blockedUsers, optionalCol }: XUsersRowProps): XUsersData => {
   return blockedUsers.map((user) => {
-    const defaultRow: XUserRow = [
+    const xUsersData: XUserRow = [
       user.id,
       new Date(user.blockedAt).toLocaleDateString(),
       <BadgesComponent items={user.blockReasons} badgeVariant="secondary"></BadgesComponent>,
     ];
-    if (optionalCol === 'groups') {
-      defaultRow.splice(
+    if (optionalCol === 'blockedInGroups') {
+      xUsersData.splice(
         2,
         0,
         <BadgesComponent
@@ -31,6 +31,6 @@ export const mapToXUsersData = ({ BadgesComponent, blockedUsers, optionalCol }: 
       );
     }
 
-    return defaultRow;
+    return xUsersData;
   });
 };

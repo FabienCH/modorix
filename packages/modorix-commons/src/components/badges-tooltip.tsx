@@ -1,5 +1,5 @@
 import { Badge } from '@modorix-ui/components/badge';
-import { TooltipContent, TooltipPortal, TooltipProvider, TooltipTrigger, Tooltips } from '@modorix-ui/components/tooltip';
+import { Tooltip, TooltipContent, TooltipPortal, TooltipProvider, TooltipTrigger } from '@modorix-ui/components/tooltip';
 import { cn } from '@modorix-ui/utils/utils';
 
 interface BadgesTooltipProps {
@@ -14,7 +14,7 @@ export const BadgesTooltip = ({ items, buttonOptions, badgeVariant, contentClass
 
   return (
     <TooltipProvider>
-      <Tooltips delayDuration={400}>
+      <Tooltip delayDuration={400}>
         <TooltipTrigger asChild>
           <Badge ref={setLabelElem} variant={badgeVariant} className={cn('px-2.5 py-1 h-auto text-xs cursor-pointer', buttonClassName)}>
             <span className={buttonClassName}>{buttonLabel}</span>
@@ -31,7 +31,7 @@ export const BadgesTooltip = ({ items, buttonOptions, badgeVariant, contentClass
             </div>
           </TooltipContent>
         </TooltipPortal>
-      </Tooltips>
+      </Tooltip>
     </TooltipProvider>
   );
 };

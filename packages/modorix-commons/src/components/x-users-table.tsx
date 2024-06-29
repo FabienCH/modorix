@@ -10,7 +10,7 @@ interface XUsersTableProps {
   BadgesComponent: ({ items, badgeVariant }: { items: BlockReason[]; badgeVariant: 'outline' | 'secondary' }) => JSX.Element;
   blockedUsers: XUser[];
   rowGridCols: `grid-cols-${string}`;
-  optionalCol?: 'groups';
+  optionalCol?: 'blockedInGroups';
 }
 
 export const XUsersTable = ({ BadgesComponent, blockedUsers, rowGridCols, optionalCol }: XUsersTableProps) => {
@@ -26,7 +26,7 @@ export const XUsersTable = ({ BadgesComponent, blockedUsers, rowGridCols, option
 
   useEffect(() => {
     const newColumns = [...defaultColumns];
-    if (optionalCol === 'groups') {
+    if (optionalCol === 'blockedInGroups') {
       newColumns.splice(2, 0, 'Blocked in');
     }
 

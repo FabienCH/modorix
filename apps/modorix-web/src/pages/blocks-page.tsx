@@ -27,7 +27,7 @@ export default function BlocksPage() {
           <XUsersTable
             BadgesComponent={AutoResizeBadgesWithTooltip}
             blockedUsers={blockQueueCandidates}
-            optionalCol="groups"
+            optionalCol="blockedInGroups"
             rowGridCols="grid-cols-[1fr_1fr_2fr_2fr]"
           />
         </TabsContent>
@@ -35,7 +35,7 @@ export default function BlocksPage() {
           <XUsersTable
             BadgesComponent={AutoResizeBadgesWithTooltip}
             blockedUsers={blockedUsers}
-            optionalCol="groups"
+            optionalCol="blockedInGroups"
             rowGridCols="grid-cols-[1fr_1fr_2fr_2fr]"
           />
         </TabsContent>
