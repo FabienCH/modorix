@@ -17,7 +17,7 @@ export class BlockXUserRequestDto implements BlockXUserRequest {
 
   @IsNotEmpty()
   @IsString()
-  blockingUserId!: string;
+  blockingModorixUserId!: string;
 
   @IsArray()
   @IsString({ each: true })
@@ -39,10 +39,13 @@ export class XUserDto implements XUser {
 
   @IsArray()
   @IsString({ each: true })
-  blockingUserIds!: string[];
+  blockingModorixUserIds!: string[];
 
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
   blockedInGroups?: { id: string; name: string }[];
+
+  @IsArray()
+  blockQueueModorixUserIds!: string[];
 }

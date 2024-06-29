@@ -18,7 +18,8 @@ export class BlockXUsersRepository {
           { id: 'GE', name: 'Germany' },
           { id: 'scientists', name: 'Scientists' },
         ],
-        blockingUserIds: ['2'],
+        blockingModorixUserIds: ['2'],
+        blockQueueModorixUserIds: [],
       },
     ];
   }
@@ -27,15 +28,27 @@ export class BlockXUsersRepository {
     this.blockedXUsers.push(xUser);
   }
 
+  updateXUser(xUser: XUser): void {
+    this.blockedXUsers.forEach((currentXUser) => {
+      if (currentXUser.id === xUser.id) {
+        currentXUser = xUser;
+      }
+    });
+  }
+
   blockedXUsersList(modorixUserId: string): XUser[] {
-    return this.blockedXUsers.filter((blockedXUser) => blockedXUser.blockingUserIds.includes(modorixUserId));
+    return this.blockedXUsers.filter((blockedXUser) => blockedXUser.blockingModorixUserIds.includes(modorixUserId));
   }
 
   blockedXUsersByIds(ids: string[]): XUser[] {
     return this.blockedXUsers.filter((blockedUser) => ids.includes(blockedUser.id));
   }
 
+  blockedXUsersById(id: string): XUser | undefined {
+    return this.blockedXUsers.find((blockedUser) => blockedUser.id === id);
+  }
+
   blockQueueCandidates(modorixUserId: string) {
-    return this.blockedXUsers.filter((blockedXUser) => !blockedXUser.blockingUserIds.includes(modorixUserId));
+    return this.blockedXUsers.filter((blockedXUser) => !blockedXUser.blockingModorixUserIds.includes(modorixUserId));
   }
 }
