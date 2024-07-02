@@ -82,7 +82,7 @@ export const AutoResizeBadgesWithTooltip = ({ items, badgeVariant }: AutoResizeB
                   badgeRefs.current[idx] = el;
                 }
               },
-              className: 'truncate',
+              className: 'truncate h-fit',
               label: blockReason.label,
             }}
             items={[blockReason]}
@@ -97,6 +97,7 @@ export const AutoResizeBadgesWithTooltip = ({ items, badgeVariant }: AutoResizeB
             }}
             variant={badgeVariant}
             key={blockReason.id}
+            className="h-fit"
           >
             <span>{blockReason.label}</span>
           </Badge>
@@ -104,7 +105,7 @@ export const AutoResizeBadgesWithTooltip = ({ items, badgeVariant }: AutoResizeB
       )}
       {remainingItems ? (
         <BadgesTooltip
-          buttonOptions={{ label: `+${remainingItems}` }}
+          buttonOptions={{ label: `+${remainingItems}`, className: 'h-fit' }}
           items={items}
           badgeVariant={badgeVariant}
           contentClassName="max-w-[min(400px,40vw)]"

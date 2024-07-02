@@ -11,7 +11,7 @@ export default function MembershipButton({ group, onClick }: MembershipCellProps
   return group.isJoined ? (
     <LeaveGroupDialog group={group} onClick={onClick} />
   ) : (
-    <Button className="ml-2.5" onClick={onClick}>
+    <Button className="ml-3.5" size={'sm'} onClick={onClick}>
       Join
     </Button>
   );

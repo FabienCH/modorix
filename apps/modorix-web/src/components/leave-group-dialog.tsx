@@ -21,7 +21,7 @@ export function LeaveGroupDialog({ group, onClick }: LeaveGroupDialogProps) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button className="ml-[5px]" variant="destructive">
+        <Button className="ml-[8px]" variant="destructive" size={'sm'}>
           Leave
         </Button>
       </AlertDialogTrigger>
