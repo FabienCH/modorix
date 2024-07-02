@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class BlockXUsersRepository {
-  private readonly blockedXUsers: XUser[];
+  private blockedXUsers: XUser[];
 
   constructor() {
     this.blockedXUsers = [
@@ -45,15 +45,20 @@ export class BlockXUsersRepository {
   }
 
   updateXUser(xUser: XUser): void {
-    this.blockedXUsers.forEach((currentXUser) => {
+    this.blockedXUsers = this.blockedXUsers.map((currentXUser) => {
       if (currentXUser.id === xUser.id) {
         currentXUser = xUser;
       }
+      return currentXUser;
     });
   }
 
   blockedXUsersList(modorixUserId: string): XUser[] {
     return this.blockedXUsers.filter((blockedXUser) => blockedXUser.blockingModorixUserIds.includes(modorixUserId));
+  }
+
+  getAllBlockedXUsers(): XUser[] {
+    return this.blockedXUsers;
   }
 
   blockedXUsersByIds(ids: string[]): XUser[] {
@@ -62,9 +67,5 @@ export class BlockXUsersRepository {
 
   blockedXUsersById(id: string): XUser | undefined {
     return this.blockedXUsers.find((blockedUser) => blockedUser.id === id);
-  }
-
-  blockQueueCandidates(modorixUserId: string) {
-    return this.blockedXUsers.filter((blockedXUser) => !blockedXUser.blockingModorixUserIds.includes(modorixUserId));
   }
 }

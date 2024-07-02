@@ -57,6 +57,11 @@ export class BlockXUsersService {
   }
 
   blockQueueCandidates(modorixUserId: string): XUser[] {
-    return this.blockXUsersRepository.blockQueueCandidates(modorixUserId);
+    return this.blockXUsersRepository
+      .getAllBlockedXUsers()
+      .filter(
+        (blockedXUser) =>
+          !blockedXUser.blockingModorixUserIds.includes(modorixUserId) && !blockedXUser.blockQueueModorixUserIds.includes(modorixUserId),
+      );
   }
 }

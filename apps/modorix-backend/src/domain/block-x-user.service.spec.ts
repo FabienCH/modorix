@@ -132,6 +132,27 @@ describe('BlockXUsersService', () => {
         },
       ]);
     });
+
+    it('should not list X users in current Modorix user block queue', () => {
+      const userInBLockQueue = {
+        id: '@UltraEurope',
+        blockedAt: '2024-06-19T18:41:45Z',
+        blockReasons: [
+          { id: '0', label: 'Harassment' },
+          { id: '2', label: 'Spreading fake news' },
+        ],
+        blockedInGroups: [
+          { id: 'GE', name: 'Germany' },
+          { id: 'scientists', name: 'Scientists' },
+        ],
+        blockingModorixUserIds: ['2'],
+        blockQueueModorixUserIds: ['1'],
+      };
+      blockXUsersRepository.updateXUser(userInBLockQueue);
+      const blockQueueCandidates = blockXUsersService.blockQueueCandidates('1');
+
+      expect(blockQueueCandidates).toEqual([]);
+    });
   });
 
   describe('Add a X user to block queue', () => {

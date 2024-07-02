@@ -39,7 +39,7 @@ export default function BlocksPage() {
   }, []);
 
   async function addXUserToQueue(xUser: XUser): Promise<void> {
-    addToBlockQueue('1', xUser.id);
+    await addToBlockQueue('1', xUser.id);
     setBlockQueueCandidates(await getBlockQueueCandidates('1'));
   }
 
