@@ -7,7 +7,13 @@ export class GroupsRepository {
   private readonly groups: Group[] = [
     { id: 'US', name: 'United States', description: 'For people living in US', isJoined: false, blockedXUserIds: [] },
     { id: 'UK', name: 'United Kingdom', description: 'For people living in Uk', isJoined: false, blockedXUserIds: [] },
-    { id: 'GE', name: 'Germany', description: 'For people living in Germany', isJoined: false, blockedXUserIds: [] },
+    {
+      id: 'GE',
+      name: 'Germany',
+      description: 'For people living in Germany',
+      isJoined: false,
+      blockedXUserIds: ['@UltraEurope', '@UltraEuropeee'],
+    },
     { id: 'FR', name: 'France', description: 'For people living in France', isJoined: false, blockedXUserIds: [] },
     { id: 'ES', name: 'Spain', description: 'For people living in Spain', isJoined: false, blockedXUserIds: [] },
     {
@@ -15,7 +21,7 @@ export class GroupsRepository {
       name: 'Scientists',
       description: 'For scientists or people working around science',
       isJoined: false,
-      blockedXUserIds: [],
+      blockedXUserIds: ['@UltraEurope', '@UltraEuropeee'],
     },
     {
       id: 'streamers',

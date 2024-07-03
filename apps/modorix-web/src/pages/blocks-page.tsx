@@ -1,10 +1,10 @@
 import { XUsersTable } from '@modorix-commons/components/x-users-table';
 import { getBlockedUsers } from '@modorix-commons/gateways/block-user-gateway';
 import { XUser } from '@modorix-commons/models/x-user';
-import { Button } from '@modorix-ui/components/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@modorix-ui/components/tabs';
 import { useEffect, useState } from 'react';
 import { addToBlockQueue, getBlockQueueCandidates } from '../adapters/gateways/block-user-gateway';
+import { AddToQueueButton } from '../components/add-to-queue-button';
 import { AutoResizeBadgesWithTooltip } from '../components/auto-resize-badges-with-tooltip';
 
 export default function BlocksPage() {
@@ -14,21 +14,19 @@ export default function BlocksPage() {
   const blockedInGroupsColConfig = {
     index: 2,
     columnLabel: 'Blocked In',
-    getCellElem: (xUser: XUser) => (
-      <AutoResizeBadgesWithTooltip
-        items={(xUser.blockedInGroups ?? []).map((group) => ({ id: group.id, label: group.name }))}
-        badgeVariant="outline"
-      ></AutoResizeBadgesWithTooltip>
-    ),
+    getCellElem: (xUser: XUser) => {
+      return (
+        <AutoResizeBadgesWithTooltip
+          items={(xUser.blockedInGroups ?? []).map((group) => ({ id: group.id, label: group.name }))}
+          badgeVariant="outline"
+        ></AutoResizeBadgesWithTooltip>
+      );
+    },
   };
   const addToBlockQueueColConfig = {
     index: 4,
     columnLabel: 'Add To Queue',
-    getCellElem: (xUser: XUser) => (
-      <Button size={'sm'} onClick={() => addXUserToQueue(xUser)}>
-        Add to Queue
-      </Button>
-    ),
+    getCellElem: (xUser: XUser) => <AddToQueueButton onClick={() => addXUserToQueue(xUser)}></AddToQueueButton>,
   };
 
   useEffect(() => {
