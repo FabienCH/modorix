@@ -11,17 +11,19 @@ import {
   AlertDialogTrigger,
 } from '@modorix-ui/components/alert-dialog';
 import { Button, buttonVariants } from '@modorix-ui/components/button';
+import { type VariantProps } from 'class-variance-authority';
 
 interface LeaveGroupDialogProps {
   group: Group | GroupDetails;
+  buttonSize: VariantProps<typeof buttonVariants>['size'];
   onClick: () => void;
 }
 
-export function LeaveGroupDialog({ group, onClick }: LeaveGroupDialogProps) {
+export function LeaveGroupDialog({ group, onClick, buttonSize }: LeaveGroupDialogProps) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button className="ml-[8px]" variant="destructive" size={'sm'}>
+        <Button className="ml-[8px]" variant="destructive" size={buttonSize}>
           Leave
         </Button>
       </AlertDialogTrigger>

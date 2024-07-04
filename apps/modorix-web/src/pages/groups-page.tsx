@@ -27,7 +27,7 @@ export default function GroupsPage() {
       <NavLink to={`${ROUTES.Groups}/${group.id}`}>{group.name}</NavLink>,
       group.description,
       group.blockedXUserIds.length.toString(),
-      <MembershipButton group={group} onClick={() => handleClickFn(group)} />,
+      <MembershipButton group={group} size={'sm'} onClick={() => handleClickFn(group)} />,
     ]);
     setGroupsData(groupsData);
   }
