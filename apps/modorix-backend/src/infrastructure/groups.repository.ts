@@ -12,7 +12,7 @@ export class GroupsRepository {
       name: 'Germany',
       description: 'For people living in Germany',
       isJoined: false,
-      blockedXUserIds: ['@UltraEurope', '@UltraEuropeee'],
+      blockedXUserIds: [],
     },
     { id: 'FR', name: 'France', description: 'For people living in France', isJoined: false, blockedXUserIds: [] },
     { id: 'ES', name: 'Spain', description: 'For people living in Spain', isJoined: false, blockedXUserIds: [] },
@@ -21,7 +21,7 @@ export class GroupsRepository {
       name: 'Scientists',
       description: 'For scientists or people working around science',
       isJoined: false,
-      blockedXUserIds: ['@UltraEurope', '@UltraEuropeee'],
+      blockedXUserIds: [],
     },
     {
       id: 'streamers',

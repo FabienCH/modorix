@@ -50,7 +50,10 @@ describe('BlockUserController', () => {
 
   describe('Add a X user to block queue', () => {
     it('should add a X user to Modorix user block queue', () => {
+      addXUserToBlockQueueSpy.mockImplementationOnce(() => {});
+
       blockXUserController.addXUserToBlockQueue({ modorixUserId: 'modorix-user-id' }, { xUserId: '@UltraEurope' });
+
       expect(addXUserToBlockQueueSpy).toHaveBeenCalledWith('@UltraEurope', 'modorix-user-id');
     });
 
