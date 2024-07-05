@@ -72,10 +72,10 @@ export const AutoResizeBadgesWithTooltip = ({ items, badgeVariant }: AutoResizeB
 
   return (
     <div ref={ref} className="truncate flex flex-nowrap [&>*:not(:last-child)]:mr-2">
-      {displayedItems.map((blockReason, idx) =>
+      {displayedItems.map((item, idx) =>
         mustTruncate ? (
           <BadgesTooltip
-            key={blockReason.id}
+            key={item.id}
             buttonOptions={{
               setLabelElem: (el) => {
                 if (el) {
@@ -83,9 +83,9 @@ export const AutoResizeBadgesWithTooltip = ({ items, badgeVariant }: AutoResizeB
                 }
               },
               className: 'truncate h-fit',
-              label: blockReason.label,
+              label: item.label,
             }}
-            items={[blockReason]}
+            items={[item]}
             badgeVariant={badgeVariant}
           ></BadgesTooltip>
         ) : (
@@ -96,10 +96,10 @@ export const AutoResizeBadgesWithTooltip = ({ items, badgeVariant }: AutoResizeB
               }
             }}
             variant={badgeVariant}
-            key={blockReason.id}
+            key={item.id}
             className="h-fit"
           >
-            <span>{blockReason.label}</span>
+            <span>{item.label}</span>
           </Badge>
         ),
       )}

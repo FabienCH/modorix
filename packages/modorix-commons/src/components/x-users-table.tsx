@@ -20,36 +20,27 @@ interface XUsersTableProps {
 }
 
 export const XUsersTable = ({ BadgesComponent, blockedUsers, rowGridCols, optionalColsConfig }: XUsersTableProps) => {
-  const [blockedUsersData, setBlockedUsersData] = useState<XUsersData>([]);
-  const [columns, setColumns] = useState<string[]>(defaultColumns);
-  const [additionalRows, setAdditionalRows] = useState<XUserRowConfig[]>([]);
+  const [tableState, setTableState] = useState<{ columns: string[]; data: XUsersData }>();
 
   useEffect(() => {
-    (async () => {
-      const blockedUserData: XUsersData = mapToXUsersData({ BadgesComponent, blockedUsers, additionalRows });
-      setBlockedUsersData(blockedUserData);
-    })();
-  }, [blockedUsers, additionalRows, BadgesComponent]);
-
-  useEffect(() => {
-    const newColumns = [...defaultColumns];
-    const newAdditionalRows: XUserRowConfig[] = [];
+    const columns = [...defaultColumns];
+    const additionalRows: XUserRowConfig[] = [];
     optionalColsConfig?.forEach((colConfig) => {
       const { index, columnLabel, getCellElem } = colConfig;
-      newColumns.splice(index, 0, columnLabel);
-      newAdditionalRows.push({ index, getCellElem });
+      columns.splice(index, 0, columnLabel);
+      additionalRows.push({ index, getCellElem });
     });
 
-    setColumns(newColumns);
-    setAdditionalRows(newAdditionalRows);
-  }, [optionalColsConfig]);
+    const blockedUserData: XUsersData = mapToXUsersData({ BadgesComponent, blockedUsers, additionalRows });
+    setTableState({ columns, data: blockedUserData });
+  }, [blockedUsers, optionalColsConfig, BadgesComponent]);
 
-  return (
+  return tableState ? (
     <ModorixTable
       rowClassName={`grid ${rowGridCols} align-middle`}
-      columns={columns}
-      data={blockedUsersData}
+      columns={tableState.columns}
+      data={tableState.data}
       emptyDataMessage="No users blocked here"
     ></ModorixTable>
-  );
+  ) : null;
 };
