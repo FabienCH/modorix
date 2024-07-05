@@ -10,6 +10,14 @@ export async function getBlockQueueCandidates(modorixUserId: string): Promise<XU
   ).json();
 }
 
+export async function getBlockQueue(modorixUserId: string): Promise<XUser[]> {
+  return (
+    await fetch(`${blockedXUsersBaseUrl}/queue/${modorixUserId}`, {
+      method: 'GET',
+    })
+  ).json();
+}
+
 export function addToBlockQueue(modorixUserId: string, xUserId: string): Promise<Response> {
   return fetch(`${blockedXUsersBaseUrl}/queue/${modorixUserId}`, {
     method: 'POST',
