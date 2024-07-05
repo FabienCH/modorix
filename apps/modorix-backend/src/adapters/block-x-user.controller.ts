@@ -56,4 +56,10 @@ export class BlockXUsersController {
   blockQueueCandidates(@Param() { modorixUserId }: { modorixUserId: string }): XUserDto[] {
     return this.blockXUsersService.blockQueueCandidates(modorixUserId);
   }
+
+  @Get('block-x-users/queue/:modorixUserId')
+  @HttpCode(200)
+  blockQueue(@Param() { modorixUserId }: { modorixUserId: string }): XUserDto[] {
+    return this.blockXUsersService.blockQueue(modorixUserId);
+  }
 }

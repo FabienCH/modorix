@@ -64,4 +64,10 @@ export class BlockXUsersService {
           !blockedXUser.blockingModorixUserIds.includes(modorixUserId) && !blockedXUser.blockQueueModorixUserIds.includes(modorixUserId),
       );
   }
+
+  blockQueue(modorixUserId: string): XUser[] {
+    return this.blockXUsersRepository
+      .getAllBlockedXUsers()
+      .filter((blockedXUser) => blockedXUser.blockQueueModorixUserIds.includes(modorixUserId));
+  }
 }

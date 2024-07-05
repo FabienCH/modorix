@@ -9,7 +9,7 @@ import { BlockReasonError } from './errors/block-reason-error';
 import { XUserNotFoundError } from './errors/x-user-not-found-error';
 
 describe('BlockXUsersService', () => {
-  function getBlockXUserRequest(blockReasonIds: string[], blockedInGroupsIds = ['0']): BlockXUserRequest {
+  function getBlockXUserRequest(blockReasonIds: string[], blockedInGroupsIds = []): BlockXUserRequest {
     return {
       id: '@userId',
       blockedAt: '2024-05-27T18:01:45Z',
@@ -167,6 +167,42 @@ describe('BlockXUsersService', () => {
       const blockQueueCandidates = blockXUsersService.blockQueueCandidates('1');
 
       expect(blockQueueCandidates).toEqual([]);
+    });
+  });
+
+  describe('Retrieve X users block queue', () => {
+    const userInBlockQueue = {
+      id: '@UltraEurope',
+      blockedAt: '2024-06-19T18:41:45Z',
+      blockReasons: [
+        { id: '0', label: 'Harassment' },
+        { id: '2', label: 'Spreading fake news' },
+      ],
+      blockedInGroups: [
+        { id: 'GE', name: 'Germany' },
+        { id: 'scientists', name: 'Scientists' },
+      ],
+      blockingModorixUserIds: ['2'],
+      blockQueueModorixUserIds: ['1'],
+    };
+
+    beforeEach(() => {
+      blockXUsersRepository.blockXUser({
+        id: '@userId',
+        blockedAt: '2024-05-27T18:01:45Z',
+        blockReasons: [{ id: '1', label: 'Racism / Xenophobia' }],
+        blockedInGroups: [{ id: 'US', name: 'United States' }],
+        blockingModorixUserIds: ['1'],
+        blockQueueModorixUserIds: [],
+      });
+
+      blockXUsersRepository.updateXUser(userInBlockQueue);
+    });
+
+    it('should give a list of X users not blocked by the current Modorix user', () => {
+      const blockQueue = blockXUsersService.blockQueue('1');
+
+      expect(blockQueue).toEqual([userInBlockQueue]);
     });
   });
 
