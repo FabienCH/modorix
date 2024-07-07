@@ -9,3 +9,11 @@ export async function getBlockedUsers(modorixUserId: string): Promise<XUser[]> {
     })
   ).json();
 }
+
+export async function getBlockQueue(modorixUserId: string): Promise<XUser[]> {
+  return (
+    await fetch(`${blockedXUsersBaseUrl}/queue/${modorixUserId}`, {
+      method: 'GET',
+    })
+  ).json();
+}
