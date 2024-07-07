@@ -14,8 +14,9 @@ export default function GroupAddToBlockQueueCell({ xUser, isGroupJoined, onButto
   const tooltipContent = !isGroupJoined
     ? 'Join group to add this X user to your queue'
     : `Already ${alreadyBlocked ? 'blocked' : 'in queue'}`;
+  const isAddToQueueDisabled = !isGroupJoined || alreadyBlocked || alreadyInQueue;
 
-  return !isGroupJoined || alreadyBlocked || alreadyInQueue ? (
+  return isAddToQueueDisabled ? (
     <TooltipProvider>
       <Tooltip delayDuration={400}>
         <TooltipTrigger asChild>
