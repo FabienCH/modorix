@@ -1,13 +1,33 @@
 import { XUsersTable } from '@modorix-commons/components/x-users-table';
-import { getBlockedUsers, getBlockQueueCandidates } from '@modorix-commons/gateways/block-user-gateway';
+import { getBlockedUsers } from '@modorix-commons/gateways/block-user-gateway';
 import { XUser } from '@modorix-commons/models/x-user';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@modorix-ui/components/tabs';
 import { useEffect, useState } from 'react';
+import { addToBlockQueue, getBlockQueueCandidates } from '../adapters/gateways/block-user-gateway';
+import { AddToQueueButton } from '../components/add-to-queue-button';
 import { AutoResizeBadgesWithTooltip } from '../components/auto-resize-badges-with-tooltip';
 
 export default function BlocksPage() {
   const [blockedUsers, setBlockedUsers] = useState<XUser[]>([]);
   const [blockQueueCandidates, setBlockQueueCandidates] = useState<XUser[]>([]);
+
+  const blockedInGroupsColConfig = {
+    index: 2,
+    columnLabel: 'Blocked In',
+    getCellElem: (xUser: XUser) => {
+      return (
+        <AutoResizeBadgesWithTooltip
+          items={(xUser.blockedInGroups ?? []).map((group) => ({ id: group.id, label: group.name }))}
+          badgeVariant="outline"
+        ></AutoResizeBadgesWithTooltip>
+      );
+    },
+  };
+  const addToBlockQueueColConfig = {
+    index: 4,
+    columnLabel: 'Add To Queue',
+    getCellElem: (xUser: XUser) => <AddToQueueButton onClick={() => addXUserToQueue(xUser)}></AddToQueueButton>,
+  };
 
   useEffect(() => {
     (async () => {
@@ -15,6 +35,11 @@ export default function BlocksPage() {
       setBlockQueueCandidates(await getBlockQueueCandidates('1'));
     })();
   }, []);
+
+  async function addXUserToQueue(xUser: XUser): Promise<void> {
+    await addToBlockQueue('1', xUser.id);
+    setBlockQueueCandidates(await getBlockQueueCandidates('1'));
+  }
 
   return (
     <section className="w-full mx-auto max-w-screen-lg">
@@ -27,15 +52,15 @@ export default function BlocksPage() {
           <XUsersTable
             BadgesComponent={AutoResizeBadgesWithTooltip}
             blockedUsers={blockQueueCandidates}
-            optionalCol="blockedInGroups"
-            rowGridCols="grid-cols-[1fr_1fr_2fr_2fr]"
+            optionalColsConfig={[blockedInGroupsColConfig, addToBlockQueueColConfig]}
+            rowGridCols="grid-cols-[1fr_1fr_2fr_2fr_auto]"
           />
         </TabsContent>
         <TabsContent value="my-blocks-list">
           <XUsersTable
             BadgesComponent={AutoResizeBadgesWithTooltip}
             blockedUsers={blockedUsers}
-            optionalCol="blockedInGroups"
+            optionalColsConfig={[blockedInGroupsColConfig]}
             rowGridCols="grid-cols-[1fr_1fr_2fr_2fr]"
           />
         </TabsContent>

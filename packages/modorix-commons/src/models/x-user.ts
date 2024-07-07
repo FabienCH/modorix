@@ -10,11 +10,12 @@ export interface BlockXUserRequest extends BaseXUser {
   blockedAt: string;
   blockReasonIds: string[];
   blockedInGroupsIds?: string[];
-  blockingUserId: string;
+  blockingModorixUserId: string;
 }
 
 export interface XUser extends BaseXUser {
   blockReasons: BlockReason[];
   blockedInGroups?: { id: string; name: string }[];
-  blockingUserIds: string[];
+  blockingModorixUserIds: string[];
+  blockQueueModorixUserIds: string[];
 }

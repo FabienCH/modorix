@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { getGroups } from '../adapters/gateways/group-gateway';
 import MembershipButton from '../components/membership-button';
-import { toggleMemberShip } from '../domain/toggle-group-membership-usecase';
+import { toggleMembership } from '../domain/toggle-group-membership-usecase';
 import { ROUTES } from '../routes';
 
 const columns = ['Group', 'Description', 'Blocked Users', 'Membership'];
@@ -13,7 +13,7 @@ export default function GroupsPage() {
   const [groupsData, setGroupsData] = useState<(string | JSX.Element)[][]>([]);
 
   const handleClick = useCallback(async (group: Group) => {
-    await toggleMemberShip(group);
+    await toggleMembership(group);
     await retrieveGroupsList(handleClick);
   }, []);
 
@@ -27,7 +27,7 @@ export default function GroupsPage() {
       <NavLink to={`${ROUTES.Groups}/${group.id}`}>{group.name}</NavLink>,
       group.description,
       group.blockedXUserIds.length.toString(),
-      <MembershipButton group={group} onClick={() => handleClickFn(group)} />,
+      <MembershipButton group={group} size={'sm'} onClick={() => handleClickFn(group)} />,
     ]);
     setGroupsData(groupsData);
   }
