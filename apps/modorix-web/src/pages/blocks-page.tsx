@@ -1,9 +1,9 @@
 import { XUsersTable } from '@modorix-commons/components/x-users-table';
-import { getBlockedUsers } from '@modorix-commons/gateways/block-user-gateway';
+import { getBlockedUsers, getBlockQueue } from '@modorix-commons/gateways/block-user-gateway';
 import { XUser } from '@modorix-commons/models/x-user';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@modorix-ui/components/tabs';
 import { useEffect, useState } from 'react';
-import { addToBlockQueue, getBlockQueue, getBlockQueueCandidates } from '../adapters/gateways/block-user-gateway';
+import { addToBlockQueue, getBlockQueueCandidates } from '../adapters/gateways/block-user-gateway';
 import { AddToQueueButton } from '../components/add-to-queue-button';
 import { AutoResizeBadgesWithTooltip } from '../components/auto-resize-badges-with-tooltip';
 
