@@ -30,7 +30,7 @@
   "web_accessible_resources": [
     {
       "matches": ["https://x.com/*"],
-      "resources": ["scripts/block-user.js"]
+      "resources": ["content/scripts/block-user.js"]
     }
   ],
   "content_scripts": [

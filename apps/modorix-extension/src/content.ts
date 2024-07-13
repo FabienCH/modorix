@@ -1,15 +1,11 @@
 console.log('The extension is up and running');
 
-import { listenForUsernamesMouseEnter, updateUsernamesListener } from './content/content-handler';
-import { MessageIds } from './shared/message-ids.enum';
+import { onTabToListenLoadedMessage } from './content/infrastructure/messages-handlers/messages-listener';
+import { listenForUsernamesMouseEnter, updateUsernamesMouseEnterListener } from './content/usernames-mouse-enter-listener';
 
-chrome.runtime.onMessage.addListener(async (message) => {
-  if (message.id === MessageIds.PAGE_TO_LISTEN_LOADED) {
-    updateUsernamesListener();
-  }
-});
+onTabToListenLoadedMessage(updateUsernamesMouseEnterListener);
 
 (async () => {
   await listenForUsernamesMouseEnter();
-  document.addEventListener('scrollend', updateUsernamesListener);
+  document.addEventListener('scrollend', updateUsernamesMouseEnterListener);
 })();
