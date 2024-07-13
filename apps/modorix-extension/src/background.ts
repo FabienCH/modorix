@@ -1,4 +1,5 @@
-import { saveBlockUser } from './background/block-user-gateway';
+import { saveBlockUser } from './background/infrastructure/gateways/block-user-gateway';
+import { MessageIds } from './shared/message-ids.enum';
 import {
   BlockUserMessageData,
   UserBlockedMessageData,
@@ -6,8 +7,7 @@ import {
   isUserBlockedFailureData,
   isUserBlockedMessage,
   isUserBlockedSuccessData,
-} from './core/event-message';
-import { MessageIds } from './core/message-ids.enum';
+} from './shared/messages/event-message';
 
 console.log('background loaded !');
 

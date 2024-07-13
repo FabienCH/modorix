@@ -1,6 +1,6 @@
-import { UserBlockedMessageFailureData, UserBlockedMessageSuccessData } from '../core/event-message';
-import { lookForHtmlElement } from '../core/look-for-html-element';
-import { MessageIds } from '../core/message-ids.enum';
+import { lookForHtmlElement } from '../shared/html-utils/look-for-html-element';
+import { MessageIds } from '../shared/message-ids.enum';
+import { UserBlockedMessageFailureData, UserBlockedMessageSuccessData } from '../shared/messages/event-message';
 
 (async () => {
   const userNameContainer = await lookForHtmlElement("[data-testid='UserName']");

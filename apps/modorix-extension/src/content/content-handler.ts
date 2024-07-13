@@ -1,4 +1,4 @@
-import { lookForHtmlElements } from '../core/look-for-html-elements';
+import { lookForHtmlElements } from '../shared/html-utils/look-for-html-elements';
 import { addBlockButtonToCard } from './add-block-button';
 
 let userNameLinksElements: HTMLElement[] = [];

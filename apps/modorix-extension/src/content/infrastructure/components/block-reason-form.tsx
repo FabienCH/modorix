@@ -1,5 +1,5 @@
 import { CheckboxFormField } from '@modorix-ui/components/checkbox';
-import { FormBlockReason } from '../../core/form-block-reason';
+import { FormBlockReason } from '../../models/form-block-reason';
 
 interface BlockReasonFormProps {
   formBlockReasons: FormBlockReason[];

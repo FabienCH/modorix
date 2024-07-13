@@ -1,8 +1,8 @@
 import '@modorix-ui/globals.css';
-import { BlockUserMessageData } from '../core/event-message';
-import { lookForHtmlElement } from '../core/look-for-html-element';
-import { MessageIds } from '../core/message-ids.enum';
-import { renderBlockButton } from './components/render-block-button';
+import { lookForHtmlElement } from '../shared/html-utils/look-for-html-element';
+import { BlockUserMessageData } from '../shared/messages/event-message';
+import { MessageIds } from '../shared/messages/message-ids.enum';
+import { renderBlockButton } from './infrastructure/components/render-block-button';
 
 export async function addBlockButtonToCard(linkElement: HTMLAnchorElement) {
   const cardElement = await lookForHtmlElement("[data-testid='HoverCard']", {

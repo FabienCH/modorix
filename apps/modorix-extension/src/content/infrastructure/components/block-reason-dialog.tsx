@@ -13,9 +13,9 @@ import {
   contentClassName,
 } from '@modorix-ui/components/dialog';
 import { useState } from 'react';
-import { FormBlockReason } from '../../core/form-block-reason';
-import { getBlockReasons } from '../block-reasons-gateway';
-import { validateSelectedReasons } from '../validate-block-reasons';
+import { FormBlockReason } from '../../models/form-block-reason';
+import { validateSelectedReasons } from '../../validate-block-reasons';
+import { getBlockReasons } from '../gateways/block-reasons-gateway';
 import { BlockReasonForm } from './block-reason-form';
 
 interface BlockReasonDialogProps {
