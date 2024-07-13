@@ -2,7 +2,6 @@ import { lookForHtmlElement } from '../../shared/html-utils/look-for-html-elemen
 import { sendXUserBlockedFailure, sendXUserBlockedSuccess } from '../infrastructure/messages-handlers/messages-sender';
 
 (async () => {
-  console.log('BLOCK USER');
   const userNameContainer = await lookForHtmlElement("[data-testid='UserName']");
   const userName =
     [...(userNameContainer?.querySelectorAll('span') ?? [])].find((spanElem) => spanElem?.innerText.startsWith('@'))?.innerText ?? '';
