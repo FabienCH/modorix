@@ -1,5 +1,5 @@
 import { lookForHtmlElement } from '../../shared/html-utils/look-for-html-element';
-import { sendXUserBlockedFailure, sendXUserBlockedSuccess } from '../infrastructure/messages-handlers/messages-sender';
+import { sendXUserBlockedFailureMessage, sendXUserBlockedSuccessMessage } from '../infrastructure/messages-handlers/messages-sender';
 
 (async () => {
   const userNameContainer = await lookForHtmlElement("[data-testid='UserName']");
@@ -18,8 +18,8 @@ import { sendXUserBlockedFailure, sendXUserBlockedSuccess } from '../infrastruct
     const blockReasonIdsStr = await chrome.storage.local.get('blockReasonIds');
     const blockReasonIds = JSON.parse(blockReasonIdsStr.blockReasonIds);
     confirmBlockBtn.click();
-    await sendXUserBlockedSuccess(userName, blockReasonIds);
+    await sendXUserBlockedSuccessMessage(userName, blockReasonIds);
   } else {
-    await sendXUserBlockedFailure(userName);
+    await sendXUserBlockedFailureMessage(userName);
   }
 })();

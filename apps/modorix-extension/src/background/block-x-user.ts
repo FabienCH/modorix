@@ -8,7 +8,7 @@ import { saveBlockUser } from './infrastructure/gateways/block-user-gateway';
 
 let blockUserTab: chrome.tabs.Tab | null = null;
 
-export async function blockInNewTab(data: BlockUserMessageData): Promise<chrome.tabs.Tab> {
+export async function blockXUserInNewTab(data: BlockUserMessageData): Promise<chrome.tabs.Tab> {
   blockUserTab = await chrome.tabs.create({
     url: data.url,
     active: data.active,

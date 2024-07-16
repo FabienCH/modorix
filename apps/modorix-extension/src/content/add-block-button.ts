@@ -1,7 +1,7 @@
 import '@modorix-ui/globals.css';
 import { lookForHtmlElement } from '../shared/html-utils/look-for-html-element';
 import { renderBlockButton } from './infrastructure/components/render-block-button';
-import { sendBlockXUser } from './infrastructure/messages-handlers/messages-sender';
+import { sendBlockXUserMessage } from './infrastructure/messages-handlers/messages-sender';
 
 export async function addBlockButtonToCard(linkElement: HTMLAnchorElement) {
   const cardElement = await lookForHtmlElement("[data-testid='HoverCard']", {
@@ -31,7 +31,7 @@ function addBlockButton(cardElement: HTMLElement, linkElement: HTMLAnchorElement
   }
 
   renderBlockButton(buttonsContainer, linkElement, (blockReasonIds) => {
-    sendBlockXUser(linkElement.href, blockReasonIds);
+    sendBlockXUserMessage(linkElement.href, blockReasonIds);
   });
 }
 
