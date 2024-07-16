@@ -1,8 +1,7 @@
 import '@modorix-ui/globals.css';
-import { BlockUserMessageData } from '../core/event-message';
-import { lookForHtmlElement } from '../core/look-for-html-element';
-import { MessageIds } from '../core/message-ids.enum';
-import { renderBlockButton } from './components/render-block-button';
+import { lookForHtmlElement } from '../shared/html-utils/look-for-html-element';
+import { renderBlockButton } from './infrastructure/components/render-block-button';
+import { sendBlockXUserMessage } from './infrastructure/messages-handlers/messages-sender';
 
 export async function addBlockButtonToCard(linkElement: HTMLAnchorElement) {
   const cardElement = await lookForHtmlElement("[data-testid='HoverCard']", {
@@ -13,7 +12,7 @@ export async function addBlockButtonToCard(linkElement: HTMLAnchorElement) {
   }
 
   addBlockButton(cardElement, linkElement);
-  addButtonIfCardChanges(cardElement, linkElement);
+  updateButtonIfCardChanges(cardElement, linkElement);
 }
 
 function addBlockButton(cardElement: HTMLElement, linkElement: HTMLAnchorElement) {
@@ -31,25 +30,14 @@ function addBlockButton(cardElement: HTMLElement, linkElement: HTMLAnchorElement
     return;
   }
 
-  const handleConfirmModal = async (blockReasonIds: string[]) => {
-    const data: BlockUserMessageData = {
-      url: linkElement.href,
-      active: true,
-      blockReasonIds,
-    };
-    await chrome.runtime.sendMessage('', {
-      id: MessageIds.BLOCK_USER,
-      data,
-    });
-  };
-
-  renderBlockButton(buttonsContainer, linkElement, handleConfirmModal);
+  renderBlockButton(buttonsContainer, linkElement, (blockReasonIds) => {
+    sendBlockXUserMessage(linkElement.href, blockReasonIds);
+  });
 }
 
-function addButtonIfCardChanges(cardElement: HTMLElement, linkElement: HTMLAnchorElement) {
-  let newCardElement: HTMLElement | null;
+function updateButtonIfCardChanges(cardElement: HTMLElement, linkElement: HTMLAnchorElement) {
   const lookupInterval = setInterval(async () => {
-    newCardElement = await lookForHtmlElement("[data-testid='HoverCard']", {
+    const newCardElement = await lookForHtmlElement("[data-testid='HoverCard']", {
       intervalDelay: 10,
     });
 

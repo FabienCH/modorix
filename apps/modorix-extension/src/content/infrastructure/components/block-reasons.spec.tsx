@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { act } from 'react';
-import * as BlockReasonsGateway from '../block-reasons-gateway';
+import * as BlockReasonsGateway from '../gateways/block-reasons-gateway';
 import { BlockReasonDialog } from './block-reason-dialog';
 
 async function clickOnCheckbox(name: string) {
@@ -64,7 +64,7 @@ describe('Block user reasons', () => {
       expect(selectedBlockReasonIds).toEqual(['0']);
     });
 
-    it('should block a user with mulitple reasons', async () => {
+    it('should block a user with multiple reasons', async () => {
       await clickOnCheckbox('Harassment');
       await clickOnCheckbox('Racism / Xenophobia');
 

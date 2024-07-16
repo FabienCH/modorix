@@ -1,11 +1,11 @@
-import { lookForHtmlElements } from '../core/look-for-html-elements';
+import { lookForHtmlElements } from '../shared/html-utils/look-for-html-elements';
 import { addBlockButtonToCard } from './add-block-button';
 
 let userNameLinksElements: HTMLElement[] = [];
 let userNameListenerHandlers: Array<() => Promise<void>> = [];
 let lastEventToUpdateUsernamesListenerAt: number;
 
-export function updateUsernamesListener() {
+export function updateUsernamesMouseEnterListener() {
   debounceUpdateUsernamesListener(async () => {
     if (userNameLinksElements.length) {
       removeUsernamesMouseEnterListener();
@@ -18,7 +18,7 @@ export async function listenForUsernamesMouseEnter() {
   userNameLinksElements = await lookForHtmlElements("[data-testid='User-Name'][id] a:not(:has(> time))");
 
   userNameLinksElements.forEach((linkElement) => {
-    listenToUserNameLinkMouseEnter(linkElement as HTMLAnchorElement);
+    listenToUsernameLinkMouseEnter(linkElement as HTMLAnchorElement);
   });
 }
 
@@ -40,7 +40,7 @@ function debounceUpdateUsernamesListener(callback: () => Promise<void>) {
   }, 300);
 }
 
-const listenToUserNameLinkMouseEnter = (linkElement: HTMLAnchorElement) => {
+const listenToUsernameLinkMouseEnter = (linkElement: HTMLAnchorElement) => {
   const functionWrapper = addBlockButtonToCard.bind(this, linkElement);
   userNameListenerHandlers.push(functionWrapper);
   linkElement.addEventListener('mouseenter', functionWrapper);

@@ -1,6 +1,5 @@
-import { UserBlockedMessageFailureData, UserBlockedMessageSuccessData } from '../core/event-message';
-import { lookForHtmlElement } from '../core/look-for-html-element';
-import { MessageIds } from '../core/message-ids.enum';
+import { lookForHtmlElement } from '../../shared/html-utils/look-for-html-element';
+import { sendXUserBlockedFailureMessage, sendXUserBlockedSuccessMessage } from '../infrastructure/messages-handlers/messages-sender';
 
 (async () => {
   const userNameContainer = await lookForHtmlElement("[data-testid='UserName']");
@@ -19,19 +18,8 @@ import { MessageIds } from '../core/message-ids.enum';
     const blockReasonIdsStr = await chrome.storage.local.get('blockReasonIds');
     const blockReasonIds = JSON.parse(blockReasonIdsStr.blockReasonIds);
     confirmBlockBtn.click();
-    const data: UserBlockedMessageSuccessData = { status: 'SUCCESS', userId: userName, blockReasonIds };
-    await chrome.runtime.sendMessage('', {
-      id: MessageIds.USER_BLOCKED,
-      data,
-    });
+    await sendXUserBlockedSuccessMessage(userName, blockReasonIds);
   } else {
-    const data: UserBlockedMessageFailureData = {
-      status: 'FAILURE',
-      message: `Couldn't block user ${userName}`,
-    };
-    await chrome.runtime.sendMessage('', {
-      id: MessageIds.USER_BLOCKED,
-      data,
-    });
+    await sendXUserBlockedFailureMessage(userName);
   }
 })();

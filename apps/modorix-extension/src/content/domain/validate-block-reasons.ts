@@ -1,4 +1,4 @@
-import { FormBlockReason } from '../core/form-block-reason';
+import { FormBlockReason } from '../models/form-block-reason';
 
 export function validateSelectedReasons(formBlockReasons: FormBlockReason[]): void | Error {
   const hasNoBlockReason = !formBlockReasons.find((blockReason) => blockReason.checked);

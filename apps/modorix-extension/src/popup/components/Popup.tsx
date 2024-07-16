@@ -3,7 +3,7 @@ import { getBlockedUsers, getBlockQueue } from '@modorix-commons/gateways/block-
 import { XUser } from '@modorix-commons/models/x-user';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@modorix-ui/components/tabs';
 import { useEffect, useState } from 'react';
-import { BlockUserReasons } from '../content/components/block-user-reasons';
+import { BlockUserReasons } from './block-user-reasons';
 
 export default function Popup() {
   const [blockedUsers, setBlockedUsers] = useState<XUser[]>([]);
