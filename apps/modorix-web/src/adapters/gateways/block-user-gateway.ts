@@ -10,7 +10,7 @@ export async function getBlockQueueCandidates(modorixUserId: string): Promise<XU
   ).json();
 }
 
-export function addToBlockQueue(modorixUserId: string, xUserId: string): Promise<Response> {
+export function addToBlockQueue(modorixUserId: string, xUserId: number): Promise<Response> {
   return fetch(`${blockedXUsersBaseUrl}/queue/${modorixUserId}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

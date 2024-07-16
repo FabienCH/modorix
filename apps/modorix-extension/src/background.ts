@@ -1,5 +1,9 @@
-import { blockXUserInNewTab, handleBlockedUser } from './background/block-x-user';
-import { onBlockUserMessage, onUserBlockedMessage } from './background/infrastructure/messages-handlers/messages-listener';
+import { blockXUserInNewTab, handleBlockedUser, handleRequestBlockedUser } from './background/block-x-user';
+import {
+  onBlockUserMessage,
+  onRequestBlockUserMessage,
+  onUserBlockedMessage,
+} from './background/infrastructure/messages-handlers/messages-listener';
 import { sendNewXTabToListenLoadedMessage } from './background/infrastructure/messages-handlers/messages-sender';
 
 console.log('background loaded !');
@@ -18,4 +22,5 @@ chrome.tabs.onUpdated.addListener(async (tabId: number, changes: chrome.tabs.Tab
 onBlockUserMessage(async (data) => {
   blockUserTab = await blockXUserInNewTab(data);
 });
+onRequestBlockUserMessage(async (data) => await handleRequestBlockedUser(data));
 onUserBlockedMessage(async (data) => await handleBlockedUser(data));

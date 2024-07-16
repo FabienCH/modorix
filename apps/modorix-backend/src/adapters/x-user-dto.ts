@@ -1,10 +1,10 @@
 import { BlockReason } from '@modorix-commons/models/block-reason';
 import { BlockXUserRequest, XUser } from '@modorix-commons/models/x-user';
-import { IsArray, IsDateString, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsDateString, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class BlockXUserRequestDto implements BlockXUserRequest {
   @IsNotEmpty()
-  @IsString()
+  @IsNumber()
   xId!: number;
 
   @IsNotEmpty()

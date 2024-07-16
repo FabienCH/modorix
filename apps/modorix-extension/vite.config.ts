@@ -38,7 +38,7 @@ export default defineConfig({
     react(),
     webExtension({
       manifest: generateManifest,
-      additionalInputs: ['src/content/scripts/block-user.ts'],
+      additionalInputs: ['src/content/scripts/block-user.ts', 'src/content/scripts/request-listener.ts'],
       disableAutoLaunch: true,
       watchFilePaths: ['src', 'public'],
       browser: process.env.TARGET || 'chrome',
