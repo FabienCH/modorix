@@ -15,7 +15,7 @@ export class BlockXUsersRepository {
 
   updateXUser(xUser: XUser): void {
     this.blockedXUsers = this.blockedXUsers.map((currentXUser) => {
-      if (currentXUser.id === xUser.id) {
+      if (currentXUser.xId === xUser.xId) {
         currentXUser = xUser;
       }
       return currentXUser;
@@ -30,11 +30,11 @@ export class BlockXUsersRepository {
     return this.blockedXUsers;
   }
 
-  blockedXUsersByIds(ids: string[]): XUser[] {
-    return this.blockedXUsers.filter((blockedUser) => ids.includes(blockedUser.id));
+  blockedXUsersByIds(ids: number[]): XUser[] {
+    return this.blockedXUsers.filter((blockedUser) => ids.includes(blockedUser.xId));
   }
 
-  blockedXUsersById(id: string): XUser | undefined {
-    return this.blockedXUsers.find((blockedUser) => blockedUser.id === id);
+  blockedXUsersById(id: number): XUser | undefined {
+    return this.blockedXUsers.find((blockedUser) => blockedUser.xId === id);
   }
 }

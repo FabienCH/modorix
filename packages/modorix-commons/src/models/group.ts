@@ -8,7 +8,7 @@ interface BaseGroup {
 }
 
 export interface Group extends BaseGroup {
-  blockedXUserIds: string[];
+  blockedXUserIds: number[];
 }
 
 export interface GroupDetails extends BaseGroup {

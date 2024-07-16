@@ -34,7 +34,7 @@ export class BlockXUsersController {
 
   @Post('block-x-users/queue/:modorixUserId')
   @HttpCode(201)
-  addXUserToBlockQueue(@Param() { modorixUserId }: { modorixUserId: string }, @Body() { xUserId }: { xUserId: string }): void {
+  addXUserToBlockQueue(@Param() { modorixUserId }: { modorixUserId: string }, @Body() { xUserId }: { xUserId: number }): void {
     try {
       return this.blockXUsersService.addToBlockQueue(xUserId, modorixUserId);
     } catch (error) {

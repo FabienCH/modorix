@@ -5,8 +5,19 @@ import { BlockReasonsRepository } from '../infrastructure/block-reason.repositor
 import { BlockXUsersRepository } from '../infrastructure/block-x-user.repository';
 import { GroupsRepository } from '../infrastructure/groups.repository';
 import { BlockXUsersController } from './block-x-user.controller';
+import { BlockXUserRequestDto } from './x-user-dto';
 
 describe('BlockUserController', () => {
+  function getXUser(blockReasonIds: string[]): BlockXUserRequestDto {
+    return {
+      xId: 1,
+      xUsername: '@1-username',
+      blockedAt: '2024-05-27T18:01:45Z',
+      blockReasonIds,
+      blockingModorixUserId: '1',
+    };
+  }
+
   let blockXUserController: BlockXUsersController;
   let blockXUserService: BlockXUsersService;
   let blockXUserSpy: jest.SpyInstance;
@@ -26,9 +37,10 @@ describe('BlockUserController', () => {
 
   describe('Block X user', () => {
     it('should block a X user', () => {
-      blockXUserController.blockXUser({ id: '1', blockedAt: '2024-05-27T18:01:45Z', blockReasonIds: ['1'], blockingModorixUserId: '1' });
+      blockXUserController.blockXUser(getXUser(['1']));
       expect(blockXUserSpy).toHaveBeenCalledWith({
-        id: '1',
+        xId: 1,
+        xUsername: '@1-username',
         blockedAt: '2024-05-27T18:01:45Z',
         blockReasonIds: ['1'],
         blockingModorixUserId: '1',
@@ -37,14 +49,14 @@ describe('BlockUserController', () => {
 
     it('should not block a X user without reason', () => {
       expect(() => {
-        blockXUserController.blockXUser({ id: '1', blockedAt: '2024-05-27T18:01:45Z', blockReasonIds: [], blockingModorixUserId: '1' });
-      }).toThrow(new BadRequestException('could not block user "1" because no reason was given'));
+        blockXUserController.blockXUser(getXUser([]));
+      }).toThrow(new BadRequestException('could not block user "@1-username" because no reason was given'));
     });
 
     it('should not block a X user with non existing reason', () => {
       expect(() => {
-        blockXUserController.blockXUser({ id: '1', blockedAt: '2024-05-27T18:01:45Z', blockReasonIds: ['12'], blockingModorixUserId: '1' });
-      }).toThrow(new BadRequestException('could not block user "1" because at least one reason does not exist'));
+        blockXUserController.blockXUser(getXUser(['12']));
+      }).toThrow(new BadRequestException('could not block user "@1-username" because at least one reason does not exist'));
     });
   });
 
@@ -52,15 +64,15 @@ describe('BlockUserController', () => {
     it('should add a X user to Modorix user block queue', () => {
       addXUserToBlockQueueSpy.mockImplementationOnce(() => {});
 
-      blockXUserController.addXUserToBlockQueue({ modorixUserId: 'modorix-user-id' }, { xUserId: '@UltraEurope' });
+      blockXUserController.addXUserToBlockQueue({ modorixUserId: 'modorix-user-id' }, { xUserId: 862285194 });
 
-      expect(addXUserToBlockQueueSpy).toHaveBeenCalledWith('@UltraEurope', 'modorix-user-id');
+      expect(addXUserToBlockQueueSpy).toHaveBeenCalledWith(862285194, 'modorix-user-id');
     });
 
     it("should not add X user to block queue if he hasn't been blocked by any Modorix user", () => {
       expect(() => {
-        blockXUserController.addXUserToBlockQueue({ modorixUserId: 'modorix-user-id' }, { xUserId: '@not-blocked-x-user' });
-      }).toThrow(new NotFoundException('X user with id "@not-blocked-x-user" was not found'));
+        blockXUserController.addXUserToBlockQueue({ modorixUserId: 'modorix-user-id' }, { xUserId: 0 });
+      }).toThrow(new NotFoundException('X user with id "0" was not found'));
     });
   });
 });
