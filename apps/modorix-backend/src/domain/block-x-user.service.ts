@@ -5,6 +5,7 @@ import { BlockXUsersRepository } from '../infrastructure/block-x-user.repository
 import { GroupsRepository } from '../infrastructure/groups.repository';
 import { BlockReasonError } from './errors/block-reason-error';
 import { XUserNotFoundError } from './errors/x-user-not-found-error';
+import { XUserNotInQueueError } from './errors/x-user-not-in-queue';
 
 @Injectable()
 export class BlockXUsersService {
@@ -41,6 +42,22 @@ export class BlockXUsersService {
     groupsToBlockXUser.forEach((group) => {
       this.groupsRepository.addBlockedUser(group.id, blockXUserRequest.xId);
     });
+  }
+
+  blockXUserFromQueue(xUserId: number, modorixUserId: string): void {
+    const xUser = this.blockXUsersRepository.blockedXUsersById(xUserId);
+    if (!xUser) {
+      throw new XUserNotFoundError(xUserId);
+    }
+
+    const xUserNotInQueue = !xUser.blockQueueModorixUserIds.find((currModorixUserId) => currModorixUserId === modorixUserId);
+    if (xUserNotInQueue) {
+      throw new XUserNotInQueueError(xUserId);
+    }
+
+    xUser.blockQueueModorixUserIds = xUser.blockQueueModorixUserIds.filter((currModorixUserId) => currModorixUserId !== modorixUserId);
+    xUser.blockingModorixUserIds.push(modorixUserId);
+    this.blockXUsersRepository.updateXUser(xUser);
   }
 
   addToBlockQueue(xUserId: number, modorixUserId: string): void {

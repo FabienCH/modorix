@@ -13,6 +13,7 @@ import {
 import { BlockXUsersService } from '../domain/block-x-user.service';
 import { BlockReasonError } from '../domain/errors/block-reason-error';
 import { XUserNotFoundError } from '../domain/errors/x-user-not-found-error';
+import { XUserNotInQueueError } from '../domain/errors/x-user-not-in-queue';
 import { BlockXUserRequestDto, XUserDto } from './x-user-dto';
 
 @Controller()
@@ -26,6 +27,22 @@ export class BlockXUsersController {
       return this.blockXUsersService.blockXUser(xUser);
     } catch (error) {
       if (error instanceof BlockReasonError) {
+        throw new BadRequestException(error.message);
+      }
+      throw new HttpException('An unexpected error occurred', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Post('block-x-users/from-queue/:modorixUserId')
+  @HttpCode(201)
+  blockXUserFromQueue(@Param() { modorixUserId }: { modorixUserId: string }, @Body() { xUserId }: { xUserId: number }): void {
+    try {
+      return this.blockXUsersService.blockXUserFromQueue(xUserId, modorixUserId);
+    } catch (error) {
+      if (error instanceof XUserNotFoundError) {
+        throw new NotFoundException(error.message);
+      }
+      if (error instanceof XUserNotInQueueError) {
         throw new BadRequestException(error.message);
       }
       throw new HttpException('An unexpected error occurred', HttpStatus.INTERNAL_SERVER_ERROR);

@@ -1,6 +1,8 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { BlockXUsersService } from '../domain/block-x-user.service';
+import { XUserNotFoundError } from '../domain/errors/x-user-not-found-error';
+import { XUserNotInQueueError } from '../domain/errors/x-user-not-in-queue';
 import { BlockReasonsRepository } from '../infrastructure/block-reason.repository';
 import { BlockXUsersRepository } from '../infrastructure/block-x-user.repository';
 import { GroupsRepository } from '../infrastructure/groups.repository';
@@ -19,8 +21,9 @@ describe('BlockUserController', () => {
   }
 
   let blockXUserController: BlockXUsersController;
-  let blockXUserService: BlockXUsersService;
+  let blockXUsersService: BlockXUsersService;
   let blockXUserSpy: jest.SpyInstance;
+  let blockXUserFromQueueSpy: jest.SpyInstance;
   let addXUserToBlockQueueSpy: jest.SpyInstance;
 
   beforeEach(async () => {
@@ -30,9 +33,10 @@ describe('BlockUserController', () => {
     }).compile();
 
     blockXUserController = app.get<BlockXUsersController>(BlockXUsersController);
-    blockXUserService = app.get<BlockXUsersService>(BlockXUsersService);
-    blockXUserSpy = jest.spyOn(blockXUserService, 'blockXUser');
-    addXUserToBlockQueueSpy = jest.spyOn(blockXUserService, 'addToBlockQueue');
+    blockXUsersService = app.get<BlockXUsersService>(BlockXUsersService);
+    blockXUserSpy = jest.spyOn(blockXUsersService, 'blockXUser');
+    blockXUserFromQueueSpy = jest.spyOn(blockXUsersService, 'blockXUserFromQueue');
+    addXUserToBlockQueueSpy = jest.spyOn(blockXUsersService, 'addToBlockQueue');
   });
 
   describe('Block X user', () => {
@@ -57,6 +61,36 @@ describe('BlockUserController', () => {
       expect(() => {
         blockXUserController.blockXUser(getXUser(['12']));
       }).toThrow(new BadRequestException('could not block user "@1-username" because at least one reason does not exist'));
+    });
+  });
+
+  describe('Block X user from queue', () => {
+    it('should block a X user', () => {
+      blockXUserFromQueueSpy.mockImplementationOnce(() => {});
+
+      blockXUserController.blockXUserFromQueue({ modorixUserId: '1' }, { xUserId: 862285194 });
+
+      expect(blockXUserFromQueueSpy).toHaveBeenCalledWith(862285194, '1');
+    });
+
+    it('should not block a X user if he does not exist', () => {
+      blockXUserFromQueueSpy.mockImplementationOnce(() => {
+        throw new XUserNotFoundError(2);
+      });
+
+      expect(() => {
+        blockXUserController.blockXUserFromQueue({ modorixUserId: '1' }, { xUserId: 2 });
+      }).toThrow(new NotFoundException('X user with id "2" was not found'));
+    });
+
+    it("should not block a X user if he is not in Modorix user's block queue", () => {
+      blockXUserFromQueueSpy.mockImplementationOnce(() => {
+        throw new XUserNotInQueueError(862285194);
+      });
+
+      expect(() => {
+        blockXUserController.blockXUserFromQueue({ modorixUserId: '1' }, { xUserId: 862285194 });
+      }).toThrow(new BadRequestException('X user with id "862285194" is not in Modorix\'s user queue'));
     });
   });
 

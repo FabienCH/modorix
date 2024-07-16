@@ -7,6 +7,7 @@ import { GroupsRepository } from '../infrastructure/groups.repository';
 import { BlockXUsersService } from './block-x-user.service';
 import { BlockReasonError } from './errors/block-reason-error';
 import { XUserNotFoundError } from './errors/x-user-not-found-error';
+import { XUserNotInQueueError } from './errors/x-user-not-in-queue';
 
 describe('BlockXUsersService', () => {
   function getBlockXUserRequest(blockReasonIds: string[], blockedInGroupsIds = []): BlockXUserRequest {
@@ -115,6 +116,45 @@ describe('BlockXUsersService', () => {
       expect(() => {
         blockXUsersService.blockXUser(getBlockXUserRequest(['1', 'non existing reason']));
       }).toThrow(new BlockReasonError('@username', 'notFound'));
+    });
+  });
+
+  describe('Block a X user from the queue', () => {
+    it('should add X user to the block list', () => {
+      blockXUsersService.addToBlockQueue(862285194, '1');
+
+      blockXUsersService.blockXUserFromQueue(862285194, '1');
+
+      const blockedXUser = blockXUsersRepository.blockedXUsersById(862285194);
+      expect(blockedXUser).toEqual(expect.objectContaining({ blockingModorixUserIds: ['2', '1'], blockQueueModorixUserIds: [] }));
+    });
+
+    it('should not block a X user if he does not exist', () => {
+      expect(() => {
+        blockXUsersService.blockXUserFromQueue(1, '1');
+      }).toThrow(new XUserNotFoundError(1));
+    });
+
+    it("should not block a X user if he is not in Modorix user's block queue", () => {
+      blockXUsersRepository.blockXUser({
+        xId: 2,
+        xUsername: '@userNotInModorixUserQueue',
+        blockedAt: '2024-06-19T18:41:45Z',
+        blockReasons: [
+          { id: '0', label: 'Harassment' },
+          { id: '2', label: 'Spreading fake news' },
+        ],
+        blockedInGroups: [
+          { id: 'GE', name: 'Germany' },
+          { id: 'scientists', name: 'Scientists' },
+        ],
+        blockingModorixUserIds: ['2'],
+        blockQueueModorixUserIds: [],
+      });
+
+      expect(() => {
+        blockXUsersService.blockXUserFromQueue(2, '1');
+      }).toThrow(new XUserNotInQueueError(2));
     });
   });
 
