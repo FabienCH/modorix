@@ -2,6 +2,7 @@ export default {
   rootDir: 'src',
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
+  clearMocks: true,
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
   },

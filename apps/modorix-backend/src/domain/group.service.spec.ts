@@ -71,7 +71,7 @@ describe('GroupsService', () => {
   describe('Finding a group by id', () => {
     beforeEach(() => {
       blockUsersRepository.blockXUser({
-        xId: 1,
+        xId: '1',
         xUsername: '@username',
         blockedAt: '2024-06-14T19:01:45Z',
         blockReasons: [{ id: '2', label: 'Spreading fake news' }],
@@ -80,7 +80,7 @@ describe('GroupsService', () => {
         blockQueueModorixUserIds: [],
       });
 
-      groupsRepository.addBlockedUser('UK', 1);
+      groupsRepository.addBlockedUser('UK', '1');
     });
 
     it('give the expected group', () => {
@@ -93,7 +93,7 @@ describe('GroupsService', () => {
         isJoined: false,
         blockedXUsers: [
           {
-            xId: 1,
+            xId: '1',
             xUsername: '@username',
             blockedAt: '2024-06-14T19:01:45Z',
             blockReasons: [{ id: '2', label: 'Spreading fake news' }],

@@ -1,19 +1,28 @@
 /// <reference types="vite/client" />
-import { MessageIds } from './core/message-ids.enum';
+import { MessageIds } from '../../shared/messages/message-ids.enum';
+
+const userBlocked = MessageIds.USER_BLOCKED;
+const setHeaders = MessageIds.SET_HEADERS;
 
 declare global {
   interface CustomEventMap extends DocumentEventMap {
-    [MessageIds.USER_BLOCKED]: UserBlockedSuccessEvent;
+    userBlocked: UserBlockedSuccessEvent;
+    setHeaders: SetHeadersEvent;
   }
 
-  class UserBlockedSuccessEvent extends Event implements CustomEvent<UserBlockedSuccessMessageData> {
+  class UserBlockedSuccessEvent extends Event implements CustomEvent {
     initCustomEvent(
       type: string,
       bubbles?: boolean | undefined,
       cancelable?: boolean | undefined,
-      detail?: UserBlockedSuccessMessageData | undefined,
+      detail: UserBlockedSuccessMessageData,
     ): void;
     detail: UserBlockedSuccessMessageData;
+  }
+
+  class SetHeadersEvent extends Event implements CustomEvent {
+    initCustomEvent(type: string, bubbles?: boolean | undefined, cancelable?: boolean | undefined, detail: SetHeadersMessageData): void;
+    detail: SetHeadersMessageData;
   }
 
   interface Document {

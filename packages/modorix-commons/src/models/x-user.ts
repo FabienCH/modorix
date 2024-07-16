@@ -1,7 +1,7 @@
 import { BlockReason } from './block-reason';
 
 interface BaseXUser {
-  xId: number;
+  xId: string;
   xUsername: string;
   blockedAt: string;
 }

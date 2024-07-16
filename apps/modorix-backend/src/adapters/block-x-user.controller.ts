@@ -35,7 +35,7 @@ export class BlockXUsersController {
 
   @Post('block-x-users/from-queue/:modorixUserId')
   @HttpCode(201)
-  blockXUserFromQueue(@Param() { modorixUserId }: { modorixUserId: string }, @Body() { xUserId }: { xUserId: number }): void {
+  blockXUserFromQueue(@Param() { modorixUserId }: { modorixUserId: string }, @Body() { xUserId }: { xUserId: string }): void {
     try {
       return this.blockXUsersService.blockXUserFromQueue(xUserId, modorixUserId);
     } catch (error) {
@@ -51,7 +51,7 @@ export class BlockXUsersController {
 
   @Post('block-x-users/queue/:modorixUserId')
   @HttpCode(201)
-  addXUserToBlockQueue(@Param() { modorixUserId }: { modorixUserId: string }, @Body() { xUserId }: { xUserId: number }): void {
+  addXUserToBlockQueue(@Param() { modorixUserId }: { modorixUserId: string }, @Body() { xUserId }: { xUserId: string }): void {
     try {
       return this.blockXUsersService.addToBlockQueue(xUserId, modorixUserId);
     } catch (error) {

@@ -1,6 +1,8 @@
 import { BlockXUserRequest } from '@modorix-commons/models/x-user';
 
-export function saveBlockUser(xId: number, xUsername: string, blockReasonIds: string[]): Promise<Response> {
+const blockedXUsersBaseUrl = 'http://localhost:3000/api/block-x-users';
+
+export async function saveBlockUser(xId: string, xUsername: string, blockReasonIds: string[]): Promise<Response> {
   const bodyData: BlockXUserRequest = {
     xId,
     xUsername,
@@ -8,9 +10,17 @@ export function saveBlockUser(xId: number, xUsername: string, blockReasonIds: st
     blockReasonIds,
     blockingModorixUserId: '1',
   };
-  return fetch('http://localhost:3000/api/block-x-users', {
+  return fetch(blockedXUsersBaseUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(bodyData),
+  });
+}
+
+export async function updateBlockedUser(xUserId: string): Promise<Response> {
+  return fetch(`${blockedXUsersBaseUrl}/from-queue/1`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ xUserId }),
   });
 }

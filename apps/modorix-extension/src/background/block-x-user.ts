@@ -20,7 +20,7 @@ export async function blockXUserInNewTab(data: BlockUserMessageData): Promise<ch
   return blockUserTab;
 }
 
-export async function handleRequestBlockedUser(data: RequestBlockUserMessageData) {
+export async function handleRequestBlockUser(data: RequestBlockUserMessageData) {
   requestBlockUserMessageData = data;
 }
 

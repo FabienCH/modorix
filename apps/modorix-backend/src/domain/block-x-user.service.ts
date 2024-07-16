@@ -44,7 +44,7 @@ export class BlockXUsersService {
     });
   }
 
-  blockXUserFromQueue(xUserId: number, modorixUserId: string): void {
+  blockXUserFromQueue(xUserId: string, modorixUserId: string): void {
     const xUser = this.blockXUsersRepository.blockedXUsersById(xUserId);
     if (!xUser) {
       throw new XUserNotFoundError(xUserId);
@@ -60,7 +60,7 @@ export class BlockXUsersService {
     this.blockXUsersRepository.updateXUser(xUser);
   }
 
-  addToBlockQueue(xUserId: number, modorixUserId: string): void {
+  addToBlockQueue(xUserId: string, modorixUserId: string): void {
     const xUser = this.blockXUsersRepository.blockedXUsersById(xUserId);
     if (!xUser) {
       throw new XUserNotFoundError(xUserId);

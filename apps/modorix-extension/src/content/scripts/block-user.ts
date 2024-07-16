@@ -6,9 +6,9 @@ import {
   sendXUserBlockedSuccessMessage,
 } from '../infrastructure/messages-handlers/messages-sender';
 
-function injectRequestListenerScript() {
+function injectBlockRequestListenerScript() {
   const script = document.createElement('script');
-  script.src = chrome.runtime.getURL('src/scripts/request-listener.js');
+  script.src = chrome.runtime.getURL('src/content/scripts/block-request-listener.js');
   script.onload = function () {
     script.remove();
   };
@@ -16,7 +16,7 @@ function injectRequestListenerScript() {
 }
 
 (async () => {
-  injectRequestListenerScript();
+  injectBlockRequestListenerScript();
   const usernameContainer = await lookForHtmlElement("[data-testid='UserName']");
   const xUsername =
     [...(usernameContainer?.querySelectorAll('span') ?? [])].find((spanElem) => spanElem?.innerText.startsWith('@'))?.innerText ?? '';
@@ -36,7 +36,7 @@ function injectRequestListenerScript() {
     await sendRequestBlockXUserMessage(xUsername, blockReasonIds);
     document.addEventListener(
       MessageIds.USER_BLOCKED,
-      async (event: UserBlockedSuccessEvent) => {
+      async (event) => {
         await sendXUserBlockedSuccessMessage(event);
       },
       { once: true },

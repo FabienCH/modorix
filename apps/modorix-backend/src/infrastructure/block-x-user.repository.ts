@@ -30,11 +30,11 @@ export class BlockXUsersRepository {
     return this.blockedXUsers;
   }
 
-  blockedXUsersByIds(ids: number[]): XUser[] {
+  blockedXUsersByIds(ids: string[]): XUser[] {
     return this.blockedXUsers.filter((blockedUser) => ids.includes(blockedUser.xId));
   }
 
-  blockedXUsersById(id: number): XUser | undefined {
+  blockedXUsersById(id: string): XUser | undefined {
     return this.blockedXUsers.find((blockedUser) => blockedUser.xId === id);
   }
 }

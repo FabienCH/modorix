@@ -35,8 +35,8 @@ import { MessageIds } from '../../shared/messages/message-ids.enum';
         if (this.responseType !== 'blob' && this.responseText) {
           try {
             const response = JSON.parse(this.responseText);
-            if ('id' in response && 'screen_name' in response) {
-              const xUserId = response.id;
+            if ('id_str' in response && 'screen_name' in response) {
+              const xUserId = response.id_str;
               const data: UserBlockedSuccessMessageData = { status: 'SUCCESS', xUserId, xUsername: response.screen_name };
               document.dispatchEvent(new CustomEvent(MessageIds.USER_BLOCKED, { detail: data }));
             }
