@@ -21,7 +21,7 @@ export type XUsersData = XUserRow[];
 export const mapToXUsersData = ({ BadgesComponent, blockedUsers, additionalRows }: XUsersRowProps): XUsersData => {
   return blockedUsers.map((user) => {
     const xUsersData: XUserRow = [
-      user.id,
+      user.xUsername,
       new Date(user.blockedAt).toLocaleDateString(),
       <BadgesComponent items={user.blockReasons} badgeVariant="secondary"></BadgesComponent>,
     ];

@@ -1,5 +1,6 @@
 import {
   BlockUserMessageData,
+  RequestBlockUserMessageData,
   UserBlockedMessageData,
   isUserBlockedFailureData,
   isUserBlockedSuccessData,
@@ -7,6 +8,7 @@ import {
 import { saveBlockUser } from './infrastructure/gateways/block-user-gateway';
 
 let blockUserTab: chrome.tabs.Tab | null = null;
+let requestBlockUserMessageData: RequestBlockUserMessageData | null = null;
 
 export async function blockXUserInNewTab(data: BlockUserMessageData): Promise<chrome.tabs.Tab> {
   blockUserTab = await chrome.tabs.create({
@@ -18,12 +20,16 @@ export async function blockXUserInNewTab(data: BlockUserMessageData): Promise<ch
   return blockUserTab;
 }
 
+export async function handleRequestBlockUser(data: RequestBlockUserMessageData) {
+  requestBlockUserMessageData = data;
+}
+
 export async function handleBlockedUser(data: UserBlockedMessageData): Promise<void> {
-  if (isUserBlockedSuccessData(data)) {
+  if (isUserBlockedSuccessData(data) && requestBlockUserMessageData?.xUsername === data.xUsername) {
     try {
-      await saveBlockUser(data.userId, data.blockReasonIds);
+      await saveBlockUser(data.xUserId, data.xUsername, requestBlockUserMessageData.blockReasonIds);
     } catch (error) {
-      console.error(`Modorix: Could not saved blocked user ${data.userId}`);
+      console.error(`Modorix: Could not saved blocked user ${data.xUsername}`);
     }
   }
   if (isUserBlockedFailureData(data)) {

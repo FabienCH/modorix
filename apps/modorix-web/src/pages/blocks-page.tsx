@@ -42,7 +42,7 @@ export default function BlocksPage() {
   }, [blockQueueCandidates]);
 
   async function addXUserToQueue(xUser: XUser): Promise<void> {
-    await addToBlockQueue('1', xUser.id);
+    await addToBlockQueue('1', xUser.xId);
     setBlockQueueCandidates(await getBlockQueueCandidates('1'));
   }
 

@@ -1,6 +1,16 @@
-import { blockXUserInNewTab, handleBlockedUser } from './background/block-x-user';
-import { onBlockUserMessage, onUserBlockedMessage } from './background/infrastructure/messages-handlers/messages-listener';
-import { sendNewXTabToListenLoadedMessage } from './background/infrastructure/messages-handlers/messages-sender';
+import { blockXUserInNewTab, handleBlockedUser, handleRequestBlockUser } from './background/block-x-user';
+import {
+  onBlockUserMessage,
+  onRequestBlockUserMessage,
+  onRequestRunBlocksQueueMessage,
+  onUserBlockedMessage,
+} from './background/infrastructure/messages-handlers/messages-listener';
+import {
+  sendBlockQueueUpdateMessage,
+  sendNewXTabToListenLoadedMessage,
+} from './background/infrastructure/messages-handlers/messages-sender';
+import { runBlocksQueue } from './background/usecases/run-blocks-queue-usecase';
+import { BlocksQueueUpdateMessageData } from './shared/messages/event-message';
 
 console.log('background loaded !');
 
@@ -17,5 +27,12 @@ chrome.tabs.onUpdated.addListener(async (tabId: number, changes: chrome.tabs.Tab
 
 onBlockUserMessage(async (data) => {
   blockUserTab = await blockXUserInNewTab(data);
+});
+onRequestBlockUserMessage(async (data) => await handleRequestBlockUser(data));
+onRequestRunBlocksQueueMessage(async (data) => {
+  const notify = (queueUpdateData: BlocksQueueUpdateMessageData) => {
+    sendBlockQueueUpdateMessage(queueUpdateData);
+  };
+  await runBlocksQueue(data.blockQueue, notify);
 });
 onUserBlockedMessage(async (data) => await handleBlockedUser(data));

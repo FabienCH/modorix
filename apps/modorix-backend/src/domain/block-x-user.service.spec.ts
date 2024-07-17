@@ -7,11 +7,13 @@ import { GroupsRepository } from '../infrastructure/groups.repository';
 import { BlockXUsersService } from './block-x-user.service';
 import { BlockReasonError } from './errors/block-reason-error';
 import { XUserNotFoundError } from './errors/x-user-not-found-error';
+import { XUserNotInQueueError } from './errors/x-user-not-in-queue';
 
 describe('BlockXUsersService', () => {
   function getBlockXUserRequest(blockReasonIds: string[], blockedInGroupsIds = []): BlockXUserRequest {
     return {
-      id: '@userId',
+      xId: '1',
+      xUsername: '@username',
       blockedAt: '2024-05-27T18:01:45Z',
       blockReasonIds,
       blockedInGroupsIds,
@@ -20,7 +22,8 @@ describe('BlockXUsersService', () => {
   }
   function checkExpectedXUser(blockedXUser: XUser | undefined, blockReasons: BlockReason[]) {
     expect(blockedXUser).toEqual({
-      id: '@userId',
+      xId: '1',
+      xUsername: '@username',
       blockedAt: '2024-05-27T18:01:45Z',
       blockReasons,
       blockingModorixUserIds: ['1'],
@@ -43,7 +46,8 @@ describe('BlockXUsersService', () => {
     groupsRepository = app.get<GroupsRepository>(GroupsRepository);
 
     blockXUsersRepository.blockXUser({
-      id: '@UltraEurope',
+      xId: '862285194',
+      xUsername: '@UltraEurope',
       blockedAt: '2024-06-19T18:41:45Z',
       blockReasons: [
         { id: '0', label: 'Harassment' },
@@ -62,7 +66,7 @@ describe('BlockXUsersService', () => {
     it('should add X user to the block list', () => {
       blockXUsersService.blockXUser(getBlockXUserRequest(['1']));
 
-      const blockedXUser = blockXUsersRepository.blockedXUsersList('1').find((xUser) => xUser.id === '@userId');
+      const blockedXUser = blockXUsersRepository.blockedXUsersList('1').find((xUser) => xUser.xUsername === '@username');
 
       checkExpectedXUser(blockedXUser, [
         {
@@ -76,7 +80,7 @@ describe('BlockXUsersService', () => {
       blockXUsersService.blockXUser(getBlockXUserRequest(['1']));
 
       const groupsBlockedXUserIds = groupsRepository.groupsList().flatMap((group) => group.blockedXUserIds);
-      const expectedIds = groupsBlockedXUserIds.map(() => '@userId');
+      const expectedIds = groupsBlockedXUserIds.map(() => '@username');
 
       expect(groupsBlockedXUserIds).toEqual(expectedIds);
     });
@@ -84,7 +88,7 @@ describe('BlockXUsersService', () => {
     it('should add X user to the block list with multiple reasons', () => {
       blockXUsersService.blockXUser(getBlockXUserRequest(['1', '3', '6']));
 
-      const blockedXUser = blockXUsersRepository.blockedXUsersList('1').find((user) => user.id === '@userId');
+      const blockedXUser = blockXUsersRepository.blockedXUsersList('1').find((user) => user.xUsername === '@username');
 
       checkExpectedXUser(blockedXUser, [
         {
@@ -105,20 +109,60 @@ describe('BlockXUsersService', () => {
     it('should not add X user to the block list if no reasons', () => {
       expect(() => {
         blockXUsersService.blockXUser(getBlockXUserRequest([]));
-      }).toThrow(new BlockReasonError('@userId', 'empty'));
+      }).toThrow(new BlockReasonError('@username', 'empty'));
     });
 
     it('should not add X user to the block list if at least one reason does not exist', () => {
       expect(() => {
         blockXUsersService.blockXUser(getBlockXUserRequest(['1', 'non existing reason']));
-      }).toThrow(new BlockReasonError('@userId', 'notFound'));
+      }).toThrow(new BlockReasonError('@username', 'notFound'));
+    });
+  });
+
+  describe('Block a X user from the queue', () => {
+    it('should add X user to the block list', () => {
+      blockXUsersService.addToBlockQueue('862285194', '1');
+
+      blockXUsersService.blockXUserFromQueue('862285194', '1');
+
+      const blockedXUser = blockXUsersRepository.blockedXUsersById('862285194');
+      expect(blockedXUser).toEqual(expect.objectContaining({ blockingModorixUserIds: ['2', '1'], blockQueueModorixUserIds: [] }));
+    });
+
+    it('should not block a X user if he does not exist', () => {
+      expect(() => {
+        blockXUsersService.blockXUserFromQueue('1', '1');
+      }).toThrow(new XUserNotFoundError('1'));
+    });
+
+    it("should not block a X user if he is not in Modorix user's block queue", () => {
+      blockXUsersRepository.blockXUser({
+        xId: '2',
+        xUsername: '@userNotInModorixUserQueue',
+        blockedAt: '2024-06-19T18:41:45Z',
+        blockReasons: [
+          { id: '0', label: 'Harassment' },
+          { id: '2', label: 'Spreading fake news' },
+        ],
+        blockedInGroups: [
+          { id: 'GE', name: 'Germany' },
+          { id: 'scientists', name: 'Scientists' },
+        ],
+        blockingModorixUserIds: ['2'],
+        blockQueueModorixUserIds: [],
+      });
+
+      expect(() => {
+        blockXUsersService.blockXUserFromQueue('2', '1');
+      }).toThrow(new XUserNotInQueueError('2'));
     });
   });
 
   describe('Retrieve X users block queue candidates', () => {
     beforeEach(() => {
       blockXUsersRepository.blockXUser({
-        id: '@userId',
+        xId: '1',
+        xUsername: '@username',
         blockedAt: '2024-05-27T18:01:45Z',
         blockReasons: [{ id: '1', label: 'Racism / Xenophobia' }],
         blockedInGroups: [{ id: 'US', name: 'United States' }],
@@ -132,7 +176,8 @@ describe('BlockXUsersService', () => {
 
       expect(blockQueueCandidates).toEqual([
         {
-          id: '@UltraEurope',
+          xId: '862285194',
+          xUsername: '@UltraEurope',
           blockedAt: '2024-06-19T18:41:45Z',
           blockReasons: [
             { id: '0', label: 'Harassment' },
@@ -149,8 +194,9 @@ describe('BlockXUsersService', () => {
     });
 
     it('should not list X users in current Modorix user block queue', () => {
-      const userInBLockQueue = {
-        id: '@UltraEurope',
+      const userInBlockQueue = {
+        xId: '862285194',
+        xUsername: '@UltraEurope',
         blockedAt: '2024-06-19T18:41:45Z',
         blockReasons: [
           { id: '0', label: 'Harassment' },
@@ -163,7 +209,7 @@ describe('BlockXUsersService', () => {
         blockingModorixUserIds: ['2'],
         blockQueueModorixUserIds: ['1'],
       };
-      blockXUsersRepository.updateXUser(userInBLockQueue);
+      blockXUsersRepository.updateXUser(userInBlockQueue);
       const blockQueueCandidates = blockXUsersService.blockQueueCandidates('1');
 
       expect(blockQueueCandidates).toEqual([]);
@@ -172,7 +218,8 @@ describe('BlockXUsersService', () => {
 
   describe('Retrieve X users block queue', () => {
     const userInBlockQueue = {
-      id: '@UltraEurope',
+      xId: '862285194',
+      xUsername: '@UltraEurope',
       blockedAt: '2024-06-19T18:41:45Z',
       blockReasons: [
         { id: '0', label: 'Harassment' },
@@ -188,7 +235,8 @@ describe('BlockXUsersService', () => {
 
     beforeEach(() => {
       blockXUsersRepository.blockXUser({
-        id: '@userId',
+        xId: '1',
+        xUsername: '@username',
         blockedAt: '2024-05-27T18:01:45Z',
         blockReasons: [{ id: '1', label: 'Racism / Xenophobia' }],
         blockedInGroups: [{ id: 'US', name: 'United States' }],
@@ -208,12 +256,13 @@ describe('BlockXUsersService', () => {
 
   describe('Add a X user to block queue', () => {
     it('should add X user to Modorix user block queue', () => {
-      blockXUsersService.addToBlockQueue('@UltraEurope', 'modorix-user-id');
+      blockXUsersService.addToBlockQueue('862285194', 'modorix-user-id');
 
-      const blockedXUser = blockXUsersRepository.blockedXUsersByIds(['@UltraEurope'])[0];
+      const blockedXUser = blockXUsersRepository.blockedXUsersByIds(['862285194'])[0];
 
       expect(blockedXUser).toEqual({
-        id: '@UltraEurope',
+        xId: '862285194',
+        xUsername: '@UltraEurope',
         blockedAt: '2024-06-19T18:41:45Z',
         blockReasons: [
           { id: '0', label: 'Harassment' },
@@ -230,8 +279,8 @@ describe('BlockXUsersService', () => {
 
     it("should not add X user to block queue if he hasn't been blocked by any Modorix user", () => {
       expect(() => {
-        blockXUsersService.addToBlockQueue('@not-blocked-x-user', 'modorix-user-id');
-      }).toThrow(new XUserNotFoundError('@not-blocked-x-user'));
+        blockXUsersService.addToBlockQueue('0', 'modorix-user-id');
+      }).toThrow(new XUserNotFoundError('0'));
     });
   });
 });

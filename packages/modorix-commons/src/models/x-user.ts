@@ -1,13 +1,12 @@
 import { BlockReason } from './block-reason';
 
 interface BaseXUser {
-  id: string;
+  xId: string;
+  xUsername: string;
   blockedAt: string;
 }
 
 export interface BlockXUserRequest extends BaseXUser {
-  id: string;
-  blockedAt: string;
   blockReasonIds: string[];
   blockedInGroupsIds?: string[];
   blockingModorixUserId: string;

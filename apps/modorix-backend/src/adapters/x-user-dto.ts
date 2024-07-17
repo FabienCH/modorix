@@ -5,7 +5,11 @@ import { IsArray, IsDateString, IsNotEmpty, IsOptional, IsString } from 'class-v
 export class BlockXUserRequestDto implements BlockXUserRequest {
   @IsNotEmpty()
   @IsString()
-  id!: string;
+  xId!: string;
+
+  @IsNotEmpty()
+  @IsString()
+  xUsername!: string;
 
   @IsNotEmpty()
   @IsDateString()
@@ -28,7 +32,11 @@ export class BlockXUserRequestDto implements BlockXUserRequest {
 export class XUserDto implements XUser {
   @IsNotEmpty()
   @IsString()
-  id!: string;
+  xId!: string;
+
+  @IsNotEmpty()
+  @IsString()
+  xUsername!: string;
 
   @IsNotEmpty()
   @IsDateString()

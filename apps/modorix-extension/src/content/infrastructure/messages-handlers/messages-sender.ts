@@ -1,16 +1,23 @@
-import { BlockUserMessageData, UserBlockedMessageFailureData, UserBlockedMessageSuccessData } from '../../../shared/messages/event-message';
+import { BlockUserMessageData, RequestBlockUserMessageData, UserBlockedFailureMessageData } from '../../../shared/messages/event-message';
 import { MessageIds } from '../../../shared/messages/message-ids.enum';
 
-export function sendXUserBlockedSuccessMessage(userName: string, blockReasonIds: string[]): Promise<void> {
-  const data: UserBlockedMessageSuccessData = { status: 'SUCCESS', userId: userName, blockReasonIds };
+export function sendRequestBlockXUserMessage(xUsername: string, blockReasonIds: string[]): Promise<void> {
+  const data: RequestBlockUserMessageData = { xUsername: xUsername.replace('@', ''), blockReasonIds };
   return chrome.runtime.sendMessage('', {
-    id: MessageIds.USER_BLOCKED,
+    id: MessageIds.REQUEST_BLOCK_USER,
     data,
   });
 }
 
+export function sendXUserBlockedSuccessMessage(event: UserBlockedSuccessEvent): Promise<void> {
+  return chrome.runtime.sendMessage('', {
+    id: MessageIds.USER_BLOCKED,
+    data: event.detail,
+  });
+}
+
 export function sendXUserBlockedFailureMessage(userName: string): Promise<void> {
-  const data: UserBlockedMessageFailureData = {
+  const data: UserBlockedFailureMessageData = {
     status: 'FAILURE',
     message: `Couldn't block user ${userName}`,
   };

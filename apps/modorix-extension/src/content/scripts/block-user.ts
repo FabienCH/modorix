@@ -1,10 +1,25 @@
 import { lookForHtmlElement } from '../../shared/html-utils/look-for-html-element';
-import { sendXUserBlockedFailureMessage, sendXUserBlockedSuccessMessage } from '../infrastructure/messages-handlers/messages-sender';
+import { MessageIds } from '../../shared/messages/message-ids.enum';
+import {
+  sendRequestBlockXUserMessage,
+  sendXUserBlockedFailureMessage,
+  sendXUserBlockedSuccessMessage,
+} from '../infrastructure/messages-handlers/messages-sender';
+
+function injectBlockRequestListenerScript() {
+  const script = document.createElement('script');
+  script.src = chrome.runtime.getURL('src/content/scripts/block-request-listener.js');
+  script.onload = function () {
+    script.remove();
+  };
+  (document.head || document.documentElement).appendChild(script);
+}
 
 (async () => {
-  const userNameContainer = await lookForHtmlElement("[data-testid='UserName']");
-  const userName =
-    [...(userNameContainer?.querySelectorAll('span') ?? [])].find((spanElem) => spanElem?.innerText.startsWith('@'))?.innerText ?? '';
+  injectBlockRequestListenerScript();
+  const usernameContainer = await lookForHtmlElement("[data-testid='UserName']");
+  const xUsername =
+    [...(usernameContainer?.querySelectorAll('span') ?? [])].find((spanElem) => spanElem?.innerText.startsWith('@'))?.innerText ?? '';
 
   const plusBtn = await lookForHtmlElement("[data-testid='userActions']");
   plusBtn?.click();
@@ -18,8 +33,15 @@ import { sendXUserBlockedFailureMessage, sendXUserBlockedSuccessMessage } from '
     const blockReasonIdsStr = await chrome.storage.local.get('blockReasonIds');
     const blockReasonIds = JSON.parse(blockReasonIdsStr.blockReasonIds);
     confirmBlockBtn.click();
-    await sendXUserBlockedSuccessMessage(userName, blockReasonIds);
+    await sendRequestBlockXUserMessage(xUsername, blockReasonIds);
+    document.addEventListener(
+      MessageIds.USER_BLOCKED,
+      async (event) => {
+        await sendXUserBlockedSuccessMessage(event);
+      },
+      { once: true },
+    );
   } else {
-    await sendXUserBlockedFailureMessage(userName);
+    await sendXUserBlockedFailureMessage(xUsername);
   }
 })();
