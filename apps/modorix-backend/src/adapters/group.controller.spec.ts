@@ -1,8 +1,8 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { GroupsService } from '../domain/group.service';
-import { BlockXUsersRepository } from '../infrastructure/block-x-user.repository';
-import { GroupsRepository } from '../infrastructure/groups.repository';
+import { BlockXUsersRepository } from '../infrastructure/repositories/block-x-user.repository';
+import { GroupsRepository } from '../infrastructure/repositories/groups.repository';
 import { GroupsController } from './group.controller';
 
 describe('GroupsController', () => {

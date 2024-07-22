@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BlockXUsersRepository } from '../infrastructure/block-x-user.repository';
-import { GroupsRepository } from '../infrastructure/groups.repository';
+import { BlockXUsersRepository } from '../infrastructure/repositories/block-x-user.repository';
+import { GroupsRepository } from '../infrastructure/repositories/groups.repository';
 import { GroupNotFoundError } from './errors/group-not-found-error';
 import { GroupsService } from './group.service';
 

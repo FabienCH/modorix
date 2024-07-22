@@ -1,7 +1,7 @@
 import { Group, GroupDetails } from '@modorix-commons/models/group';
 import { Injectable } from '@nestjs/common';
-import { BlockXUsersRepository } from '../infrastructure/block-x-user.repository';
-import { GroupsRepository } from '../infrastructure/groups.repository';
+import { BlockXUsersRepository } from '../infrastructure/repositories/block-x-user.repository';
+import { GroupsRepository } from '../infrastructure/repositories/groups.repository';
 import { GroupNotFoundError } from './errors/group-not-found-error';
 
 @Injectable()

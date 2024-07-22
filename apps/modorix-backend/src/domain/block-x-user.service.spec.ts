@@ -1,9 +1,9 @@
 import { BlockReason } from '@modorix-commons/models/block-reason';
 import { BlockXUserRequest, XUser } from '@modorix-commons/models/x-user';
 import { Test, TestingModule } from '@nestjs/testing';
-import { BlockReasonsRepository } from '../infrastructure/block-reason.repository';
-import { BlockXUsersRepository } from '../infrastructure/block-x-user.repository';
-import { GroupsRepository } from '../infrastructure/groups.repository';
+import { BlockReasonsRepository } from '../infrastructure/repositories/block-reason.repository';
+import { BlockXUsersRepository } from '../infrastructure/repositories/block-x-user.repository';
+import { GroupsRepository } from '../infrastructure/repositories/groups.repository';
 import { BlockXUsersService } from './block-x-user.service';
 import { BlockReasonError } from './errors/block-reason-error';
 import { XUserNotFoundError } from './errors/x-user-not-found-error';

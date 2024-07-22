@@ -3,9 +3,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { BlockXUsersService } from '../domain/block-x-user.service';
 import { XUserNotFoundError } from '../domain/errors/x-user-not-found-error';
 import { XUserNotInQueueError } from '../domain/errors/x-user-not-in-queue';
-import { BlockReasonsRepository } from '../infrastructure/block-reason.repository';
-import { BlockXUsersRepository } from '../infrastructure/block-x-user.repository';
-import { GroupsRepository } from '../infrastructure/groups.repository';
+import { BlockReasonsRepository } from '../infrastructure/repositories/block-reason.repository';
+import { BlockXUsersRepository } from '../infrastructure/repositories/block-x-user.repository';
+import { GroupsRepository } from '../infrastructure/repositories/groups.repository';
 import { BlockXUsersController } from './block-x-user.controller';
 import { BlockXUserRequestDto } from './x-user-dto';
 

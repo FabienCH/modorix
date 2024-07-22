@@ -5,9 +5,9 @@ import { BlockXUsersController } from '../adapters/block-x-user.controller';
 import { GroupsController } from '../adapters/group.controller';
 import { BlockXUsersService } from '../domain/block-x-user.service';
 import { GroupsService } from '../domain/group.service';
-import { BlockReasonsRepository } from './block-reason.repository';
-import { BlockXUsersRepository } from './block-x-user.repository';
-import { GroupsRepository } from './groups.repository';
+import { BlockReasonsRepository } from './repositories/block-reason.repository';
+import { BlockXUsersRepository } from './repositories/block-x-user.repository';
+import { GroupsRepository } from './repositories/groups.repository';
 
 @Module({
   imports: [],
