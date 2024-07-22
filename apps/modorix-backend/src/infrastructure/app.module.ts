@@ -1,21 +1,28 @@
-import { Module } from '@nestjs/common';
+import { Inject, Module } from '@nestjs/common';
+import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { BlockReasonsController } from 'src/adapters/block-reasons.controller';
 import { BlockReasonsService } from 'src/domain/block-reason.service';
 import { BlockXUsersController } from '../adapters/block-x-user.controller';
 import { GroupsController } from '../adapters/group.controller';
 import { BlockXUsersService } from '../domain/block-x-user.service';
 import { GroupsService } from '../domain/group.service';
+import { DrizzleModule, PG_CONNECTION } from './database/drizzle.module';
+import * as schema from './database/schema';
+import { pgXUsers } from './database/schema';
 import { BlockReasonsRepository } from './repositories/block-reason.repository';
 import { BlockXUsersRepository } from './repositories/block-x-user.repository';
 import { GroupsRepository } from './repositories/groups.repository';
 
 @Module({
-  imports: [],
+  imports: [DrizzleModule],
   controllers: [BlockXUsersController, GroupsController, BlockReasonsController],
   providers: [BlockXUsersService, BlockXUsersRepository, GroupsService, GroupsRepository, BlockReasonsService, BlockReasonsRepository],
 })
 export class AppModule {
-  constructor(private readonly blockXUserRepository: BlockXUsersRepository) {
+  constructor(
+    @Inject(PG_CONNECTION) private pgConnection: NodePgDatabase<typeof schema>,
+    private readonly blockXUserRepository: BlockXUsersRepository,
+  ) {
     this.blockXUserRepository.blockXUser({
       xId: '862285194',
       xUsername: '@UltraEurope',
@@ -56,5 +63,11 @@ export class AppModule {
       blockedInGroups: [{ id: 'FR', name: 'France' }],
       blockQueueModorixUserIds: [],
     });
+
+    this.testDb();
+  }
+
+  private async testDb() {
+    console.log('pgConnection', await this.pgConnection.select().from(pgXUsers));
   }
 }
