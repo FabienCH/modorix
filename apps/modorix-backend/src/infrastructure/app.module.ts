@@ -2,16 +2,19 @@ import { Inject, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { BlockReasonsController } from 'src/adapters/block-reasons.controller';
-import { BlockReasonsService } from 'src/domain/block-reason.service';
+import { BlockReasonsRepositoryToken } from '../../domain/repositories/block-reason.repository';
+import { BlockXUsersRepositoryToken } from '../../domain/repositories/block-x-user.repository';
+import { GroupsRepositoryToken } from '../../domain/repositories/groups.repository';
+import { BlockReasonsService } from '../../domain/usecases/block-reason.service';
 import { BlockXUsersController } from '../adapters/block-x-user.controller';
 import { GroupsController } from '../adapters/group.controller';
-import { BlockXUsersService } from '../domain/block-x-user.service';
-import { GroupsService } from '../domain/group.service';
+import { BlockXUsersService } from '../domain/usecases/block-x-user.service';
+import { GroupsService } from '../domain/usecases/group.service';
 import { DrizzleModule, PG_CONNECTION } from './database/drizzle.module';
 import { pgXUsers } from './database/schema/xUser';
-import { BlockReasonsRepository } from './repositories/block-reason.repository';
-import { BlockXUsersRepository } from './repositories/block-x-user.repository';
-import { GroupsRepository } from './repositories/groups.repository';
+import { BlockReasonsInMemoryRepository } from './repositories/block-reason-in-memory.repository';
+import { BlockXUsersInMemoryRepository } from './repositories/block-x-user-in-memory.repository';
+import { GroupsInMemoryRepository } from './repositories/groups-in-memory.repository';
 
 const ENV = process.env.NODE_ENV;
 
@@ -23,12 +26,19 @@ const ENV = process.env.NODE_ENV;
     }),
   ],
   controllers: [BlockXUsersController, GroupsController, BlockReasonsController],
-  providers: [BlockXUsersService, BlockXUsersRepository, GroupsService, GroupsRepository, BlockReasonsService, BlockReasonsRepository],
+  providers: [
+    BlockXUsersService,
+    GroupsService,
+    BlockReasonsService,
+    { provide: GroupsRepositoryToken, useClass: GroupsInMemoryRepository },
+    { provide: BlockXUsersRepositoryToken, useClass: BlockXUsersInMemoryRepository },
+    { provide: BlockReasonsRepositoryToken, useClass: BlockReasonsInMemoryRepository },
+  ],
 })
 export class AppModule {
   constructor(
     @Inject(PG_CONNECTION) private pgConnection: NodePgDatabase,
-    private readonly blockXUserRepository: BlockXUsersRepository,
+    private readonly blockXUserRepository: BlockXUsersInMemoryRepository,
   ) {
     this.blockXUserRepository.blockXUser({
       xId: '862285194',

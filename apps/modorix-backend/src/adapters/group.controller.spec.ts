@@ -1,8 +1,10 @@
 import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { GroupsService } from '../domain/group.service';
-import { BlockXUsersRepository } from '../infrastructure/repositories/block-x-user.repository';
-import { GroupsRepository } from '../infrastructure/repositories/groups.repository';
+import { BlockXUsersRepositoryToken } from '../domain/repositories/block-x-user.repository';
+import { GroupsRepositoryToken } from '../domain/repositories/groups.repository';
+import { GroupsService } from '../domain/usecases/group.service';
+import { BlockXUsersInMemoryRepository } from '../infrastructure/repositories/block-x-user-in-memory.repository';
+import { GroupsInMemoryRepository } from '../infrastructure/repositories/groups-in-memory.repository';
 import { GroupsController } from './group.controller';
 
 describe('GroupsController', () => {
@@ -16,7 +18,11 @@ describe('GroupsController', () => {
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [GroupsController],
-      providers: [GroupsService, GroupsRepository, BlockXUsersRepository],
+      providers: [
+        GroupsService,
+        { provide: GroupsRepositoryToken, useClass: GroupsInMemoryRepository },
+        { provide: BlockXUsersRepositoryToken, useClass: BlockXUsersInMemoryRepository },
+      ],
     }).compile();
 
     groupsController = app.get<GroupsController>(GroupsController);

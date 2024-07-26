@@ -1,13 +1,16 @@
 import { BlockReason } from '@modorix-commons/models/block-reason';
 import { BlockXUserRequest, XUser } from '@modorix-commons/models/x-user';
 import { Test, TestingModule } from '@nestjs/testing';
-import { BlockReasonsRepository } from '../infrastructure/repositories/block-reason.repository';
-import { BlockXUsersRepository } from '../infrastructure/repositories/block-x-user.repository';
-import { GroupsRepository } from '../infrastructure/repositories/groups.repository';
+import { BlockReasonsInMemoryRepository } from '../../infrastructure/repositories/block-reason-in-memory.repository';
+import { BlockXUsersInMemoryRepository } from '../../infrastructure/repositories/block-x-user-in-memory.repository';
+import { GroupsInMemoryRepository } from '../../infrastructure/repositories/groups-in-memory.repository';
+import { BlockReasonError } from '../errors/block-reason-error';
+import { XUserNotFoundError } from '../errors/x-user-not-found-error';
+import { XUserNotInQueueError } from '../errors/x-user-not-in-queue';
+import { BlockReasonsRepositoryToken } from '../repositories/block-reason.repository';
+import { BlockXUsersRepositoryToken } from '../repositories/block-x-user.repository';
+import { GroupsRepositoryToken } from '../repositories/groups.repository';
 import { BlockXUsersService } from './block-x-user.service';
-import { BlockReasonError } from './errors/block-reason-error';
-import { XUserNotFoundError } from './errors/x-user-not-found-error';
-import { XUserNotInQueueError } from './errors/x-user-not-in-queue';
 
 describe('BlockXUsersService', () => {
   function getBlockXUserRequest(blockReasonIds: string[], blockedInGroupsIds = []): BlockXUserRequest {
@@ -33,17 +36,22 @@ describe('BlockXUsersService', () => {
   }
 
   let blockXUsersService: BlockXUsersService;
-  let blockXUsersRepository: BlockXUsersRepository;
-  let groupsRepository: GroupsRepository;
+  let blockXUsersRepository: BlockXUsersInMemoryRepository;
+  let groupsRepository: GroupsInMemoryRepository;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
-      providers: [BlockXUsersService, BlockXUsersRepository, GroupsRepository, BlockReasonsRepository],
+      providers: [
+        BlockXUsersService,
+        { provide: GroupsRepositoryToken, useClass: GroupsInMemoryRepository },
+        { provide: BlockXUsersRepositoryToken, useClass: BlockXUsersInMemoryRepository },
+        { provide: BlockReasonsRepositoryToken, useClass: BlockReasonsInMemoryRepository },
+      ],
     }).compile();
 
     blockXUsersService = app.get<BlockXUsersService>(BlockXUsersService);
-    blockXUsersRepository = app.get<BlockXUsersRepository>(BlockXUsersRepository);
-    groupsRepository = app.get<GroupsRepository>(GroupsRepository);
+    blockXUsersRepository = app.get<BlockXUsersInMemoryRepository>(BlockXUsersRepositoryToken);
+    groupsRepository = app.get<GroupsInMemoryRepository>(GroupsRepositoryToken);
 
     blockXUsersRepository.blockXUser({
       xId: '862285194',

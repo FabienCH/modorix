@@ -1,6 +1,6 @@
 import { BlockReason } from '@modorix-commons/models/block-reason';
 import { Controller, Get, HttpCode } from '@nestjs/common';
-import { BlockReasonsService } from '../domain/block-reason.service';
+import { BlockReasonsService } from '../domain/usecases/block-reason.service';
 
 @Controller()
 export class BlockReasonsController {

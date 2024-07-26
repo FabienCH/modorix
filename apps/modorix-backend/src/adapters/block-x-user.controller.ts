@@ -10,10 +10,10 @@ import {
   Param,
   Post,
 } from '@nestjs/common';
-import { BlockXUsersService } from '../domain/block-x-user.service';
 import { BlockReasonError } from '../domain/errors/block-reason-error';
 import { XUserNotFoundError } from '../domain/errors/x-user-not-found-error';
 import { XUserNotInQueueError } from '../domain/errors/x-user-not-in-queue';
+import { BlockXUsersService } from '../domain/usecases/block-x-user.service';
 import { BlockXUserRequestDto, XUserDto } from './x-user-dto';
 
 @Controller()

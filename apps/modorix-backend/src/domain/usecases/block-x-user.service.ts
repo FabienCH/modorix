@@ -1,18 +1,18 @@
 import { BlockXUserRequest, XUser } from '@modorix-commons/models/x-user';
-import { Injectable } from '@nestjs/common';
-import { BlockReasonsRepository } from '../infrastructure/repositories/block-reason.repository';
-import { BlockXUsersRepository } from '../infrastructure/repositories/block-x-user.repository';
-import { GroupsRepository } from '../infrastructure/repositories/groups.repository';
-import { BlockReasonError } from './errors/block-reason-error';
-import { XUserNotFoundError } from './errors/x-user-not-found-error';
-import { XUserNotInQueueError } from './errors/x-user-not-in-queue';
+import { Inject, Injectable } from '@nestjs/common';
+import { BlockReasonError } from '../errors/block-reason-error';
+import { XUserNotFoundError } from '../errors/x-user-not-found-error';
+import { XUserNotInQueueError } from '../errors/x-user-not-in-queue';
+import { BlockReasonsRepository, BlockReasonsRepositoryToken } from '../repositories/block-reason.repository';
+import { BlockXUsersRepository, BlockXUsersRepositoryToken } from '../repositories/block-x-user.repository';
+import { GroupsRepository, GroupsRepositoryToken } from '../repositories/groups.repository';
 
 @Injectable()
 export class BlockXUsersService {
   constructor(
-    private readonly blockXUsersRepository: BlockXUsersRepository,
-    private readonly groupsRepository: GroupsRepository,
-    private readonly blockReasonsRepository: BlockReasonsRepository,
+    @Inject(BlockXUsersRepositoryToken) private readonly blockXUsersRepository: BlockXUsersRepository,
+    @Inject(GroupsRepositoryToken) private readonly groupsRepository: GroupsRepository,
+    @Inject(BlockReasonsRepositoryToken) private readonly blockReasonsRepository: BlockReasonsRepository,
   ) {}
 
   blockXUser(blockXUserRequest: BlockXUserRequest): void {

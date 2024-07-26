@@ -1,11 +1,14 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { BlockXUsersService } from '../domain/block-x-user.service';
 import { XUserNotFoundError } from '../domain/errors/x-user-not-found-error';
 import { XUserNotInQueueError } from '../domain/errors/x-user-not-in-queue';
-import { BlockReasonsRepository } from '../infrastructure/repositories/block-reason.repository';
-import { BlockXUsersRepository } from '../infrastructure/repositories/block-x-user.repository';
-import { GroupsRepository } from '../infrastructure/repositories/groups.repository';
+import { BlockReasonsRepositoryToken } from '../domain/repositories/block-reason.repository';
+import { BlockXUsersRepositoryToken } from '../domain/repositories/block-x-user.repository';
+import { GroupsRepositoryToken } from '../domain/repositories/groups.repository';
+import { BlockXUsersService } from '../domain/usecases/block-x-user.service';
+import { BlockReasonsInMemoryRepository } from '../infrastructure/repositories/block-reason-in-memory.repository';
+import { BlockXUsersInMemoryRepository } from '../infrastructure/repositories/block-x-user-in-memory.repository';
+import { GroupsInMemoryRepository } from '../infrastructure/repositories/groups-in-memory.repository';
 import { BlockXUsersController } from './block-x-user.controller';
 import { BlockXUserRequestDto } from './x-user-dto';
 
@@ -29,7 +32,12 @@ describe('BlockUserController', () => {
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [BlockXUsersController],
-      providers: [BlockXUsersService, BlockXUsersRepository, GroupsRepository, BlockReasonsRepository],
+      providers: [
+        BlockXUsersService,
+        { provide: GroupsRepositoryToken, useClass: GroupsInMemoryRepository },
+        { provide: BlockXUsersRepositoryToken, useClass: BlockXUsersInMemoryRepository },
+        { provide: BlockReasonsRepositoryToken, useClass: BlockReasonsInMemoryRepository },
+      ],
     }).compile();
 
     blockXUserController = app.get<BlockXUsersController>(BlockXUsersController);

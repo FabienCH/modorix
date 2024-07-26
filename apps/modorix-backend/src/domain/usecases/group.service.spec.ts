@@ -1,22 +1,28 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BlockXUsersRepository } from '../infrastructure/repositories/block-x-user.repository';
-import { GroupsRepository } from '../infrastructure/repositories/groups.repository';
-import { GroupNotFoundError } from './errors/group-not-found-error';
+import { BlockXUsersInMemoryRepository } from '../../infrastructure/repositories/block-x-user-in-memory.repository';
+import { GroupsInMemoryRepository } from '../../infrastructure/repositories/groups-in-memory.repository';
+import { GroupNotFoundError } from '../errors/group-not-found-error';
+import { BlockXUsersRepositoryToken } from '../repositories/block-x-user.repository';
+import { GroupsRepositoryToken } from '../repositories/groups.repository';
 import { GroupsService } from './group.service';
 
 describe('GroupsService', () => {
   let groupsService: GroupsService;
-  let groupsRepository: GroupsRepository;
-  let blockUsersRepository: BlockXUsersRepository;
+  let groupsRepository: GroupsInMemoryRepository;
+  let blockUsersRepository: BlockXUsersInMemoryRepository;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
-      providers: [GroupsService, GroupsRepository, BlockXUsersRepository],
+      providers: [
+        GroupsService,
+        { provide: GroupsRepositoryToken, useClass: GroupsInMemoryRepository },
+        { provide: BlockXUsersRepositoryToken, useClass: BlockXUsersInMemoryRepository },
+      ],
     }).compile();
 
     groupsService = app.get<GroupsService>(GroupsService);
-    groupsRepository = app.get<GroupsRepository>(GroupsRepository);
-    blockUsersRepository = app.get<BlockXUsersRepository>(BlockXUsersRepository);
+    groupsRepository = app.get<GroupsInMemoryRepository>(GroupsRepositoryToken);
+    blockUsersRepository = app.get<BlockXUsersInMemoryRepository>(BlockXUsersRepositoryToken);
   });
 
   describe('Get all groups', () => {

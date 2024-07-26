@@ -1,8 +1,9 @@
 import { XUser } from '@modorix-commons/models/x-user';
 import { Injectable } from '@nestjs/common';
+import { BlockXUsersRepository } from '../../domain/repositories/block-x-user.repository';
 
 @Injectable()
-export class BlockXUsersRepository {
+export class BlockXUsersInMemoryRepository implements BlockXUsersRepository {
   private blockedXUsers: XUser[];
 
   constructor() {

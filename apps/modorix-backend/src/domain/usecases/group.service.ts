@@ -1,14 +1,14 @@
 import { Group, GroupDetails } from '@modorix-commons/models/group';
-import { Injectable } from '@nestjs/common';
-import { BlockXUsersRepository } from '../infrastructure/repositories/block-x-user.repository';
-import { GroupsRepository } from '../infrastructure/repositories/groups.repository';
-import { GroupNotFoundError } from './errors/group-not-found-error';
+import { Inject, Injectable } from '@nestjs/common';
+import { GroupNotFoundError } from '../errors/group-not-found-error';
+import { BlockXUsersRepository, BlockXUsersRepositoryToken } from '../repositories/block-x-user.repository';
+import { GroupsRepository, GroupsRepositoryToken } from '../repositories/groups.repository';
 
 @Injectable()
 export class GroupsService {
   constructor(
-    private readonly groupsRepository: GroupsRepository,
-    private readonly blockXUsersRepository: BlockXUsersRepository,
+    @Inject(BlockXUsersRepositoryToken) private readonly blockXUsersRepository: BlockXUsersRepository,
+    @Inject(GroupsRepositoryToken) private readonly groupsRepository: GroupsRepository,
   ) {}
 
   groupsList(): Group[] {

@@ -1,8 +1,9 @@
 import { Group } from '@modorix-commons/models/group';
 import { Injectable } from '@nestjs/common';
+import { GroupsRepository } from '../../domain/repositories/groups.repository';
 
 @Injectable()
-export class GroupsRepository {
+export class GroupsInMemoryRepository implements GroupsRepository {
   private groupNotFound = true;
   private readonly groups: Group[] = [
     { id: 'US', name: 'United States', description: 'For people living in US', isJoined: false, blockedXUserIds: [] },

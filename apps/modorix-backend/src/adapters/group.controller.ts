@@ -1,7 +1,7 @@
 import { Group, GroupDetails } from '@modorix-commons/models/group';
 import { Controller, Get, HttpCode, HttpException, HttpStatus, NotFoundException, Param, Post } from '@nestjs/common';
 import { GroupNotFoundError } from '../domain/errors/group-not-found-error';
-import { GroupsService } from '../domain/group.service';
+import { GroupsService } from '../domain/usecases/group.service';
 
 @Controller()
 export class GroupsController {
