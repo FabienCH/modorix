@@ -1,4 +1,5 @@
 import { Inject, Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { BlockReasonsController } from 'src/adapters/block-reasons.controller';
 import { BlockReasonsService } from 'src/domain/block-reason.service';
@@ -7,20 +8,26 @@ import { GroupsController } from '../adapters/group.controller';
 import { BlockXUsersService } from '../domain/block-x-user.service';
 import { GroupsService } from '../domain/group.service';
 import { DrizzleModule, PG_CONNECTION } from './database/drizzle.module';
-import * as schema from './database/schema';
-import { pgXUsers } from './database/schema';
+import { pgXUsers } from './database/schema/xUser';
 import { BlockReasonsRepository } from './repositories/block-reason.repository';
 import { BlockXUsersRepository } from './repositories/block-x-user.repository';
 import { GroupsRepository } from './repositories/groups.repository';
 
+const ENV = process.env.NODE_ENV;
+
 @Module({
-  imports: [DrizzleModule],
+  imports: [
+    DrizzleModule,
+    ConfigModule.forRoot({
+      envFilePath: !ENV ? '.env' : `${ENV}.env`,
+    }),
+  ],
   controllers: [BlockXUsersController, GroupsController, BlockReasonsController],
   providers: [BlockXUsersService, BlockXUsersRepository, GroupsService, GroupsRepository, BlockReasonsService, BlockReasonsRepository],
 })
 export class AppModule {
   constructor(
-    @Inject(PG_CONNECTION) private pgConnection: NodePgDatabase<typeof schema>,
+    @Inject(PG_CONNECTION) private pgConnection: NodePgDatabase,
     private readonly blockXUserRepository: BlockXUsersRepository,
   ) {
     this.blockXUserRepository.blockXUser({

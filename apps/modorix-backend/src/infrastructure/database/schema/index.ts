@@ -1,1 +1,0 @@
-export { pgXUsers } from './xUser';

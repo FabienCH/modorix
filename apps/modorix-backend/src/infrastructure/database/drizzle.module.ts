@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
-import { NodePgDatabase, drizzle } from 'drizzle-orm/node-postgres';
+import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import { getEnvValue } from '../../get-env-value';
-import * as schema from './schema';
 
 export const PG_CONNECTION = Symbol('PG_CONNECTION');
 
@@ -16,7 +15,7 @@ export const PG_CONNECTION = Symbol('PG_CONNECTION');
           ssl: false,
         });
 
-        return drizzle(pool, { schema }) as NodePgDatabase<typeof schema>;
+        return drizzle(pool);
       },
     },
   ],
