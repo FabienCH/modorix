@@ -1,0 +1,15 @@
+services:
+- type: web
+  name: modorix-backend
+  branch: ci/deploy-dev
+  runtime: node
+  rootDir: apps/modorix-backend
+  buildCommand: npm install; npm run build:dev
+  startCommand: npm run start:dev
+- type: web
+  name: modorix-web
+  branch: ci/deploy-dev
+  runtime: static
+  rootDir: apps/modorix-web
+  buildCommand: npm install; npm run build:dev
+  staticPublishPath: ./dist/
