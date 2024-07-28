@@ -1,6 +1,6 @@
 import { BlockReason } from '@modorix-commons/models/block-reason';
 import { Injectable } from '@nestjs/common';
-import { BlockReasonsRepository } from '../../domain/repositories/block-reason.repository';
+import { BlockReasonsRepository } from '../../../domain/repositories/block-reason.repository';
 
 @Injectable()
 export class BlockReasonsInMemoryRepository implements BlockReasonsRepository {
@@ -15,7 +15,7 @@ export class BlockReasonsInMemoryRepository implements BlockReasonsRepository {
     { id: '7', label: 'Other' },
   ];
 
-  blockedReasonsList(): BlockReason[] {
+  async blockedReasonsList(): Promise<BlockReason[]> {
     return this.blockReasons;
   }
 }

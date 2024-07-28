@@ -6,7 +6,7 @@ import { BlockReasonsRepository, BlockReasonsRepositoryToken } from '../reposito
 export class BlockReasonsService {
   constructor(@Inject(BlockReasonsRepositoryToken) private readonly blockReasonsRepository: BlockReasonsRepository) {}
 
-  blockedReasonsList(): BlockReason[] {
-    return this.blockReasonsRepository.blockedReasonsList();
+  async blockedReasonsList(): Promise<BlockReason[]> {
+    return await this.blockReasonsRepository.blockedReasonsList();
   }
 }

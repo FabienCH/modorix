@@ -9,13 +9,13 @@ export class GroupsController {
 
   @Get('groups')
   @HttpCode(200)
-  groupsList(): Group[] {
+  groupsList(): Promise<Group[]> {
     return this.groupsService.groupsList();
   }
 
   @Get('groups/:groupId')
   @HttpCode(200)
-  groupById(@Param() { groupId }: { groupId: string }): GroupDetails {
+  groupById(@Param() { groupId }: { groupId: string }): Promise<GroupDetails> {
     try {
       return this.groupsService.findGroupById(groupId);
     } catch (error) {
@@ -25,7 +25,7 @@ export class GroupsController {
 
   @Post('groups/join/:groupId')
   @HttpCode(201)
-  joinGroup(@Param() { groupId }: { groupId: string }): void {
+  joinGroup(@Param() { groupId }: { groupId: string }): Promise<void> {
     try {
       return this.groupsService.joinGroup(groupId);
     } catch (error) {
@@ -35,7 +35,7 @@ export class GroupsController {
 
   @Post('groups/leave/:groupId')
   @HttpCode(201)
-  leaveGroup(@Param() { groupId }: { groupId: string }): void {
+  leaveGroup(@Param() { groupId }: { groupId: string }): Promise<void> {
     try {
       return this.groupsService.leaveGroup(groupId);
     } catch (error) {

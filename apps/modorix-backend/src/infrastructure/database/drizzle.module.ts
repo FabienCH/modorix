@@ -3,12 +3,12 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
 import { getEnvValue } from '../../get-env-value';
 
-export const PG_CONNECTION = Symbol('PG_CONNECTION');
+export const PG_DATABASE = Symbol('PG_DATABASE');
 
 @Module({
   providers: [
     {
-      provide: PG_CONNECTION,
+      provide: PG_DATABASE,
       useFactory: async () => {
         const pool = new Pool({
           connectionString: `postgresql://${getEnvValue('DB_USER')}:${getEnvValue('DB_PASSWORD')}@${getEnvValue('DB_HOST')}:6543/${getEnvValue('DB_NAME')}`,
@@ -19,6 +19,6 @@ export const PG_CONNECTION = Symbol('PG_CONNECTION');
       },
     },
   ],
-  exports: [PG_CONNECTION],
+  exports: [PG_DATABASE],
 })
 export class DrizzleModule {}

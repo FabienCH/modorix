@@ -3,7 +3,7 @@ import { pgTable, primaryKey, uuid } from 'drizzle-orm/pg-core';
 import { pgGroups } from './group';
 import { pgXUsers } from './xUser';
 
-export const usersToGroups = pgTable(
+export const xUsersToGroups = pgTable(
   'x_users_to_groups',
   {
     userId: uuid('x_user_id')
@@ -19,20 +19,20 @@ export const usersToGroups = pgTable(
 );
 
 export const xUsersRelations = relations(pgXUsers, ({ many }) => ({
-  usersToGroups: many(usersToGroups),
+  usersToGroups: many(xUsersToGroups),
 }));
 
 export const groupsRelations = relations(pgGroups, ({ many }) => ({
-  usersToGroups: many(usersToGroups),
+  usersToGroups: many(xUsersToGroups),
 }));
 
-export const usersToGroupsRelations = relations(usersToGroups, ({ one }) => ({
+export const xUsersToGroupsRelations = relations(xUsersToGroups, ({ one }) => ({
   group: one(pgGroups, {
-    fields: [usersToGroups.groupId],
+    fields: [xUsersToGroups.groupId],
     references: [pgGroups.id],
   }),
   user: one(pgXUsers, {
-    fields: [usersToGroups.userId],
+    fields: [xUsersToGroups.userId],
     references: [pgXUsers.id],
   }),
 }));

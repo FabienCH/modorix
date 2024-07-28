@@ -1,6 +1,6 @@
 import { Group } from '@modorix-commons/models/group';
 import { Injectable } from '@nestjs/common';
-import { GroupsRepository } from '../../domain/repositories/groups.repository';
+import { GroupsRepository } from '../../../domain/repositories/groups.repository';
 
 @Injectable()
 export class GroupsInMemoryRepository implements GroupsRepository {
@@ -55,15 +55,15 @@ export class GroupsInMemoryRepository implements GroupsRepository {
     },
   ];
 
-  groupsList(): Group[] {
+  async groupsList(): Promise<Group[]> {
     return this.groups;
   }
 
-  findGroupById(groupId: string): Group | null {
+  async findGroupById(groupId: string): Promise<Group | null> {
     return this.groups.find((group) => group.id === groupId) ?? null;
   }
 
-  updateIsJoined(groupId: string, isJoined: boolean): void | null {
+  async updateIsJoined(groupId: string, isJoined: boolean): Promise<void | null> {
     this.groupNotFound = true;
     this.groups.forEach((group) => {
       if (group.id === groupId) {

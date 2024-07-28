@@ -11,17 +11,17 @@ export class GroupsService {
     @Inject(GroupsRepositoryToken) private readonly groupsRepository: GroupsRepository,
   ) {}
 
-  groupsList(): Group[] {
-    return this.groupsRepository.groupsList();
+  async groupsList(): Promise<Group[]> {
+    return await this.groupsRepository.groupsList();
   }
 
-  findGroupById(groupId: string): GroupDetails {
-    const group = this.groupsRepository.findGroupById(groupId);
+  async findGroupById(groupId: string): Promise<GroupDetails> {
+    const group = await this.groupsRepository.findGroupById(groupId);
     if (group === null) {
       throw new GroupNotFoundError(groupId);
     }
 
-    const blockedXUsers = this.blockXUsersRepository.blockedXUsersByIds(group.blockedXUserIds);
+    const blockedXUsers = await this.blockXUsersRepository.blockedXUsersByIds(group.blockedXUserIds);
     return {
       id: group.id,
       name: group.name,
@@ -31,15 +31,15 @@ export class GroupsService {
     };
   }
 
-  joinGroup(groupId: string): void {
-    const joinStatusUpdated = this.groupsRepository.updateIsJoined(groupId, true);
+  async joinGroup(groupId: string): Promise<void> {
+    const joinStatusUpdated = await this.groupsRepository.updateIsJoined(groupId, true);
     if (joinStatusUpdated === null) {
       throw new GroupNotFoundError(groupId);
     }
   }
 
-  leaveGroup(groupId: string): void {
-    const joinStatusUpdated = this.groupsRepository.updateIsJoined(groupId, false);
+  async leaveGroup(groupId: string): Promise<void> {
+    const joinStatusUpdated = await this.groupsRepository.updateIsJoined(groupId, false);
     if (joinStatusUpdated === null) {
       throw new GroupNotFoundError(groupId);
     }

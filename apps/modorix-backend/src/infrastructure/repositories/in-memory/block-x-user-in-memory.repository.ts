@@ -1,6 +1,6 @@
 import { XUser } from '@modorix-commons/models/x-user';
 import { Injectable } from '@nestjs/common';
-import { BlockXUsersRepository } from '../../domain/repositories/block-x-user.repository';
+import { BlockXUsersRepository } from '../../../domain/repositories/block-x-user.repository';
 
 @Injectable()
 export class BlockXUsersInMemoryRepository implements BlockXUsersRepository {
@@ -23,19 +23,19 @@ export class BlockXUsersInMemoryRepository implements BlockXUsersRepository {
     });
   }
 
-  blockedXUsersList(modorixUserId: string): XUser[] {
+  async blockedXUsersList(modorixUserId: string): Promise<XUser[]> {
     return this.blockedXUsers.filter((blockedXUser) => blockedXUser.blockingModorixUserIds.includes(modorixUserId));
   }
 
-  getAllBlockedXUsers(): XUser[] {
+  async getAllBlockedXUsers(): Promise<XUser[]> {
     return this.blockedXUsers;
   }
 
-  blockedXUsersByIds(ids: string[]): XUser[] {
+  async blockedXUsersByIds(ids: string[]): Promise<XUser[]> {
     return this.blockedXUsers.filter((blockedUser) => ids.includes(blockedUser.xId));
   }
 
-  blockedXUsersById(id: string): XUser | undefined {
+  async blockedXUsersByXId(id: string): Promise<XUser | undefined> {
     return this.blockedXUsers.find((blockedUser) => blockedUser.xId === id);
   }
 }
