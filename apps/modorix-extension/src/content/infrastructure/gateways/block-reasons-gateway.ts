@@ -1,8 +1,10 @@
 import { BlockReason } from '@modorix-commons/models/block-reason';
 
+const blockReasonsBaseUrl = `${import.meta.env.VITE_API_BASE_URL}/block-reasons`;
+
 export async function getBlockReasons(): Promise<BlockReason[]> {
   return (
-    await fetch('http://localhost:3000/api/block-reasons', {
+    await fetch(blockReasonsBaseUrl, {
       method: 'GET',
     })
   ).json();
