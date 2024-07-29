@@ -1,7 +1,6 @@
 let gatewayBaseUrl: string;
 
 export function setGatewayBaseUrl(baseUrl: string): void {
-  console.log('🚀 ~ setGatewayBaseUrl ~ baseUrl:', baseUrl);
   gatewayBaseUrl = baseUrl;
 }
 
