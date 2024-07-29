@@ -11,6 +11,6 @@ async function bootstrap() {
   app.enableCors({
     origin: ['chrome-extension://ohmnoaaknihgcbkflfjonahofjhjnofb', getEnvValue('WEB_APP_URL'), 'https://x.com'],
   });
-  await app.listen(3000);
+  await app.listen(getEnvValue('PORT'), getEnvValue('ADDRESS'));
 }
 bootstrap();
