@@ -1,6 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+import { getEnvValue } from 'src/get-env-value';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -8,7 +9,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.setGlobalPrefix('api');
   app.enableCors({
-    origin: ['chrome-extension://ohmnoaaknihgcbkflfjonahofjhjnofb', 'http://localhost:5173', 'https://x.com'],
+    origin: ['chrome-extension://ohmnoaaknihgcbkflfjonahofjhjnofb', getEnvValue('WEB_APP_URL'), 'https://x.com'],
   });
   await app.listen(3000);
 }
