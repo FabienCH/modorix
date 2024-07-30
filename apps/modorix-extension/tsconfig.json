@@ -4,5 +4,6 @@
     {
       "path": "./tsconfig.node.json"
     }
-  ]
+  ],
+  "compilerOptions": { "types": ["vitest/globals", "chrome"] }
 }
