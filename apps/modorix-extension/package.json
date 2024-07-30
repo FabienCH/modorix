@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "tsc && vite build --watch",
-    "test": "vitest",
-    "test:watch": "vitest--watch",
-    "test:ci": "vitest --coverage",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ci": "vitest run --coverage",
     "build": "tsc && TARGET=chrome vite build && TARGET=firefox vite build",
     "lint": "eslint \"src/**/*.ts\""
   },

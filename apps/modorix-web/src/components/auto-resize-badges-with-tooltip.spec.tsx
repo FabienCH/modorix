@@ -1,15 +1,46 @@
-import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
-import React from 'react';
+import * as React from 'react';
+import { describe, expect, it, vi } from 'vitest';
 import { AutoResizeBadgesWithTooltip } from './auto-resize-badges-with-tooltip';
 
 describe('Badges display', () => {
-  function setup(containerOffsetWidth: number) {
-    setMockRefElement(containerOffsetWidth);
+  async function setup(containerOffsetWidth: number) {
+    await setMockRefElement(containerOffsetWidth);
     render(<AutoResizeBadgesWithTooltip items={blockReasons} badgeVariant="outline" />);
   }
 
-  let nbOfUseRefCalls = 0;
+  const setMockRefElement = async (containerOffsetWidth: number): Promise<void> => {
+    const { mockContainerRef, mockBadgesRef, setContainerOffsetWidth } = await vi.hoisted(async () => {
+      let containerOffsetWidth = 0;
+      return {
+        mockContainerRef: {
+          get current() {
+            return { offsetWidth: containerOffsetWidth };
+          },
+          set current(_) {},
+        },
+        mockBadgesRef: {
+          get current() {
+            return [{ offsetWidth: 80 }, { offsetWidth: 100 }, { offsetWidth: 50 }];
+          },
+          set current(_) {},
+        },
+        setContainerOffsetWidth: (offsetWidth: number) => {
+          containerOffsetWidth = offsetWidth;
+        },
+      };
+    });
+    setContainerOffsetWidth(containerOffsetWidth);
+    vi.mock('react', async (importOriginal) => {
+      const react: typeof React = await importOriginal();
+
+      return {
+        ...react,
+        useRef: (initialVal: unknown) => (Array.isArray(initialVal) ? mockBadgesRef : mockContainerRef),
+      };
+    });
+  };
+
   const badgesPaddings = 16;
   const blockReasons = [
     {
@@ -26,32 +57,8 @@ describe('Badges display', () => {
     },
   ];
 
-  const setMockRefElement = (containerOffsetWidth: number): void => {
-    const mockRef = {
-      get current() {
-        return {
-          offsetWidth: containerOffsetWidth,
-          map: () => [80, 100, 50],
-        };
-      },
-      set current(_) {},
-    };
-
-    jest.spyOn(React, 'useRef').mockImplementation(() => {
-      if (nbOfUseRefCalls < 8) {
-        nbOfUseRefCalls++;
-        return mockRef;
-      }
-      return jest.requireActual('react').useRef;
-    });
-  };
-
-  beforeEach(async () => {
-    nbOfUseRefCalls = 0;
-  });
-
   it('should display all badges entirely when container is big enough', async () => {
-    setup(80 + 100 + 50 + badgesPaddings);
+    await setup(80 + 100 + 50 + badgesPaddings);
 
     const harassment = screen.getByText('Harassment');
     const racism = screen.getByText('Racism / Xenophobia');
@@ -63,7 +70,7 @@ describe('Badges display', () => {
   });
 
   it('should display all badges truncated when container is a little bit too small', async () => {
-    setup(80 + 100 + 49 + badgesPaddings);
+    await setup(80 + 100 + 49 + badgesPaddings);
 
     const harassment = screen.getByText('Harassment');
     const racism = screen.getByText('Racism / Xenophobia');
@@ -75,7 +82,7 @@ describe('Badges display', () => {
   });
 
   it('should not display all badges when container small', async () => {
-    setup(80 + 100 + badgesPaddings);
+    await setup(80 + 100 + badgesPaddings);
 
     const harassment = screen.getByText('Harassment');
     const racism = screen.getByText('Racism / Xenophobia');

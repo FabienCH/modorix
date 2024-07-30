@@ -1,10 +1,14 @@
 import react from '@vitejs/plugin-react';
 import path from 'path';
-import { defineConfig } from 'vite';
 import svgr from 'vite-plugin-svgr';
+import { defineConfig } from 'vitest/config';
 
-// https://vitejs.dev/config/
 export default defineConfig({
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: './config/tests/tests-setup.ts',
+  },
   plugins: [react(), svgr()],
   resolve: {
     alias: [
