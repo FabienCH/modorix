@@ -1,5 +1,6 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { MockInstance } from 'vitest';
 import { XUserNotFoundError } from '../domain/errors/x-user-not-found-error';
 import { XUserNotInQueueError } from '../domain/errors/x-user-not-in-queue';
 import { BlockReasonsRepositoryToken } from '../domain/repositories/block-reason.repository';
@@ -25,9 +26,9 @@ describe('BlockUserController', () => {
 
   let blockXUserController: BlockXUsersController;
   let blockXUsersService: BlockXUsersService;
-  let blockXUserSpy: jest.SpyInstance;
-  let blockXUserFromQueueSpy: jest.SpyInstance;
-  let addXUserToBlockQueueSpy: jest.SpyInstance;
+  let blockXUserSpy: MockInstance;
+  let blockXUserFromQueueSpy: MockInstance;
+  let addXUserToBlockQueueSpy: MockInstance;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
@@ -42,9 +43,9 @@ describe('BlockUserController', () => {
 
     blockXUserController = app.get<BlockXUsersController>(BlockXUsersController);
     blockXUsersService = app.get<BlockXUsersService>(BlockXUsersService);
-    blockXUserSpy = jest.spyOn(blockXUsersService, 'blockXUser');
-    blockXUserFromQueueSpy = jest.spyOn(blockXUsersService, 'blockXUserFromQueue');
-    addXUserToBlockQueueSpy = jest.spyOn(blockXUsersService, 'addToBlockQueue');
+    blockXUserSpy = vi.spyOn(blockXUsersService, 'blockXUser');
+    blockXUserFromQueueSpy = vi.spyOn(blockXUsersService, 'blockXUserFromQueue');
+    addXUserToBlockQueueSpy = vi.spyOn(blockXUsersService, 'addToBlockQueue');
   });
 
   describe('Block X user', () => {
