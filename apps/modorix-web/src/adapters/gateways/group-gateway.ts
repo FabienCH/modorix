@@ -13,13 +13,11 @@ export async function getGroup(groupId: string): Promise<GroupDetails> {
 export async function joinGroup(groupId: string): Promise<void> {
   await fetch(`${groupBaseUrl}/join/${groupId}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
   });
 }
 
 export async function leaveGroup(groupId: string): Promise<void> {
   await fetch(`${groupBaseUrl}/leave/${groupId}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
   });
 }

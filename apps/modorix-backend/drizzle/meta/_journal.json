@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1721318857053,
+      "tag": "0000_long_jocasta",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1721382564845,
+      "tag": "0001_mean_la_nuit",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1721729900194,
+      "tag": "0002_faithful_the_fury",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1721828527991,
+      "tag": "0003_stale_reavers",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1721916812916,
+      "tag": "0004_first_greymalkin",
+      "breakpoints": true
+    }
+  ]
+}

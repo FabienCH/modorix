@@ -1,40 +1,43 @@
 import { XUser } from '@modorix-commons/models/x-user';
 import { Injectable } from '@nestjs/common';
+import { BlockXUsersRepository } from '../../../domain/repositories/block-x-user.repository';
 
 @Injectable()
-export class BlockXUsersRepository {
+export class BlockXUsersInMemoryRepository implements BlockXUsersRepository {
   private blockedXUsers: XUser[];
 
   constructor() {
     this.blockedXUsers = [];
   }
 
-  blockXUser(xUser: XUser): void {
+  async blockXUser(xUser: XUser): Promise<void> {
     this.blockedXUsers.push(xUser);
+    return;
   }
 
-  updateXUser(xUser: XUser): void {
+  async updateXUser(xUser: XUser): Promise<void> {
     this.blockedXUsers = this.blockedXUsers.map((currentXUser) => {
       if (currentXUser.xId === xUser.xId) {
         currentXUser = xUser;
       }
       return currentXUser;
     });
+    return;
   }
 
-  blockedXUsersList(modorixUserId: string): XUser[] {
+  async blockedXUsersList(modorixUserId: string): Promise<XUser[]> {
     return this.blockedXUsers.filter((blockedXUser) => blockedXUser.blockingModorixUserIds.includes(modorixUserId));
   }
 
-  getAllBlockedXUsers(): XUser[] {
+  async getAllBlockedXUsers(): Promise<XUser[]> {
     return this.blockedXUsers;
   }
 
-  blockedXUsersByIds(ids: string[]): XUser[] {
+  async blockedXUsersByIds(ids: string[]): Promise<XUser[]> {
     return this.blockedXUsers.filter((blockedUser) => ids.includes(blockedUser.xId));
   }
 
-  blockedXUsersById(id: string): XUser | undefined {
+  async blockedXUsersByXId(id: string): Promise<XUser | undefined> {
     return this.blockedXUsers.find((blockedUser) => blockedUser.xId === id);
   }
 }

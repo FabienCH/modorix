@@ -1,13 +1,16 @@
 import { BlockReason } from '@modorix-commons/models/block-reason';
 import { BlockXUserRequest, XUser } from '@modorix-commons/models/x-user';
 import { Test, TestingModule } from '@nestjs/testing';
-import { BlockReasonsRepository } from '../infrastructure/block-reason.repository';
-import { BlockXUsersRepository } from '../infrastructure/block-x-user.repository';
-import { GroupsRepository } from '../infrastructure/groups.repository';
+import { BlockReasonsInMemoryRepository } from '../../infrastructure/repositories/in-memory/block-reason-in-memory.repository';
+import { BlockXUsersInMemoryRepository } from '../../infrastructure/repositories/in-memory/block-x-user-in-memory.repository';
+import { GroupsInMemoryRepository } from '../../infrastructure/repositories/in-memory/groups-in-memory.repository';
+import { BlockReasonError } from '../errors/block-reason-error';
+import { XUserNotFoundError } from '../errors/x-user-not-found-error';
+import { XUserNotInQueueError } from '../errors/x-user-not-in-queue';
+import { BlockReasonsRepositoryToken } from '../repositories/block-reason.repository';
+import { BlockXUsersRepositoryToken } from '../repositories/block-x-user.repository';
+import { GroupsRepositoryToken } from '../repositories/groups.repository';
 import { BlockXUsersService } from './block-x-user.service';
-import { BlockReasonError } from './errors/block-reason-error';
-import { XUserNotFoundError } from './errors/x-user-not-found-error';
-import { XUserNotInQueueError } from './errors/x-user-not-in-queue';
 
 describe('BlockXUsersService', () => {
   function getBlockXUserRequest(blockReasonIds: string[], blockedInGroupsIds = []): BlockXUserRequest {
@@ -33,19 +36,24 @@ describe('BlockXUsersService', () => {
   }
 
   let blockXUsersService: BlockXUsersService;
-  let blockXUsersRepository: BlockXUsersRepository;
-  let groupsRepository: GroupsRepository;
+  let blockXUsersRepository: BlockXUsersInMemoryRepository;
+  let groupsRepository: GroupsInMemoryRepository;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
-      providers: [BlockXUsersService, BlockXUsersRepository, GroupsRepository, BlockReasonsRepository],
+      providers: [
+        BlockXUsersService,
+        { provide: GroupsRepositoryToken, useClass: GroupsInMemoryRepository },
+        { provide: BlockXUsersRepositoryToken, useClass: BlockXUsersInMemoryRepository },
+        { provide: BlockReasonsRepositoryToken, useClass: BlockReasonsInMemoryRepository },
+      ],
     }).compile();
 
     blockXUsersService = app.get<BlockXUsersService>(BlockXUsersService);
-    blockXUsersRepository = app.get<BlockXUsersRepository>(BlockXUsersRepository);
-    groupsRepository = app.get<GroupsRepository>(GroupsRepository);
+    blockXUsersRepository = app.get<BlockXUsersInMemoryRepository>(BlockXUsersRepositoryToken);
+    groupsRepository = app.get<GroupsInMemoryRepository>(GroupsRepositoryToken);
 
-    blockXUsersRepository.blockXUser({
+    await blockXUsersRepository.blockXUser({
       xId: '862285194',
       xUsername: '@UltraEurope',
       blockedAt: '2024-06-19T18:41:45Z',
@@ -63,10 +71,10 @@ describe('BlockXUsersService', () => {
   });
 
   describe('Block a X user', () => {
-    it('should add X user to the block list', () => {
-      blockXUsersService.blockXUser(getBlockXUserRequest(['1']));
+    it('should add X user to the block list', async () => {
+      await blockXUsersService.blockXUser(getBlockXUserRequest(['1']));
 
-      const blockedXUser = blockXUsersRepository.blockedXUsersList('1').find((xUser) => xUser.xUsername === '@username');
+      const blockedXUser = (await blockXUsersRepository.blockedXUsersList('1')).find((xUser) => xUser.xUsername === '@username');
 
       checkExpectedXUser(blockedXUser, [
         {
@@ -76,19 +84,19 @@ describe('BlockXUsersService', () => {
       ]);
     });
 
-    it('should add the blocked X user too all groups', () => {
-      blockXUsersService.blockXUser(getBlockXUserRequest(['1']));
+    it('should add the blocked X user too all groups', async () => {
+      await blockXUsersService.blockXUser(getBlockXUserRequest(['1']));
 
-      const groupsBlockedXUserIds = groupsRepository.groupsList().flatMap((group) => group.blockedXUserIds);
+      const groupsBlockedXUserIds = (await groupsRepository.groupsList()).flatMap((group) => group.blockedXUserIds);
       const expectedIds = groupsBlockedXUserIds.map(() => '@username');
 
       expect(groupsBlockedXUserIds).toEqual(expectedIds);
     });
 
-    it('should add X user to the block list with multiple reasons', () => {
-      blockXUsersService.blockXUser(getBlockXUserRequest(['1', '3', '6']));
+    it('should add X user to the block list with multiple reasons', async () => {
+      await blockXUsersService.blockXUser(getBlockXUserRequest(['1', '3', '6']));
 
-      const blockedXUser = blockXUsersRepository.blockedXUsersList('1').find((user) => user.xUsername === '@username');
+      const blockedXUser = (await blockXUsersRepository.blockedXUsersList('1')).find((user) => user.xUsername === '@username');
 
       checkExpectedXUser(blockedXUser, [
         {
@@ -106,37 +114,37 @@ describe('BlockXUsersService', () => {
       ]);
     });
 
-    it('should not add X user to the block list if no reasons', () => {
-      expect(() => {
-        blockXUsersService.blockXUser(getBlockXUserRequest([]));
-      }).toThrow(new BlockReasonError('@username', 'empty'));
+    it('should not add X user to the block list if no reasons', async () => {
+      await expect(async () => {
+        await blockXUsersService.blockXUser(getBlockXUserRequest([]));
+      }).rejects.toThrow(new BlockReasonError('@username', 'empty'));
     });
 
-    it('should not add X user to the block list if at least one reason does not exist', () => {
-      expect(() => {
-        blockXUsersService.blockXUser(getBlockXUserRequest(['1', 'non existing reason']));
-      }).toThrow(new BlockReasonError('@username', 'notFound'));
+    it('should not add X user to the block list if at least one reason does not exist', async () => {
+      await expect(async () => {
+        await blockXUsersService.blockXUser(getBlockXUserRequest(['1', 'non existing reason']));
+      }).rejects.toThrow(new BlockReasonError('@username', 'notFound'));
     });
   });
 
   describe('Block a X user from the queue', () => {
-    it('should add X user to the block list', () => {
-      blockXUsersService.addToBlockQueue('862285194', '1');
+    it('should add X user to the block list', async () => {
+      await blockXUsersService.addToBlockQueue('862285194', '1');
 
-      blockXUsersService.blockXUserFromQueue('862285194', '1');
+      await blockXUsersService.blockXUserFromQueue('862285194', '1');
 
-      const blockedXUser = blockXUsersRepository.blockedXUsersById('862285194');
+      const blockedXUser = await blockXUsersRepository.blockedXUsersByXId('862285194');
       expect(blockedXUser).toEqual(expect.objectContaining({ blockingModorixUserIds: ['2', '1'], blockQueueModorixUserIds: [] }));
     });
 
-    it('should not block a X user if he does not exist', () => {
-      expect(() => {
-        blockXUsersService.blockXUserFromQueue('1', '1');
-      }).toThrow(new XUserNotFoundError('1'));
+    it('should not block a X user if he does not exist', async () => {
+      await expect(async () => {
+        await blockXUsersService.blockXUserFromQueue('1', '1');
+      }).rejects.toThrow(new XUserNotFoundError('1'));
     });
 
-    it("should not block a X user if he is not in Modorix user's block queue", () => {
-      blockXUsersRepository.blockXUser({
+    it("should not block a X user if he is not in Modorix user's block queue", async () => {
+      await blockXUsersRepository.blockXUser({
         xId: '2',
         xUsername: '@userNotInModorixUserQueue',
         blockedAt: '2024-06-19T18:41:45Z',
@@ -152,15 +160,15 @@ describe('BlockXUsersService', () => {
         blockQueueModorixUserIds: [],
       });
 
-      expect(() => {
-        blockXUsersService.blockXUserFromQueue('2', '1');
-      }).toThrow(new XUserNotInQueueError('2'));
+      await expect(async () => {
+        await blockXUsersService.blockXUserFromQueue('2', '1');
+      }).rejects.toThrow(new XUserNotInQueueError('2'));
     });
   });
 
   describe('Retrieve X users block queue candidates', () => {
-    beforeEach(() => {
-      blockXUsersRepository.blockXUser({
+    beforeEach(async () => {
+      await blockXUsersRepository.blockXUser({
         xId: '1',
         xUsername: '@username',
         blockedAt: '2024-05-27T18:01:45Z',
@@ -171,8 +179,8 @@ describe('BlockXUsersService', () => {
       });
     });
 
-    it('should give a list of X users not blocked by the current Modorix user', () => {
-      const blockQueueCandidates = blockXUsersService.blockQueueCandidates('1');
+    it('should give a list of X users not blocked by the current Modorix user', async () => {
+      const blockQueueCandidates = await blockXUsersService.blockQueueCandidates('1');
 
       expect(blockQueueCandidates).toEqual([
         {
@@ -193,7 +201,7 @@ describe('BlockXUsersService', () => {
       ]);
     });
 
-    it('should not list X users in current Modorix user block queue', () => {
+    it('should not list X users in current Modorix user block queue', async () => {
       const userInBlockQueue = {
         xId: '862285194',
         xUsername: '@UltraEurope',
@@ -209,8 +217,8 @@ describe('BlockXUsersService', () => {
         blockingModorixUserIds: ['2'],
         blockQueueModorixUserIds: ['1'],
       };
-      blockXUsersRepository.updateXUser(userInBlockQueue);
-      const blockQueueCandidates = blockXUsersService.blockQueueCandidates('1');
+      await blockXUsersRepository.updateXUser(userInBlockQueue);
+      const blockQueueCandidates = await blockXUsersService.blockQueueCandidates('1');
 
       expect(blockQueueCandidates).toEqual([]);
     });
@@ -233,8 +241,8 @@ describe('BlockXUsersService', () => {
       blockQueueModorixUserIds: ['1'],
     };
 
-    beforeEach(() => {
-      blockXUsersRepository.blockXUser({
+    beforeEach(async () => {
+      await blockXUsersRepository.blockXUser({
         xId: '1',
         xUsername: '@username',
         blockedAt: '2024-05-27T18:01:45Z',
@@ -247,18 +255,18 @@ describe('BlockXUsersService', () => {
       blockXUsersRepository.updateXUser(userInBlockQueue);
     });
 
-    it('should give a list of X users not blocked by the current Modorix user', () => {
-      const blockQueue = blockXUsersService.blockQueue('1');
+    it('should give a list of X users not blocked by the current Modorix user', async () => {
+      const blockQueue = await blockXUsersService.blockQueue('1');
 
       expect(blockQueue).toEqual([userInBlockQueue]);
     });
   });
 
   describe('Add a X user to block queue', () => {
-    it('should add X user to Modorix user block queue', () => {
-      blockXUsersService.addToBlockQueue('862285194', 'modorix-user-id');
+    it('should add X user to Modorix user block queue', async () => {
+      await blockXUsersService.addToBlockQueue('862285194', 'modorix-user-id');
 
-      const blockedXUser = blockXUsersRepository.blockedXUsersByIds(['862285194'])[0];
+      const blockedXUser = (await blockXUsersRepository.blockedXUsersByIds(['862285194']))[0];
 
       expect(blockedXUser).toEqual({
         xId: '862285194',
@@ -277,10 +285,10 @@ describe('BlockXUsersService', () => {
       });
     });
 
-    it("should not add X user to block queue if he hasn't been blocked by any Modorix user", () => {
-      expect(() => {
-        blockXUsersService.addToBlockQueue('0', 'modorix-user-id');
-      }).toThrow(new XUserNotFoundError('0'));
+    it("should not add X user to block queue if he hasn't been blocked by any Modorix user", async () => {
+      await expect(async () => {
+        await blockXUsersService.addToBlockQueue('0', 'modorix-user-id');
+      }).rejects.toThrow(new XUserNotFoundError('0'));
     });
   });
 });

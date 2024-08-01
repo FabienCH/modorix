@@ -1,0 +1,1 @@
+ALTER TABLE "x-user" ADD COLUMN "block_reason_ids" text[] NOT NULL;

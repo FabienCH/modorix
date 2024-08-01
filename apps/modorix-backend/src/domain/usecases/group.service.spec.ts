@@ -1,27 +1,33 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BlockXUsersRepository } from '../infrastructure/block-x-user.repository';
-import { GroupsRepository } from '../infrastructure/groups.repository';
-import { GroupNotFoundError } from './errors/group-not-found-error';
+import { BlockXUsersInMemoryRepository } from '../../infrastructure/repositories/in-memory/block-x-user-in-memory.repository';
+import { GroupsInMemoryRepository } from '../../infrastructure/repositories/in-memory/groups-in-memory.repository';
+import { GroupNotFoundError } from '../errors/group-not-found-error';
+import { BlockXUsersRepositoryToken } from '../repositories/block-x-user.repository';
+import { GroupsRepositoryToken } from '../repositories/groups.repository';
 import { GroupsService } from './group.service';
 
 describe('GroupsService', () => {
   let groupsService: GroupsService;
-  let groupsRepository: GroupsRepository;
-  let blockUsersRepository: BlockXUsersRepository;
+  let groupsRepository: GroupsInMemoryRepository;
+  let blockUsersRepository: BlockXUsersInMemoryRepository;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
-      providers: [GroupsService, GroupsRepository, BlockXUsersRepository],
+      providers: [
+        GroupsService,
+        { provide: GroupsRepositoryToken, useClass: GroupsInMemoryRepository },
+        { provide: BlockXUsersRepositoryToken, useClass: BlockXUsersInMemoryRepository },
+      ],
     }).compile();
 
     groupsService = app.get<GroupsService>(GroupsService);
-    groupsRepository = app.get<GroupsRepository>(GroupsRepository);
-    blockUsersRepository = app.get<BlockXUsersRepository>(BlockXUsersRepository);
+    groupsRepository = app.get<GroupsInMemoryRepository>(GroupsRepositoryToken);
+    blockUsersRepository = app.get<BlockXUsersInMemoryRepository>(BlockXUsersRepositoryToken);
   });
 
   describe('Get all groups', () => {
-    it('should give the list of groups', () => {
-      const groups = groupsService.groupsList();
+    it('should give the list of groups', async () => {
+      const groups = await groupsService.groupsList();
       expect(groups).toEqual([
         { id: 'US', name: 'United States', description: 'For people living in US', isJoined: false, blockedXUserIds: [] },
         { id: 'UK', name: 'United Kingdom', description: 'For people living in Uk', isJoined: false, blockedXUserIds: [] },
@@ -69,8 +75,8 @@ describe('GroupsService', () => {
   });
 
   describe('Finding a group by id', () => {
-    beforeEach(() => {
-      blockUsersRepository.blockXUser({
+    beforeEach(async () => {
+      await blockUsersRepository.blockXUser({
         xId: '1',
         xUsername: '@username',
         blockedAt: '2024-06-14T19:01:45Z',
@@ -83,8 +89,8 @@ describe('GroupsService', () => {
       groupsRepository.addBlockedUser('UK', '1');
     });
 
-    it('give the expected group', () => {
-      const ukGroup = groupsService.findGroupById('UK');
+    it('give the expected group', async () => {
+      const ukGroup = await groupsService.findGroupById('UK');
 
       expect(ukGroup).toEqual({
         id: 'UK',
@@ -105,42 +111,42 @@ describe('GroupsService', () => {
       });
     });
 
-    it('should not give a non existing group', () => {
-      expect(() => {
-        groupsService.findGroupById('non existing id');
-      }).toThrow(new GroupNotFoundError('non existing id'));
+    it('should not give a non existing group', async () => {
+      await expect(async () => {
+        await groupsService.findGroupById('non existing id');
+      }).rejects.toThrow(new GroupNotFoundError('non existing id'));
     });
   });
 
   describe('Join a group', () => {
-    it('should change joined group status to joined', () => {
-      groupsService.joinGroup('UK');
+    it('should change joined group status to joined', async () => {
+      await groupsService.joinGroup('UK');
 
-      const ukGroup = groupsRepository.groupsList().find((group) => group.id === 'UK');
+      const ukGroup = (await groupsRepository.groupsList()).find((group) => group.id === 'UK');
       expect(ukGroup?.isJoined).toBe(true);
     });
 
-    it('should not change joined group status of a non existing group', () => {
-      expect(() => {
-        groupsService.joinGroup('non existing id');
-      }).toThrow(new GroupNotFoundError('non existing id'));
+    it('should not change joined group status of a non existing group', async () => {
+      await expect(async () => {
+        await groupsService.joinGroup('non existing id');
+      }).rejects.toThrow(new GroupNotFoundError('non existing id'));
     });
   });
 
   describe('Leave a group', () => {
-    it('should change joined group status to left', () => {
-      groupsRepository.updateIsJoined('ES', true);
+    it('should change joined group status to left', async () => {
+      await groupsRepository.updateIsJoined('ES', true);
 
-      groupsService.leaveGroup('ES');
+      await groupsService.leaveGroup('ES');
 
-      const esGroup = groupsRepository.groupsList().find((group) => group.id === 'ES');
+      const esGroup = (await groupsRepository.groupsList()).find((group) => group.id === 'ES');
       expect(esGroup?.isJoined).toBe(false);
     });
 
-    it('should not change joined group status of a non existing group', () => {
-      expect(() => {
-        groupsService.joinGroup('non existing id');
-      }).toThrow(new GroupNotFoundError('non existing id'));
+    it('should not change joined group status of a non existing group', async () => {
+      await expect(async () => {
+        await groupsService.joinGroup('non existing id');
+      }).rejects.toThrow(new GroupNotFoundError('non existing id'));
     });
   });
 });
