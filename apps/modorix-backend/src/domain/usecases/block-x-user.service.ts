@@ -21,13 +21,11 @@ export class BlockXUsersService {
       throw new BlockReasonError(xUsername, 'empty');
     }
 
-    const blockReasons = (await this.blockReasonsRepository.blockedReasonsList()).filter((blockReason) =>
-      blockReasonIds.includes(blockReason.id),
-    );
+    const blockReasons = await this.blockReasonsRepository.blockedReasonsByIds(blockReasonIds);
     if (blockReasons.length !== blockReasonIds.length) {
       throw new BlockReasonError(xUsername, 'notFound');
     }
-    const blockedInGroups = (await this.groupsRepository.groupsList()).filter((group) => blockedInGroupsIds?.includes(group.id));
+    const blockedInGroups = await this.groupsRepository.groupsByIds(blockedInGroupsIds ?? []);
 
     const xUser: XUser = {
       xId,
@@ -38,7 +36,7 @@ export class BlockXUsersService {
       blockedInGroups,
       blockQueueModorixUserIds: [],
     };
-    this.blockXUsersRepository.blockXUser(xUser);
+    await this.blockXUsersRepository.blockXUser(xUser);
   }
 
   async blockXUserFromQueue(xUserId: string, modorixUserId: string): Promise<void> {
@@ -54,7 +52,7 @@ export class BlockXUsersService {
 
     xUser.blockQueueModorixUserIds = xUser.blockQueueModorixUserIds.filter((currModorixUserId) => currModorixUserId !== modorixUserId);
     xUser.blockingModorixUserIds.push(modorixUserId);
-    this.blockXUsersRepository.updateXUser(xUser);
+    await this.blockXUsersRepository.updateXUser(xUser);
   }
 
   async addToBlockQueue(xUserId: string, modorixUserId: string): Promise<void> {
@@ -64,7 +62,7 @@ export class BlockXUsersService {
     }
 
     xUser.blockQueueModorixUserIds.push(modorixUserId);
-    this.blockXUsersRepository.updateXUser(xUser);
+    await this.blockXUsersRepository.updateXUser(xUser);
   }
 
   async blockedXUsersList(modorixUserId: string): Promise<XUser[]> {

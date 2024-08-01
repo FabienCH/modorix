@@ -59,6 +59,10 @@ export class GroupsInMemoryRepository implements GroupsRepository {
     return this.groups;
   }
 
+  async groupsByIds(ids: string[]): Promise<Group[]> {
+    return this.groups.filter((group) => ids.includes(group.id));
+  }
+
   async findGroupById(groupId: string): Promise<Group | null> {
     return this.groups.find((group) => group.id === groupId) ?? null;
   }

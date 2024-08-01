@@ -10,17 +10,19 @@ export class BlockXUsersInMemoryRepository implements BlockXUsersRepository {
     this.blockedXUsers = [];
   }
 
-  blockXUser(xUser: XUser): void {
+  async blockXUser(xUser: XUser): Promise<void> {
     this.blockedXUsers.push(xUser);
+    return;
   }
 
-  updateXUser(xUser: XUser): void {
+  async updateXUser(xUser: XUser): Promise<void> {
     this.blockedXUsers = this.blockedXUsers.map((currentXUser) => {
       if (currentXUser.xId === xUser.xId) {
         currentXUser = xUser;
       }
       return currentXUser;
     });
+    return;
   }
 
   async blockedXUsersList(modorixUserId: string): Promise<XUser[]> {

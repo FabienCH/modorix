@@ -18,4 +18,8 @@ export class BlockReasonsInMemoryRepository implements BlockReasonsRepository {
   async blockedReasonsList(): Promise<BlockReason[]> {
     return this.blockReasons;
   }
+
+  async blockedReasonsByIds(ids: string[]): Promise<BlockReason[]> {
+    return this.blockReasons.filter((blockReason) => ids.includes(blockReason.id));
+  }
 }
