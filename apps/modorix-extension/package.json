@@ -9,6 +9,7 @@
     "test:watch": "vitest",
     "test:ci": "vitest run --coverage",
     "build": "tsc && TARGET=chrome vite build && TARGET=firefox vite build",
+    "build:dev": "tsc && TARGET=chrome vite build --mode dev && TARGET=firefox vite build --mode dev",
     "lint": "eslint \"src/**/*.ts\""
   },
   "dependencies": {

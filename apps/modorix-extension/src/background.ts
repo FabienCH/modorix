@@ -1,3 +1,4 @@
+import { setGatewayBaseUrl } from '@modorix-commons/gateways/base-url-config';
 import { blockXUserInNewTab, handleBlockedUser, handleRequestBlockUser } from './background/block-x-user';
 import {
   onBlockUserMessage,
@@ -14,6 +15,7 @@ import { BlocksQueueUpdateMessageData } from './shared/messages/event-message';
 
 console.log('background loaded !');
 
+setGatewayBaseUrl(import.meta.env.VITE_API_BASE_URL);
 let blockUserTab: chrome.tabs.Tab | null = null;
 const tabIdsListenedTo: number[] = [];
 

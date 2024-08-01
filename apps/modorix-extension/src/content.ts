@@ -1,11 +1,12 @@
 console.log('The extension is up and running');
 
+import { setGatewayBaseUrl } from '@modorix-commons/gateways/base-url-config';
 import { onRequestRunBlocksQueueMessage, onTabToListenLoadedMessage } from './content/infrastructure/messages-handlers/messages-listener';
 import { listenForUsernamesMouseEnter, updateUsernamesMouseEnterListener } from './content/usernames-mouse-enter-listener';
 import { SetHeadersMessageData } from './shared/messages/event-message';
 import { MessageIds } from './shared/messages/message-ids.enum';
 
-export function injectRequestListenerScript() {
+function injectRequestListenerScript() {
   const script = document.createElement('script');
   script.src = chrome.runtime.getURL('src/content/scripts/x-request-listener.js');
   script.onload = function () {
@@ -14,6 +15,7 @@ export function injectRequestListenerScript() {
   (document.head || document.documentElement).appendChild(script);
 }
 
+setGatewayBaseUrl(import.meta.env.VITE_API_BASE_URL);
 onTabToListenLoadedMessage(updateUsernamesMouseEnterListener);
 
 onRequestRunBlocksQueueMessage(() => {

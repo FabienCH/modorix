@@ -1,6 +1,6 @@
 import { XUser } from '@modorix-commons/models/x-user';
 
-const blockedXUsersBaseUrl = 'http://localhost:3000/api/block-x-users';
+const blockedXUsersBaseUrl = `${import.meta.env.VITE_API_BASE_URL}/block-x-users`;
 
 export async function getBlockQueueCandidates(modorixUserId: string): Promise<XUser[]> {
   return (

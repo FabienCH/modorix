@@ -1,6 +1,6 @@
 import { Group, GroupDetails } from '@modorix-commons/models/group';
 
-const groupBaseUrl = 'http://localhost:3000/api/groups';
+const groupBaseUrl = `${import.meta.env.VITE_API_BASE_URL}/groups`;
 
 export async function getGroups(): Promise<Group[]> {
   return (await fetch(groupBaseUrl, { method: 'GET' })).json();

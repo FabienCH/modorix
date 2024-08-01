@@ -1,7 +1,7 @@
 @font-face {
   font-family: lithos-modorix;
-  src: url('./lithos-Modorix.woff') format("woff");
-  src: url('./lithos-Modorix.woff2') format("woff2");
+  src: url('/lithos-Modorix.woff') format("woff");
+  src: url('/lithos-Modorix.woff2') format("woff2");
 }
 
 .lithos-font {
