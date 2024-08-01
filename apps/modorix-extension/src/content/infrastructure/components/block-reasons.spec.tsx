@@ -1,6 +1,6 @@
-import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { act } from 'react';
+import { MockInstance } from 'vitest';
 import * as BlockReasonsGateway from '../gateways/block-reasons-gateway';
 import { BlockReasonDialog } from './block-reason-dialog';
 
@@ -31,11 +31,11 @@ describe('Block user reasons', () => {
       label: 'Spreading fake news',
     },
   ];
-  let getBlockReasonsSpy: jest.SpyInstance;
+  let getBlockReasonsSpy: MockInstance;
   let selectedBlockReasonIds: string[] | undefined;
 
   beforeEach(async () => {
-    getBlockReasonsSpy = jest.spyOn(BlockReasonsGateway, 'getBlockReasons');
+    getBlockReasonsSpy = vi.spyOn(BlockReasonsGateway, 'getBlockReasons');
     getBlockReasonsSpy.mockReturnValue(await blockReasons);
     selectedBlockReasonIds = undefined;
 

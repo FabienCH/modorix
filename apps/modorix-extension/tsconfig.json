@@ -5,5 +5,5 @@
       "path": "./tsconfig.node.json"
     }
   ],
-  "exclude": ["**/*.spec.ts"]
+  "compilerOptions": { "types": ["vitest/globals", "chrome"] }
 }

@@ -1,8 +1,8 @@
 import react from '@vitejs/plugin-react';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { defineConfig } from 'vite';
 import webExtension, { readJsonFile } from 'vite-plugin-web-extension';
+import { defineConfig } from 'vitest/config';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -21,6 +21,11 @@ function generateManifest() {
 export default defineConfig({
   build: {
     outDir: process.env.TARGET === 'firefox' ? 'dist/firefox' : 'dist/chrome',
+  },
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: './config/tests/tests-setup.ts',
   },
   resolve: {
     alias: [

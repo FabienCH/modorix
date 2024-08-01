@@ -35,6 +35,7 @@ export const AutoResizeBadgesWithTooltip = ({ items, badgeVariant }: AutoResizeB
     if (areItemsUpToDate || !items.length) {
       return;
     }
+
     setContainerWidth(ref.current?.offsetWidth ?? 0);
     setBadgeWidths(badgeRefs.current.map((badgeRef) => badgeRef?.offsetWidth ?? 0));
 

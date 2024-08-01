@@ -1,3 +1,4 @@
+import { MockInstance } from 'vitest';
 import { BlocksQueueUpdateMessageData } from '../../shared/messages/event-message';
 import * as BlockXUserGateway from '../infrastructure/gateways/block-user-gateway';
 import * as XGateway from '../infrastructure/gateways/x-gateway';
@@ -5,9 +6,9 @@ import * as XHeaders from '../wait-for-x-headers';
 import { runBlocksQueue } from './run-blocks-queue-usecase';
 
 describe('Running blocks queue', () => {
-  let updateBlockedXUserSpy: jest.SpyInstance;
-  let blockUserOnXSpy: jest.SpyInstance;
-  let setTimeoutSpy: jest.SpyInstance;
+  let updateBlockedXUserSpy: MockInstance;
+  let blockUserOnXSpy: MockInstance;
+  let setTimeoutSpy: MockInstance;
   let presenterNotifierState: { [callNth: number]: BlocksQueueUpdateMessageData };
   let presenterNotifierCallNth: number;
 
@@ -37,14 +38,14 @@ describe('Running blocks queue', () => {
   };
 
   beforeEach(async () => {
-    jest.spyOn(Math, 'random').mockReturnValue(0.1);
-    setTimeoutSpy = jest.spyOn(global, 'setTimeout').mockImplementation((callback) => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.1);
+    setTimeoutSpy = vi.spyOn(global, 'setTimeout').mockImplementation((callback) => {
       callback();
       return {} as NodeJS.Timeout;
     });
-    updateBlockedXUserSpy = jest.spyOn(BlockXUserGateway, 'updateBlockedUser').mockReturnValue(Promise.resolve({} as Response));
-    blockUserOnXSpy = jest.spyOn(XGateway, 'blockUserOnX').mockReturnValue(Promise.resolve({} as Response));
-    jest.spyOn(XHeaders, 'waitForXHeaders').mockReturnValue(Promise.resolve({}));
+    updateBlockedXUserSpy = vi.spyOn(BlockXUserGateway, 'updateBlockedUser').mockReturnValue(Promise.resolve({} as Response));
+    blockUserOnXSpy = vi.spyOn(XGateway, 'blockUserOnX').mockReturnValue(Promise.resolve({} as Response));
+    vi.spyOn(XHeaders, 'waitForXHeaders').mockReturnValue(Promise.resolve({}));
     presenterNotifierState = {};
     presenterNotifierCallNth = 0;
   });
