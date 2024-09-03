@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { BlockReasonsController } from 'src/adapters/block-reasons.controller';
 
+import { APP_GUARD } from '@nestjs/core';
 import { ModorixUserController } from 'src/adapters/modorix-user.controller';
 import { ModorixUserRepositoryToken } from 'src/domain/repositories/modorix-user.repository';
 import { ModorixXUserService } from 'src/domain/usecases/modorix-user.service';
@@ -14,6 +15,8 @@ import { BlockReasonsService } from '../domain/usecases/block-reason.service';
 import { BlockXUsersService } from '../domain/usecases/block-x-user.service';
 import { GroupsService } from '../domain/usecases/group.service';
 import { SupabaseAuth } from './auth/supabase-auth';
+import { SupabaseGuard } from './auth/supabase-guard';
+import { SupabaseJwtStrategy } from './auth/supabase-jwt.strategy';
 import { DrizzleModule } from './database/drizzle.module';
 import { BlockReasonsDrizzleRepository } from './repositories/drizzle/block-reason-drizzle.repository';
 import { BlockXUsersDrizzleRepository } from './repositories/drizzle/block-x-user-drizzle.repository';
@@ -31,11 +34,17 @@ const ENV = process.env.NODE_ENV;
   ],
   controllers: [BlockXUsersController, GroupsController, BlockReasonsController, ModorixUserController],
   providers: [
+    {
+      provide: APP_GUARD,
+      useClass: SupabaseGuard,
+    },
     BlockXUsersService,
     GroupsService,
     BlockReasonsService,
     ModorixXUserService,
     SupabaseAuth,
+    SupabaseJwtStrategy,
+    SupabaseGuard,
     { provide: GroupsRepositoryToken, useClass: GroupsDrizzleRepository },
     { provide: BlockXUsersRepositoryToken, useClass: BlockXUsersDrizzleRepository },
     { provide: BlockReasonsRepositoryToken, useClass: BlockReasonsDrizzleRepository },

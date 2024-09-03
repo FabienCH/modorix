@@ -1,5 +1,6 @@
 import { Group, GroupDetails } from '@modorix-commons/models/group';
 import { Controller, Get, HttpCode, HttpException, HttpStatus, NotFoundException, Param, Post } from '@nestjs/common';
+import { Public } from 'src/infrastructure/auth/public.decorator';
 import { GroupNotFoundError } from '../domain/errors/group-not-found-error';
 import { GroupsService } from '../domain/usecases/group.service';
 
@@ -7,12 +8,14 @@ import { GroupsService } from '../domain/usecases/group.service';
 export class GroupsController {
   constructor(private readonly groupsService: GroupsService) {}
 
+  @Public()
   @Get('groups')
   @HttpCode(200)
   groupsList(): Promise<Group[]> {
     return this.groupsService.groupsList();
   }
 
+  @Public()
   @Get('groups/:groupId')
   @HttpCode(200)
   groupById(@Param() { groupId }: { groupId: string }): Promise<GroupDetails> {
