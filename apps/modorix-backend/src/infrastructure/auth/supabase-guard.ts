@@ -11,7 +11,6 @@ export class SupabaseGuard extends AuthGuard('jwt') implements CanActivate {
 
   public canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     const isPublic = this.reflector.get<boolean>('isPublic', context.getHandler());
-    console.log('🚀 ~ SupabaseGuard ~ canActivate ~ isPublic:', isPublic);
 
     if (isPublic) {
       return true;

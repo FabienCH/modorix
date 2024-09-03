@@ -12,7 +12,6 @@ export class SupabaseAuth {
   constructor(@Inject(REQUEST) private readonly request: Request) {}
 
   getClient() {
-    console.log('🚀 ~ SupabaseAuth ~ getClient ~ this.clientInstance:', this.clientInstance);
     if (this.clientInstance) {
       return this.clientInstance;
     }

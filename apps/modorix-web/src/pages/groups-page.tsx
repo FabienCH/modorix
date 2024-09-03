@@ -3,7 +3,7 @@ import { ModorixTable } from '@modorix-ui/components/modorix-table';
 import { useCallback, useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { getGroups } from '../adapters/gateways/group-gateway';
-import MembershipButton from '../components/membership-button';
+import MembershipButton from '../components/groups/membership-button';
 import { toggleMembership } from '../domain/toggle-group-membership-usecase';
 import { ROUTES } from '../routes';
 

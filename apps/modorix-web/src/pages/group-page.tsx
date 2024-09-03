@@ -6,11 +6,11 @@ import { cn } from '@modorix-ui/utils/utils';
 import { useCallback, useEffect, useState } from 'react';
 import { NavLink, useLoaderData } from 'react-router-dom';
 import BackIcon from '../../public/icon/back-arrow.svg?react';
-import { addToBlockQueue } from '../adapters/gateways/block-user-gateway';
+import { addToBlockQueue } from '../adapters/gateways/block-x-user-gateway';
 import { getGroup } from '../adapters/gateways/group-gateway';
-import { AutoResizeBadgesWithTooltip } from '../components/auto-resize-badges-with-tooltip';
-import GroupAddToBlockQueueCell from '../components/group-add-to-block-queue-cell';
-import MembershipButton from '../components/membership-button';
+import GroupAddToBlockQueueCell from '../components/groups/group-add-to-block-queue-cell';
+import MembershipButton from '../components/groups/membership-button';
+import { AutoResizeBadgesWithTooltip } from '../components/shared/auto-resize-badges-with-tooltip';
 import { toggleMembership } from '../domain/toggle-group-membership-usecase';
 import { ROUTES } from '../routes';
 

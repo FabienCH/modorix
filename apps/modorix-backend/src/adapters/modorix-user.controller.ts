@@ -1,22 +1,26 @@
-import { Body, Controller, HttpCode, HttpException, HttpStatus, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, HttpCode, HttpException, HttpStatus, Post } from '@nestjs/common';
 import { isAuthApiError } from '@supabase/supabase-js';
+import { UserSignUpValidationError } from 'src/domain/errors/user-sign-up-validation-error';
 import { ModorixXUserService } from 'src/domain/usecases/modorix-user.service';
 import { Public } from 'src/infrastructure/auth/public.decorator';
-import { ModorixUserSignUpDto } from './modorix-user-dto';
+import { ModorixUserSignUpDto } from './modorix-user-sign-up-dto';
 
 @Controller()
 export class ModorixUserController {
   constructor(private readonly modorixXUserService: ModorixXUserService) {}
 
   @Public()
-  @Post('users/sing-up')
+  @Post('users/sign-up')
   @HttpCode(201)
-  signUp(@Body() modorixUserSignUp: ModorixUserSignUpDto): Promise<void> {
+  async signUp(@Body() modorixUserSignUp: ModorixUserSignUpDto): Promise<void> {
     try {
-      return this.modorixXUserService.signUp(modorixUserSignUp);
+      return await this.modorixXUserService.signUp(modorixUserSignUp);
     } catch (error) {
+      if (error instanceof UserSignUpValidationError) {
+        throw new BadRequestException(error.message);
+      }
       if (isAuthApiError(error)) {
-        throw new HttpException(error.code ?? 'unknown error', error.status);
+        throw new HttpException(error.code ?? 'An unexpected error occurred', error.status);
       }
       throw new HttpException('An unexpected error occurred', HttpStatus.INTERNAL_SERVER_ERROR);
     }

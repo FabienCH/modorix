@@ -7,7 +7,6 @@ import { getEnvValue } from 'src/get-env-value';
 @Injectable()
 export class SupabaseJwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
-    console.log('Strategy name', Strategy.name);
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
