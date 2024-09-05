@@ -1,6 +1,6 @@
 import { BadRequestException, Body, Controller, HttpCode, HttpException, HttpStatus, Post } from '@nestjs/common';
 import { isAuthApiError } from '@supabase/supabase-js';
-import { UserSignUpValidationError } from 'src/domain/errors/user-sign-up-validation-error';
+import { UserSignUpPasswordValidationError } from 'src/domain/errors/user-sign-up-password-validation-error';
 import { ModorixXUserService } from 'src/domain/usecases/modorix-user.service';
 import { Public } from 'src/infrastructure/auth/public.decorator';
 import { ModorixUserSignUpDto } from './modorix-user-sign-up-dto';
@@ -16,7 +16,7 @@ export class ModorixUserController {
     try {
       return await this.modorixXUserService.signUp(modorixUserSignUp);
     } catch (error) {
-      if (error instanceof UserSignUpValidationError) {
+      if (error instanceof UserSignUpPasswordValidationError) {
         throw new BadRequestException(error.message);
       }
       if (isAuthApiError(error)) {

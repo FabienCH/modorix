@@ -1,4 +1,3 @@
-import { Group, GroupDetails } from '@modorix-commons/models/group';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,6 +11,7 @@ import {
 } from '@modorix-ui/components/alert-dialog';
 import { Button, buttonVariants } from '@modorix-ui/components/button';
 import { type VariantProps } from 'class-variance-authority';
+import { Group, GroupDetails } from '../../../../../packages/modorix-commons/src/domain/models/group';
 
 interface LeaveGroupDialogProps {
   group: Group | GroupDetails;

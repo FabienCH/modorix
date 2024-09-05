@@ -1,4 +1,4 @@
-import { XUser } from '@modorix-commons/models/x-user';
+import { XUser } from '@modorix-commons/domain/models/x-user';
 
 export const BlockXUsersRepositoryToken = Symbol('BlockXUsersRepositoryToken');
 

@@ -1,4 +1,4 @@
-import { Group } from '@modorix-commons/models/group';
+import { Group } from '@modorix-commons/domain/models/group';
 
 export const GroupsRepositoryToken = Symbol('GroupsRepositoryToken');
 

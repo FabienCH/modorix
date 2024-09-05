@@ -1,4 +1,4 @@
-import { BlockXUserRequest, XUser } from '@modorix-commons/models/x-user';
+import { BlockXUserRequest, XUser } from '@modorix-commons/domain/models/x-user';
 import { Inject, Injectable } from '@nestjs/common';
 import { BlockReasonError } from '../errors/block-reason-error';
 import { XUserNotFoundError } from '../errors/x-user-not-found-error';

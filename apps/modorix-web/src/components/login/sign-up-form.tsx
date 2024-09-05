@@ -2,9 +2,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@modorix-ui/components/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@modorix-ui/components/form';
 import { Input } from '@modorix-ui/components/input';
+import { passwordCharactersRegexp } from '@modorix/commons';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { passwordCharactersRegexp } from '../../domain/user-sign-up-usecase';
 
 const SignUpFormSchema = z.object({
   email: z.string({ message: 'Email address is required.' }).email('Email address is invalid.'),

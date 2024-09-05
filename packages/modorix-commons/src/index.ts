@@ -2,7 +2,9 @@
 export { XUsersTable } from './components/x-users-table';
 
 // models
-export * from './models/block-reason';
-export * from './models/group';
-export * from './models/user-sign-up';
-export * from './models/x-user';
+export * from './domain/models/block-reason';
+export * from './domain/models/group';
+export * from './domain/models/user-sign-up';
+export * from './domain/models/x-user';
+
+export * from './domain/sign-up/password-validation-regexp';

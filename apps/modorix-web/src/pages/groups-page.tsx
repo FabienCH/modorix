@@ -1,7 +1,7 @@
-import { Group } from '@modorix-commons/models/group';
 import { ModorixTable } from '@modorix-ui/components/modorix-table';
 import { useCallback, useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import { Group } from '../../../../packages/modorix-commons/src/domain/models/group';
 import { getGroups } from '../adapters/gateways/group-gateway';
 import MembershipButton from '../components/groups/membership-button';
 import { toggleMembership } from '../domain/toggle-group-membership-usecase';

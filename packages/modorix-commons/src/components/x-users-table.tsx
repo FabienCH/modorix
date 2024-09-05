@@ -1,7 +1,7 @@
 import { ModorixTable } from '@modorix-ui/components/modorix-table';
 import { useEffect, useState } from 'react';
-import { BlockReason } from '../models/block-reason';
-import { XUser } from '../models/x-user';
+import { BlockReason } from '../domain/models/block-reason';
+import { XUser } from '../domain/models/x-user';
 import { XUserRowConfig, XUsersData, mapToXUsersData } from './x-users-table-data';
 
 const defaultColumns = ['X Username', 'Blocked On', 'Block Reasons'];

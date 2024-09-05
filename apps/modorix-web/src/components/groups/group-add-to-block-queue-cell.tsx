@@ -1,4 +1,4 @@
-import { XUser } from '../../../../../packages/modorix-commons/src/models/x-user';
+import { XUser } from '../../../../../packages/modorix-commons/src/domain/models/x-user';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../../../../../packages/ui/src/components/tooltip';
 import { AddToQueueButton } from '../shared/add-to-queue-button';
 

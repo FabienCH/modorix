@@ -1,5 +1,5 @@
-import { BlockReason } from '@modorix-commons/models/block-reason';
-import { BlockXUserRequest, XUser } from '@modorix-commons/models/x-user';
+import { BlockReason } from '@modorix-commons/domain/models/block-reason';
+import { BlockXUserRequest, XUser } from '@modorix-commons/domain/models/x-user';
 import { IsArray, IsDateString, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class BlockXUserRequestDto implements BlockXUserRequest {

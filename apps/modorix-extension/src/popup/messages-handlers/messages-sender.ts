@@ -1,4 +1,4 @@
-import { XUser } from '@modorix-commons/models/x-user';
+import { XUser } from '@modorix-commons/domain/models/x-user';
 import { RequestRunBlocksQueueMessageData } from '../../shared/messages/event-message';
 import { MessageIds } from '../../shared/messages/message-ids.enum';
 

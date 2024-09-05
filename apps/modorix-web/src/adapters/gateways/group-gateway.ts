@@ -1,4 +1,4 @@
-import { Group, GroupDetails } from '@modorix-commons/models/group';
+import { Group, GroupDetails } from '../../../../../packages/modorix-commons/src/domain/models/group';
 
 const groupBaseUrl = `${import.meta.env.VITE_API_BASE_URL}/groups`;
 

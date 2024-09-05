@@ -1,7 +1,7 @@
 import { BadgesTooltip } from '@modorix-commons/components/badges-tooltip';
-import { BlockReason } from '@modorix-commons/models/block-reason';
 import { Badge } from '@modorix-ui/components/badge';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { BlockReason } from '../../../../../packages/modorix-commons/src/domain/models/block-reason';
 
 interface UpdatedBadgeDisplayConfig {
   newVisibleItems: BlockReason[];

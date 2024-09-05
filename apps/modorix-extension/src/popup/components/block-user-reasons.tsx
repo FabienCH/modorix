@@ -1,5 +1,5 @@
 import { BadgesTooltip } from '@modorix-commons/components/badges-tooltip';
-import { BlockReason } from '@modorix-commons/models/block-reason';
+import { BlockReason } from '@modorix-commons/domain/models/block-reason';
 
 export const BlockUserReasons = ({ items }: { items: BlockReason[] }) => {
   const label = items.length > 1 ? items.length.toString() : items[0].label;

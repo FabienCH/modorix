@@ -1,4 +1,4 @@
-import { XUser } from '@modorix-commons/models/x-user';
+import { XUser } from '@modorix-commons/domain/models/x-user';
 import { MessageIds } from './message-ids.enum';
 
 interface Message<Data> {

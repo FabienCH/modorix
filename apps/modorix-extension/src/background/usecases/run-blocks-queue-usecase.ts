@@ -1,4 +1,4 @@
-import { XUser } from '@modorix-commons/models/x-user';
+import { XUser } from '@modorix-commons/domain/models/x-user';
 import { BlocksQueueUpdateMessageData } from '../../shared/messages/event-message';
 import { updateBlockedUser } from '../infrastructure/gateways/block-user-gateway';
 import { blockUserOnX } from '../infrastructure/gateways/x-gateway';

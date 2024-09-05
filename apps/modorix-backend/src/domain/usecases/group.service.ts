@@ -1,4 +1,4 @@
-import { Group, GroupDetails } from '@modorix-commons/models/group';
+import { Group, GroupDetails } from '@modorix-commons/domain/models/group';
 import { Inject, Injectable } from '@nestjs/common';
 import { GroupNotFoundError } from '../errors/group-not-found-error';
 import { BlockXUsersRepository, BlockXUsersRepositoryToken } from '../repositories/block-x-user.repository';

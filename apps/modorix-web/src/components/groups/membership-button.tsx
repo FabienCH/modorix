@@ -1,6 +1,6 @@
-import { Group, GroupDetails } from '@modorix-commons/models/group';
 import { Button, buttonVariants } from '@modorix-ui/components/button';
 import { type VariantProps } from 'class-variance-authority';
+import { Group, GroupDetails } from '../../../../../packages/modorix-commons/src/domain/models/group';
 import { LeaveGroupDialog } from './leave-group-dialog';
 
 interface MembershipButtonProps {

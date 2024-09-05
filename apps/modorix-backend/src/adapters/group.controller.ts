@@ -1,4 +1,4 @@
-import { Group, GroupDetails } from '@modorix-commons/models/group';
+import { Group, GroupDetails } from '@modorix-commons/domain/models/group';
 import { Controller, Get, HttpCode, HttpException, HttpStatus, NotFoundException, Param, Post } from '@nestjs/common';
 import { Public } from 'src/infrastructure/auth/public.decorator';
 import { GroupNotFoundError } from '../domain/errors/group-not-found-error';
