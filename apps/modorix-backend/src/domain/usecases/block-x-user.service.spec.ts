@@ -1,5 +1,5 @@
-import { BlockReason } from '@modorix-commons/models/block-reason';
-import { BlockXUserRequest, XUser } from '@modorix-commons/models/x-user';
+import { BlockReason } from '@modorix-commons/domain/models/block-reason';
+import { BlockXUserRequest, XUser } from '@modorix-commons/domain/models/x-user';
 import { Test, TestingModule } from '@nestjs/testing';
 import { BlockReasonsInMemoryRepository } from '../../infrastructure/repositories/in-memory/block-reason-in-memory.repository';
 import { BlockXUsersInMemoryRepository } from '../../infrastructure/repositories/in-memory/block-x-user-in-memory.repository';

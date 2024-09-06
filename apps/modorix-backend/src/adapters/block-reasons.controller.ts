@@ -1,4 +1,4 @@
-import { BlockReason } from '@modorix-commons/models/block-reason';
+import { BlockReason } from '@modorix-commons/domain/models/block-reason';
 import { Controller, Get, HttpCode } from '@nestjs/common';
 import { BlockReasonsService } from '../domain/usecases/block-reason.service';
 

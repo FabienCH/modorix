@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import BanLogo from '../../public/icon/ban-solid.svg?react';
 import GroupLogo from '../../public/icon/people-group-solid.svg?react';
 import { ROUTES } from '../routes';
+import { SignUpDialog } from './login/sign-up-form-dialog';
 
 export default function Header() {
   function getNavLinkClassName(isActive: boolean): string {
@@ -11,8 +12,8 @@ export default function Header() {
 
   return (
     <header className="border-b flex px-4 py-3 bg-white md:px-10">
-      <div className="flex items-center flex-1 mx-auto max-w-screen-xl relative justify-center">
-        <div className="flex  pr-6 absolute left-0">
+      <div className="flex items-center flex-1 mx-auto max-w-screen-xl relative justify-between">
+        <div className="flex pr-6">
           <img src="/icon/48.png" className="w-8 mr-2" />
           <span className="text-2xl lithos-font text-shadow">
             Modori<span className="text-primary">x</span>
@@ -34,6 +35,7 @@ export default function Header() {
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
+        <SignUpDialog />
       </div>
     </header>
   );

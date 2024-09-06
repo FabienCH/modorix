@@ -1,4 +1,4 @@
-import { XUser } from '@modorix-commons/models/x-user';
+import { XUser } from '@modorix-commons/domain/models/x-user';
 import { BlocksQueueUpdateMessageData } from '../shared/messages/event-message';
 import { onRunBlocksQueueUpdateMessage } from './messages-handlers/messages-listener';
 import { sendRequestRunBlocksQueueMessage } from './messages-handlers/messages-sender';

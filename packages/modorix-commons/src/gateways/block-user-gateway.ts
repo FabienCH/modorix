@@ -1,4 +1,4 @@
-import { XUser } from '../models/x-user';
+import { XUser } from '../domain/models/x-user';
 import { getGatewayBaseUrl } from './base-url-config';
 
 const blockedXUsersBaseUrl = () => `${getGatewayBaseUrl()}/block-x-users`;

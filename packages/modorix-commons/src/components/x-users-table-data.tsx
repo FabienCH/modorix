@@ -1,4 +1,4 @@
-import { XUser } from '../models/x-user';
+import { XUser } from '../domain/models/x-user';
 
 export interface XUserRowConfig {
   index: number;

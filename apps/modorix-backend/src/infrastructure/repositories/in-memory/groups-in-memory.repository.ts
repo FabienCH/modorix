@@ -1,4 +1,4 @@
-import { Group } from '@modorix-commons/models/group';
+import { Group } from '@modorix-commons/domain/models/group';
 import { Injectable } from '@nestjs/common';
 import { GroupsRepository } from '../../../domain/repositories/groups.repository';
 

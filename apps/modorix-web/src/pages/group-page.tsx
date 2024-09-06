@@ -1,16 +1,16 @@
 import { OptionalColConfig, XUsersTable } from '@modorix-commons/components/x-users-table';
-import { GroupDetails } from '@modorix-commons/models/group';
-import { XUser } from '@modorix-commons/models/x-user';
 import { buttonVariants } from '@modorix-ui/components/button';
 import { cn } from '@modorix-ui/utils/utils';
 import { useCallback, useEffect, useState } from 'react';
 import { NavLink, useLoaderData } from 'react-router-dom';
+import { GroupDetails } from '../../../../packages/modorix-commons/src/domain/models/group';
+import { XUser } from '../../../../packages/modorix-commons/src/domain/models/x-user';
 import BackIcon from '../../public/icon/back-arrow.svg?react';
-import { addToBlockQueue } from '../adapters/gateways/block-user-gateway';
+import { addToBlockQueue } from '../adapters/gateways/block-x-user-gateway';
 import { getGroup } from '../adapters/gateways/group-gateway';
-import { AutoResizeBadgesWithTooltip } from '../components/auto-resize-badges-with-tooltip';
-import GroupAddToBlockQueueCell from '../components/group-add-to-block-queue-cell';
-import MembershipButton from '../components/membership-button';
+import GroupAddToBlockQueueCell from '../components/groups/group-add-to-block-queue-cell';
+import MembershipButton from '../components/groups/membership-button';
+import { AutoResizeBadgesWithTooltip } from '../components/shared/auto-resize-badges-with-tooltip';
 import { toggleMembership } from '../domain/toggle-group-membership-usecase';
 import { ROUTES } from '../routes';
 

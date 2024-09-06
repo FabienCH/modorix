@@ -1,5 +1,5 @@
-import { BlockReason } from '@modorix-commons/models/block-reason';
-import { XUser } from '@modorix-commons/models/x-user';
+import { BlockReason } from '@modorix-commons/domain/models/block-reason';
+import { XUser } from '@modorix-commons/domain/models/x-user';
 import { Inject, Injectable } from '@nestjs/common';
 import { arrayContains, eq, inArray } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';

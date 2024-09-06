@@ -1,6 +1,6 @@
 import { XUsersTable } from '@modorix-commons/components/x-users-table';
+import { XUser } from '@modorix-commons/domain/models/x-user';
 import { getBlockedUsers, getBlockQueue } from '@modorix-commons/gateways/block-user-gateway';
-import { XUser } from '@modorix-commons/models/x-user';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@modorix-ui/components/tabs';
 import { useEffect, useState } from 'react';
 import { BlocksQueueUpdateMessageData } from '../../shared/messages/event-message';

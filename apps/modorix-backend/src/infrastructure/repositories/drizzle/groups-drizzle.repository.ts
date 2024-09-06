@@ -1,4 +1,4 @@
-import { Group } from '@modorix-commons/models/group';
+import { Group } from '@modorix-commons/domain/models/group';
 import { Inject, Injectable } from '@nestjs/common';
 import { eq, inArray } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';

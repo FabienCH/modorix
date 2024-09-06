@@ -1,4 +1,4 @@
-import { BlockReason } from '@modorix-commons/models/block-reason';
+import { BlockReason } from '@modorix-commons/domain/models/block-reason';
 import { Injectable } from '@nestjs/common';
 import { BlockReasonsRepository } from '../../../domain/repositories/block-reason.repository';
 

@@ -1,4 +1,4 @@
-import { XUser } from '@modorix-commons/models/x-user';
+import { XUser } from '../../../../../packages/modorix-commons/src/domain/models/x-user';
 
 const blockedXUsersBaseUrl = `${import.meta.env.VITE_API_BASE_URL}/block-x-users`;
 
