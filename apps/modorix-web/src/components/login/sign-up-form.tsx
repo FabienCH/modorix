@@ -19,7 +19,15 @@ const SignUpFormSchema = z.object({
 
 export type SignUpFromValues = z.infer<typeof SignUpFormSchema>;
 
-export default function SignUpForm({ onSingUp }: { onSingUp: (formValues: SignUpFromValues) => void }) {
+export default function SignUpForm({
+  signUpErrorMessage,
+  onSingUp,
+  children,
+}: {
+  signUpErrorMessage: string | undefined;
+  onSingUp: (formValues: SignUpFromValues) => void;
+  children: React.ReactNode;
+}) {
   const signUpForm = useForm<SignUpFromValues>({
     resolver: zodResolver(SignUpFormSchema),
     mode: 'onTouched',
@@ -30,9 +38,8 @@ export default function SignUpForm({ onSingUp }: { onSingUp: (formValues: SignUp
     },
   });
 
-  const passwordsMissmatchError = signUpForm.formState.errors.root?.passwordsMissmatch;
-
   function checkPasswords(): void {
+    const currentPasswordsMissmatchError = signUpForm.formState.errors.root?.passwordsMissmatch;
     const { errors } = signUpForm.formState;
     const formValue = signUpForm.getValues();
     const arePasswordMatching = formValue.confirmPassword === formValue.password;
@@ -40,7 +47,7 @@ export default function SignUpForm({ onSingUp }: { onSingUp: (formValues: SignUp
     if (!arePasswordMatching && arePasswordsValid) {
       signUpForm.setError('root.passwordsMissmatch', { message: 'Passwords must be the same' });
     }
-    if (arePasswordMatching && passwordsMissmatchError) {
+    if (arePasswordMatching && currentPasswordsMissmatchError) {
       signUpForm.clearErrors('root.passwordsMissmatch');
     }
   }
@@ -89,20 +96,24 @@ export default function SignUpForm({ onSingUp }: { onSingUp: (formValues: SignUp
                   <Input type="password" {...field} />
                 </FormControl>
                 <FormMessage />
-                {passwordsMissmatchError ? (
-                  <p className="text-destructive text-sm font-medium">{passwordsMissmatchError?.message}</p>
+                {signUpForm.formState.errors.root?.passwordsMissmatch?.message ? (
+                  <p className="text-destructive text-sm font-medium">{signUpForm.formState.errors.root?.passwordsMissmatch?.message}</p>
                 ) : null}
+                {signUpErrorMessage ? <p className="text-destructive text-sm font-medium">{signUpErrorMessage}</p> : null}
               </FormItem>
             );
           }}
         />
-        <Button
-          type="submit"
-          disabled={signUpForm.formState.isSubmitted && !!Object.values(signUpForm.formState.errors).length}
-          className="flex mt-5 mx-auto"
-        >
-          Sign up
-        </Button>
+        <div className="flex mt-5 justify-center">
+          {children}
+          <Button
+            type="submit"
+            className="ml-4"
+            disabled={signUpForm.formState.isSubmitted && !!Object.values(signUpForm.formState.errors).length}
+          >
+            Sign up
+          </Button>
+        </div>
       </form>
     </Form>
   );

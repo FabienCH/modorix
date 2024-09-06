@@ -23,10 +23,8 @@ export class ModorixUserSupabaseRepository implements ModorixUserRepository {
   }
 
   async signUp({ email, password }: { email: string; password: string }): Promise<void> {
-    const { error } = await this.supabaseAuth.getClient().auth.signUp({
-      email,
-      password,
-    });
+    const { error } = await this.supabaseAuth.getClient().auth.signUp({ email, password });
+
     if (error) {
       throw error;
     }
