@@ -34,10 +34,12 @@ export class ModorixUserSupabaseRepository implements ModorixUserRepository {
 
   async confirmSignUp({ type, tokenHash }: SupabaseConfirmSignUpUser): Promise<UserSession> {
     const { data, error } = await this.supabaseAuth.getClient().auth.verifyOtp({ type, token_hash: tokenHash });
+    console.log('🚀 ~ ModorixUserSupabaseRepository ~ confirmSignUp ~ error:', error);
     if (error) {
       throw error;
     }
     const { user, session } = data;
+    console.log('🚀 ~ ModorixUserSupabaseRepository ~ confirmSignUp ~ data:', data);
     if (!user || !user.email || !session) {
       throw new Error('User session could not be retrieved.');
     }

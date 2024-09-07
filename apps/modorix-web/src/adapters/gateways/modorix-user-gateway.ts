@@ -21,6 +21,7 @@ export async function confirmSignUp(
       body: JSON.stringify(confirmSignUpUserRequest),
     })
   ).json();
+  console.log('🚀 ~ response:', response);
 
   if (isUserSession(response)) {
     return response;

@@ -8,7 +8,7 @@ export class BlockReasonsController {
 
   @Get('block-reasons')
   @HttpCode(200)
-  blockedReasonsList(): Promise<BlockReason[]> {
-    return this.blockReasonsService.blockedReasonsList();
+  async blockedReasonsList(): Promise<BlockReason[]> {
+    return await this.blockReasonsService.blockedReasonsList();
   }
 }

@@ -24,7 +24,7 @@ export class ModorixXUserService {
       throw new UserSignUpEmailValidationError(email);
     }
 
-    await this.modorixUserRepository.signUp({ email, password });
+    return this.modorixUserRepository.signUp({ email, password });
   }
 
   async confirmSignUp(confirmSignUpUser: ConfirmSignUpUserRequest): Promise<UserSession> {

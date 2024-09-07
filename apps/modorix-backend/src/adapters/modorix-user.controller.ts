@@ -21,10 +21,7 @@ export class ModorixUserController {
       if (error instanceof UserSignUpPasswordValidationError || error instanceof UserSignUpEmailValidationError) {
         throw new BadRequestException(error.message);
       }
-      if (isAuthApiError(error)) {
-        throw new HttpException(error.code ?? 'An unexpected error occurred', error.status);
-      }
-      throw new HttpException('An unexpected error occurred', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw this.getAuthError(error);
     }
   }
 
@@ -33,12 +30,17 @@ export class ModorixUserController {
   @HttpCode(201)
   async confirmSignUp(@Body() confirmSignUpUserDto: ConfirmSignUpUserDto): Promise<UserSession> {
     try {
-      return this.modorixXUserService.confirmSignUp(confirmSignUpUserDto);
+      return await this.modorixXUserService.confirmSignUp(confirmSignUpUserDto);
     } catch (error) {
-      if (isAuthApiError(error)) {
-        throw new HttpException(error.code ?? 'An unexpected error occurred', error.status);
-      }
-      throw new HttpException('An unexpected error occurred', HttpStatus.INTERNAL_SERVER_ERROR);
+      console.log('🚀 ~ ModorixUserController ~ signUp ~ error !!!:', error);
+      throw this.getAuthError(error);
     }
+  }
+
+  private getAuthError(error: unknown): HttpException {
+    if (isAuthApiError(error)) {
+      return new HttpException(error.code ?? 'An unexpected error occurred', error.status);
+    }
+    return new HttpException('An unexpected error occurred', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }
