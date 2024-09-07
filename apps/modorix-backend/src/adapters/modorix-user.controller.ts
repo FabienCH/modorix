@@ -33,7 +33,7 @@ export class ModorixUserController {
   @HttpCode(201)
   async confirmSignUp(@Body() confirmSignUpUserDto: ConfirmSignUpUserDto): Promise<UserSession> {
     try {
-      return await this.modorixXUserService.confirmSignUp(confirmSignUpUserDto);
+      return this.modorixXUserService.confirmSignUp(confirmSignUpUserDto);
     } catch (error) {
       if (isAuthApiError(error)) {
         throw new HttpException(error.code ?? 'An unexpected error occurred', error.status);

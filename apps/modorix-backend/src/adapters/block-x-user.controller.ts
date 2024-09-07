@@ -8,7 +8,7 @@ import {
   HttpStatus,
   NotFoundException,
   Param,
-  Post,
+  Post
 } from '@nestjs/common';
 import { BlockReasonError } from '../domain/errors/block-reason-error';
 import { XUserNotFoundError } from '../domain/errors/x-user-not-found-error';

@@ -1,7 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
-import { Observable } from 'rxjs';
 
 @Injectable()
 export class SupabaseGuard extends AuthGuard('jwt') implements CanActivate {
@@ -9,13 +8,13 @@ export class SupabaseGuard extends AuthGuard('jwt') implements CanActivate {
     super();
   }
 
-  public canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+  public async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.get<boolean>('isPublic', context.getHandler());
 
     if (isPublic) {
       return true;
     }
 
-    return super.canActivate(context);
+    return super.canActivate(context) as Promise<boolean>;
   }
 }
