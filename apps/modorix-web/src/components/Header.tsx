@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 import BanLogo from '../../public/icon/ban-solid.svg?react';
 import GroupLogo from '../../public/icon/people-group-solid.svg?react';
 import { ROUTES } from '../routes';
-import { SignUpDialog } from './login/sign-up-form-dialog';
+import { SignUpDialog } from './sign-up/sign-up-form-dialog';
 
 export default function Header() {
   function getNavLinkClassName(isActive: boolean): string {

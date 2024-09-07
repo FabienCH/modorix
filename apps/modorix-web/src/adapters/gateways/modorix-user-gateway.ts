@@ -21,10 +21,17 @@ export async function confirmSignUp(
       body: JSON.stringify(confirmSignUpUserRequest),
     })
   ).json();
-  console.log('🚀 ~ response:', response);
 
   if (isUserSession(response)) {
     return response;
   }
   return { error: response.message === 'otp_expired' ? 'expired' : 'other' };
+}
+
+export async function resendAccountConfirmation(email: string): Promise<void> {
+  await fetch(`${usersBaseUrl}/sign-up/resend-account-confirmation`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email }),
+  });
 }

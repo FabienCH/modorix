@@ -32,7 +32,18 @@ export class ModorixUserController {
     try {
       return await this.modorixXUserService.confirmSignUp(confirmSignUpUserDto);
     } catch (error) {
-      console.log('🚀 ~ ModorixUserController ~ signUp ~ error !!!:', error);
+      throw this.getAuthError(error);
+    }
+  }
+
+  @Public()
+  @Post('users/sign-up/resend-account-confirmation')
+  @HttpCode(201)
+  async resendAccountConfirmation(@Body() { email }: { email: string }): Promise<void> {
+    console.log('controller email', email);
+    try {
+      return await this.modorixXUserService.resendAccountConfirmation(email);
+    } catch (error) {
       throw this.getAuthError(error);
     }
   }

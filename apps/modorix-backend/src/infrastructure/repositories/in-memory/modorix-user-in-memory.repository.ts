@@ -4,9 +4,6 @@ import { ModorixUserRepository } from '../../../domain/repositories/modorix-user
 
 @Injectable()
 export class ModorixUserInMemoryRepository implements ModorixUserRepository {
-  confirmSignUp(_: ConfirmSignUpUserRequest): Promise<UserSession> {
-    throw new Error('Method not implemented.');
-  }
   private readonly usedEmail = 'email-used@domain.com';
 
   async getUserEmail(email: string): Promise<{ email: string } | null> {
@@ -17,6 +14,14 @@ export class ModorixUserInMemoryRepository implements ModorixUserRepository {
   }
 
   async signUp(_: { email: string; password: string }): Promise<void> {
+    return;
+  }
+
+  async confirmSignUp(_: ConfirmSignUpUserRequest): Promise<UserSession> {
+    throw new Error('Method not implemented.');
+  }
+
+  async resendAccountConfirmation(_: string): Promise<void> {
     return;
   }
 }

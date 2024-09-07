@@ -30,4 +30,8 @@ export class ModorixXUserService {
   async confirmSignUp(confirmSignUpUser: ConfirmSignUpUserRequest): Promise<UserSession> {
     return this.modorixUserRepository.confirmSignUp(confirmSignUpUser);
   }
+
+  async resendAccountConfirmation(email: string): Promise<void> {
+    return this.modorixUserRepository.resendAccountConfirmation(email);
+  }
 }

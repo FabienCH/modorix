@@ -6,4 +6,5 @@ export interface ModorixUserRepository {
   getUserEmail(email: string): Promise<{ email: string } | null>;
   signUp({ email, password }: { email: string; password: string }): Promise<void>;
   confirmSignUp(confirmSignUpUser: ConfirmSignUpUserRequest): Promise<UserSession>;
+  resendAccountConfirmation(email: string): Promise<void>;
 }
