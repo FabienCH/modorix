@@ -1,4 +1,4 @@
-import { ConfirmSignUpUserRequest, SignUpUserRequest } from '@modorix-commons/domain/models/user-sign-up';
+import { ConfirmSignUpUserRequest, SignUpUserRequest } from '@modorix-commons/domain/sign-up/models/user-sign-up';
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class ModorixUserSignUpDto implements SignUpUserRequest {
