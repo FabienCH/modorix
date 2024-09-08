@@ -27,7 +27,6 @@ export default function ConfirmSignUpPage() {
 
     confirmUserSignUp(runConfirmSignUp, onConfirm, setConfirmError);
   }, [searchParams, navigate]);
-  console.log('isSignUpConfirmed', isSignUpConfirmed);
 
   return (
     <section className="w-full mx-auto max-w-screen-lg">

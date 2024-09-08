@@ -40,7 +40,6 @@ export class ModorixUserController {
   @Post('users/sign-up/resend-account-confirmation')
   @HttpCode(201)
   async resendAccountConfirmation(@Body() { email }: { email: string }): Promise<void> {
-    console.log('controller email', email);
     try {
       return await this.modorixXUserService.resendAccountConfirmation(email);
     } catch (error) {

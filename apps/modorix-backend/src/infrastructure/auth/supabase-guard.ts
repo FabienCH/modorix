@@ -9,7 +9,7 @@ export class SupabaseGuard extends AuthGuard('jwt') implements CanActivate {
     super();
   }
 
-  public async canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+  public canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     const isPublic = this.reflector.get<boolean>('isPublic', context.getHandler());
 
     if (isPublic) {
