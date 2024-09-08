@@ -1,4 +1,4 @@
-import { SignUpUserRequest } from '@modorix-commons/domain/models/user-sign-up';
+import { ConfirmSignUpUserRequest, SignUpUserRequest, UserSession } from '@modorix-commons/domain/sign-up/models/user-sign-up';
 import { passwordCharactersRegexp } from '@modorix-commons/domain/sign-up/password-validation-regexp';
 import { Inject, Injectable } from '@nestjs/common';
 import { UserSignUpEmailValidationError } from '../errors/user-sign-up-email-validation-error';
@@ -24,6 +24,14 @@ export class ModorixXUserService {
       throw new UserSignUpEmailValidationError(email);
     }
 
-    await this.modorixUserRepository.signUp({ email, password });
+    return this.modorixUserRepository.signUp({ email, password });
+  }
+
+  async confirmSignUp(confirmSignUpUser: ConfirmSignUpUserRequest): Promise<UserSession> {
+    return this.modorixUserRepository.confirmSignUp(confirmSignUpUser);
+  }
+
+  async resendAccountConfirmation(email: string): Promise<void> {
+    return this.modorixUserRepository.resendAccountConfirmation(email);
   }
 }

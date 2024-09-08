@@ -18,9 +18,9 @@ export class GroupsController {
   @Public()
   @Get('groups/:groupId')
   @HttpCode(200)
-  groupById(@Param() { groupId }: { groupId: string }): Promise<GroupDetails> {
+  async groupById(@Param() { groupId }: { groupId: string }): Promise<GroupDetails> {
     try {
-      return this.groupsService.findGroupById(groupId);
+      return await this.groupsService.findGroupById(groupId);
     } catch (error) {
       throw this.getGroupError(error);
     }
@@ -28,9 +28,9 @@ export class GroupsController {
 
   @Post('groups/join/:groupId')
   @HttpCode(201)
-  joinGroup(@Param() { groupId }: { groupId: string }): Promise<void> {
+  async joinGroup(@Param() { groupId }: { groupId: string }): Promise<void> {
     try {
-      return this.groupsService.joinGroup(groupId);
+      return await this.groupsService.joinGroup(groupId);
     } catch (error) {
       throw this.getGroupError(error);
     }
@@ -38,9 +38,9 @@ export class GroupsController {
 
   @Post('groups/leave/:groupId')
   @HttpCode(201)
-  leaveGroup(@Param() { groupId }: { groupId: string }): Promise<void> {
+  async leaveGroup(@Param() { groupId }: { groupId: string }): Promise<void> {
     try {
-      return this.groupsService.leaveGroup(groupId);
+      return await this.groupsService.leaveGroup(groupId);
     } catch (error) {
       throw this.getGroupError(error);
     }

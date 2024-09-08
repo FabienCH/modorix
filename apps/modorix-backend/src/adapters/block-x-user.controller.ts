@@ -22,9 +22,9 @@ export class BlockXUsersController {
 
   @Post('block-x-users')
   @HttpCode(201)
-  blockXUser(@Body() xUser: BlockXUserRequestDto): Promise<void> {
+  async blockXUser(@Body() xUser: BlockXUserRequestDto): Promise<void> {
     try {
-      return this.blockXUsersService.blockXUser(xUser);
+      return await this.blockXUsersService.blockXUser(xUser);
     } catch (error) {
       if (error instanceof BlockReasonError) {
         throw new BadRequestException(error.message);
@@ -35,9 +35,12 @@ export class BlockXUsersController {
 
   @Post('block-x-users/from-queue/:modorixUserId')
   @HttpCode(201)
-  blockXUserFromQueue(@Param() { modorixUserId }: { modorixUserId: string }, @Body() { xUserId }: { xUserId: string }): Promise<void> {
+  async blockXUserFromQueue(
+    @Param() { modorixUserId }: { modorixUserId: string },
+    @Body() { xUserId }: { xUserId: string },
+  ): Promise<void> {
     try {
-      return this.blockXUsersService.blockXUserFromQueue(xUserId, modorixUserId);
+      return await this.blockXUsersService.blockXUserFromQueue(xUserId, modorixUserId);
     } catch (error) {
       if (error instanceof XUserNotFoundError) {
         throw new NotFoundException(error.message);
@@ -51,9 +54,12 @@ export class BlockXUsersController {
 
   @Post('block-x-users/queue/:modorixUserId')
   @HttpCode(201)
-  addXUserToBlockQueue(@Param() { modorixUserId }: { modorixUserId: string }, @Body() { xUserId }: { xUserId: string }): Promise<void> {
+  async addXUserToBlockQueue(
+    @Param() { modorixUserId }: { modorixUserId: string },
+    @Body() { xUserId }: { xUserId: string },
+  ): Promise<void> {
     try {
-      return this.blockXUsersService.addToBlockQueue(xUserId, modorixUserId);
+      return await this.blockXUsersService.addToBlockQueue(xUserId, modorixUserId);
     } catch (error) {
       if (error instanceof XUserNotFoundError) {
         throw new NotFoundException(error.message);
@@ -64,19 +70,19 @@ export class BlockXUsersController {
 
   @Get('block-x-users/:modorixUserId')
   @HttpCode(200)
-  blockedXUsersList(@Param() { modorixUserId }: { modorixUserId: string }): Promise<XUserDto[]> {
-    return this.blockXUsersService.blockedXUsersList(modorixUserId);
+  async blockedXUsersList(@Param() { modorixUserId }: { modorixUserId: string }): Promise<XUserDto[]> {
+    return await this.blockXUsersService.blockedXUsersList(modorixUserId);
   }
 
   @Get('block-x-users/queue/candidates/:modorixUserId')
   @HttpCode(200)
-  blockQueueCandidates(@Param() { modorixUserId }: { modorixUserId: string }): Promise<XUserDto[]> {
-    return this.blockXUsersService.blockQueueCandidates(modorixUserId);
+  async blockQueueCandidates(@Param() { modorixUserId }: { modorixUserId: string }): Promise<XUserDto[]> {
+    return await this.blockXUsersService.blockQueueCandidates(modorixUserId);
   }
 
   @Get('block-x-users/queue/:modorixUserId')
   @HttpCode(200)
-  blockQueue(@Param() { modorixUserId }: { modorixUserId: string }): Promise<XUserDto[]> {
-    return this.blockXUsersService.blockQueue(modorixUserId);
+  async blockQueue(@Param() { modorixUserId }: { modorixUserId: string }): Promise<XUserDto[]> {
+    return await this.blockXUsersService.blockQueue(modorixUserId);
   }
 }
