@@ -5,7 +5,7 @@ import { BlockReasonsController } from 'src/adapters/block-reasons.controller';
 import { APP_GUARD } from '@nestjs/core';
 import { ModorixUserController } from 'src/adapters/modorix-user.controller';
 import { ModorixUserRepositoryToken } from 'src/domain/repositories/modorix-user.repository';
-import { ModorixXUserService } from 'src/domain/usecases/modorix-user.service';
+import { ModorixUserService } from 'src/domain/usecases/modorix-user.service';
 import { BlockXUsersController } from '../adapters/block-x-user.controller';
 import { GroupsController } from '../adapters/group.controller';
 import { BlockReasonsRepositoryToken } from '../domain/repositories/block-reason.repository';
@@ -41,7 +41,7 @@ const ENV = process.env.NODE_ENV;
     BlockXUsersService,
     GroupsService,
     BlockReasonsService,
-    ModorixXUserService,
+    ModorixUserService,
     SupabaseAuth,
     SupabaseJwtStrategy,
     SupabaseGuard,

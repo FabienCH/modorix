@@ -3,22 +3,22 @@ import { ModorixUserInMemoryRepository } from 'src/infrastructure/repositories/i
 import { UserSignUpEmailValidationError } from '../errors/user-sign-up-email-validation-error';
 import { UserSignUpPasswordValidationError } from '../errors/user-sign-up-password-validation-error';
 import { ModorixUserRepositoryToken } from '../repositories/modorix-user.repository';
-import { ModorixXUserService } from './modorix-user.service';
+import { ModorixUserService } from './modorix-user.service';
 
-describe('ModorixXUserService', () => {
-  let modorixXUserService: ModorixXUserService;
+describe('ModorixUserService', () => {
+  let modorixUserService: ModorixUserService;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
-      providers: [ModorixXUserService, { provide: ModorixUserRepositoryToken, useClass: ModorixUserInMemoryRepository }],
+      providers: [ModorixUserService, { provide: ModorixUserRepositoryToken, useClass: ModorixUserInMemoryRepository }],
     }).compile();
 
-    modorixXUserService = app.get<ModorixXUserService>(ModorixXUserService);
+    modorixUserService = app.get<ModorixUserService>(ModorixUserService);
   });
 
   describe('Sign up', () => {
     it('should sign up user', async () => {
-      const signUpResult = await modorixXUserService.signUp({
+      const signUpResult = await modorixUserService.signUp({
         email: 'email@domain.com',
         password: 'StrongPassword123',
         confirmPassword: 'StrongPassword123',
@@ -29,7 +29,7 @@ describe('ModorixXUserService', () => {
 
     it('should not sign up user if passwords are not matching', async () => {
       await expect(async () => {
-        await modorixXUserService.signUp({
+        await modorixUserService.signUp({
           email: 'email@domain.com',
           password: 'StrongPassword123',
           confirmPassword: 'StrongPassword456',
@@ -39,7 +39,7 @@ describe('ModorixXUserService', () => {
 
     it("should not sign up user if password is don't have number", async () => {
       await expect(async () => {
-        await modorixXUserService.signUp({
+        await modorixUserService.signUp({
           email: 'email@domain.com',
           password: 'WeakPassword',
           confirmPassword: 'WeakPassword',
@@ -49,7 +49,7 @@ describe('ModorixXUserService', () => {
 
     it('should not sign up user if password is too short', async () => {
       await expect(async () => {
-        await modorixXUserService.signUp({
+        await modorixUserService.signUp({
           email: 'email@domain.com',
           password: 'Pass123',
           confirmPassword: 'Pass123',
@@ -59,7 +59,7 @@ describe('ModorixXUserService', () => {
 
     it('should not sign up user if email is already used', async () => {
       await expect(async () => {
-        await modorixXUserService.signUp({
+        await modorixUserService.signUp({
           email: 'email-used@domain.com',
           password: 'StrongPassword123',
           confirmPassword: 'StrongPassword123',
