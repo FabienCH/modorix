@@ -8,3 +8,5 @@ export * from './domain/models/x-user';
 
 export * from './domain/sign-up/models/user-sign-up';
 export * from './domain/sign-up/password-validation-regexp';
+
+export * from './domain/login/models/user-login';

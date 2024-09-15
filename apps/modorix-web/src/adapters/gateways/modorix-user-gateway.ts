@@ -1,15 +1,7 @@
-import { ConfirmSignUpUserRequest, SignUpUserRequest, UserSession } from '@modorix/commons';
+import { ConfirmSignUpUserRequest, UserSession } from '@modorix/commons';
 import { isUserSession } from '../../domain/type-guards/user-session-guard';
 
 const usersBaseUrl = `${import.meta.env.VITE_API_BASE_URL}/users`;
-
-export async function signUp(signUpUserRequest: SignUpUserRequest): Promise<Response> {
-  return await fetch(`${usersBaseUrl}/sign-up`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(signUpUserRequest),
-  });
-}
 
 export async function confirmSignUp(
   confirmSignUpUserRequest: ConfirmSignUpUserRequest,

@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import BanLogo from '../../public/icon/ban-solid.svg?react';
 import GroupLogo from '../../public/icon/people-group-solid.svg?react';
 import { ROUTES } from '../routes';
+import { LoginDialog } from './login/login-dialog';
 import { SignUpDialog } from './sign-up/sign-up-form-dialog';
 
 export default function Header() {
@@ -35,7 +36,10 @@ export default function Header() {
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
-        <SignUpDialog />
+        <div>
+          <LoginDialog />
+          <SignUpDialog />
+        </div>
       </div>
     </header>
   );
