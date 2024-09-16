@@ -7,7 +7,7 @@ import { z } from 'zod';
 
 const LoginUpFormSchema = z.object({
   email: z.string({ message: 'Email address is required.' }).email('Email address is invalid.'),
-  password: z.string({ message: 'Password is required.' }),
+  password: z.string({ message: 'Password is required.' }).min(1, { message: 'Password is required.' }),
 });
 
 export type LoginFromValues = z.infer<typeof LoginUpFormSchema>;
@@ -19,7 +19,7 @@ export default function LoginForm({
 }: {
   loginErrorMessage: string | undefined;
   onLogin: (formValues: LoginFromValues) => void;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }) {
   const loginForm = useForm<LoginFromValues>({
     resolver: zodResolver(LoginUpFormSchema),

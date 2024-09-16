@@ -1,8 +1,8 @@
-import { saveUserSession } from '@modorix-commons/storage/cookies-user-session-storage';
 import { UserSession } from '@modorix/commons';
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { confirmSignUp } from '../adapters/gateways/modorix-user-gateway';
+import { saveUserSessionInCookies } from '../adapters/storage/cookies-user-session-storage';
 import ConfirmSignUpError from '../components/sign-up/confirm-sign-up-error';
 import { confirmUserSignUp } from '../domain/confirm-user-sign-up-usecase';
 import { ROUTES } from '../routes';
@@ -15,7 +15,7 @@ export default function ConfirmSignUpPage() {
 
   useEffect(() => {
     function onConfirm(userSession: UserSession) {
-      saveUserSession(userSession);
+      saveUserSessionInCookies(userSession);
       setIsSignUpConfirmed(true);
       setTimeout(() => {
         navigate(ROUTES.Home);

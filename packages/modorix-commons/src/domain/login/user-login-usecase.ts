@@ -1,11 +1,11 @@
-import { saveUserSession } from '@modorix-commons/storage/cookies-user-session-storage';
-import { LoginUserRequest, UserSession } from '@modorix/commons';
+import { LoginUserRequest, SaveUserSessionStorage, UserSession } from '@modorix/commons';
 import { LoginGateway } from './gateways/user-gateway';
 import { isUserSession } from './type-guards/user-session-guard';
 
 export async function loginUser(
   loginUserRequest: LoginUserRequest,
   loginGateway: LoginGateway,
+  saveUserSession: SaveUserSessionStorage,
 ): Promise<{ successMessage: string | undefined; errorMessage: string | undefined }> {
   const loginResponse = await loginGateway(loginUserRequest);
   const isResponseUserSession = isUserSession(loginResponse);

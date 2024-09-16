@@ -1,5 +1,7 @@
-import { getAccessToken } from '../storage/cookies-user-session-storage';
+import { GetAccessTokenStorage } from '../domain/login/storage/user-session-storage';
 
-export function fetchWithAuth(input: string | URL | globalThis.Request, init?: RequestInit) {
-  return fetch(input, { ...init, headers: { ...init?.headers, Authorization: `Bearer ${getAccessToken()}` } });
+export async function fetchWithAuth(input: string | URL | globalThis.Request, getAccessToken: GetAccessTokenStorage, init?: RequestInit) {
+  const accessTokenFromStorage = getAccessToken();
+  const accessToken = typeof accessTokenFromStorage === 'string' ? accessTokenFromStorage : await accessTokenFromStorage;
+  return fetch(input, { ...init, headers: { ...init?.headers, Authorization: `Bearer ${accessToken}` } });
 }

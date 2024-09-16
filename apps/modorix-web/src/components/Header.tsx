@@ -1,12 +1,23 @@
+import ProfileIcon from '@modorix-commons/components/profile-icon';
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList, navigationMenuTriggerStyle } from '@modorix-ui/components/navigation-menu';
+import { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import BanLogo from '../../public/icon/ban-solid.svg?react';
 import GroupLogo from '../../public/icon/people-group-solid.svg?react';
+import { getAccessTokenFromCookies, getUserEmailFromCookies } from '../adapters/storage/cookies-user-session-storage';
 import { ROUTES } from '../routes';
 import { LoginDialog } from './login/login-dialog';
 import { SignUpDialog } from './sign-up/sign-up-form-dialog';
 
 export default function Header() {
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    setAccessToken(getAccessTokenFromCookies());
+    setUserEmail(getUserEmailFromCookies());
+  }, []);
+
   function getNavLinkClassName(isActive: boolean): string {
     return navigationMenuTriggerStyle(isActive ? { className: 'text-modorix-700 font-medium' } : undefined);
   }
@@ -36,10 +47,14 @@ export default function Header() {
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
-        <div>
-          <LoginDialog />
-          <SignUpDialog />
-        </div>
+        {accessToken ? (
+          <ProfileIcon email={userEmail} />
+        ) : (
+          <div>
+            <LoginDialog />
+            <SignUpDialog />
+          </div>
+        )}
       </div>
     </header>
   );

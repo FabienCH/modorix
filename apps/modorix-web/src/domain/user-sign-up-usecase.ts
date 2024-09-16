@@ -1,5 +1,5 @@
+import { SignUpGateway } from '@modorix-commons/domain/login/gateways/user-gateway';
 import { SignUpUserRequest } from '@modorix/commons';
-import { SignUpGateway } from './gateways/user-gateway';
 
 export async function signUpUser(
   signUpUserRequest: SignUpUserRequest,

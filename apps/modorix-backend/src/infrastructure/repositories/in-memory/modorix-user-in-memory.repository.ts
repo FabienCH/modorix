@@ -1,5 +1,6 @@
 import { LoginUserRequest } from '@modorix-commons/domain/login/models/user-login';
-import { ConfirmSignUpUserRequest, UserSession } from '@modorix-commons/domain/sign-up/models/user-sign-up';
+import { UserSession } from '@modorix-commons/domain/login/models/user-session';
+import { ConfirmSignUpUserRequest } from '@modorix-commons/domain/sign-up/models/user-sign-up';
 import { Injectable } from '@nestjs/common';
 import { AuthApiError } from '@supabase/supabase-js';
 import { ModorixUserRepository } from '../../../domain/repositories/modorix-user.repository';

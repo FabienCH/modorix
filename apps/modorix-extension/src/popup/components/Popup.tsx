@@ -1,59 +1,41 @@
-import { XUsersTable } from '@modorix-commons/components/x-users-table';
-import { XUser } from '@modorix-commons/domain/models/x-user';
-import { getBlockedUsers, getBlockQueue } from '@modorix-commons/gateways/block-user-gateway';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@modorix-ui/components/tabs';
+import ProfileIcon from '@modorix-commons/components/profile-icon';
+import { Button } from '@modorix-ui/components/button';
 import { useEffect, useState } from 'react';
-import { BlocksQueueUpdateMessageData } from '../../shared/messages/event-message';
-import { onRunBlocksQueueUpdate, requestRunBlocksQueue } from '../popup-handler';
-import { BlockUserReasons } from './block-user-reasons';
-import { BlocksQueue } from './blocks-queue';
-
-enum TabsEnum {
-  BLOCKS_QUEUE = 'my-blocks-queue',
-  BLOCKS_LIST = 'my-blocks-list',
-}
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import {
+  getAccessTokenFromBrowserStorage,
+  getUserEmailFromBrowserStorage,
+} from '../../content/infrastructure/storage/browser-user-session-storage';
+import { ROUTES } from '../../routes';
 
 export default function Popup() {
-  const [blockedUsers, setBlockedUsers] = useState<XUser[]>([]);
-  const [blockQueueState, setBlockQueueState] = useState<BlocksQueueUpdateMessageData>({ blockQueue: [], runQueueStatus: 'ready' });
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
-      onRunBlocksQueueUpdate(setBlockQueueState);
-      setBlockedUsers(await getBlockedUsers('1'));
-      setBlockQueueState({ blockQueue: await getBlockQueue('1'), runQueueStatus: 'ready' });
+      setAccessToken(await getAccessTokenFromBrowserStorage());
+      setUserEmail(await getUserEmailFromBrowserStorage());
     })();
   }, []);
 
-  useEffect(() => {
-    if (blockQueueState.runQueueStatus === 'error') {
-      chrome.action.setBadgeText({ text: '!' });
-      chrome.action.setBadgeBackgroundColor({ color: 'red' });
-    } else {
-      chrome.action.setBadgeText({ text: '' });
-      chrome.action.setBadgeBackgroundColor({ color: 'transparent' });
-    }
-  }, [blockQueueState]);
-
-  async function runQueue(): Promise<void> {
-    requestRunBlocksQueue(blockQueueState.blockQueue);
+  function navigateTo() {
+    navigate(pathname === ROUTES.Home ? ROUTES.Login : '..');
   }
 
   return (
-    <Tabs className="p-2" defaultValue={TabsEnum.BLOCKS_QUEUE}>
-      <div className="flex">
-        <img src="/icon/48.png" className="w-7 h-7 mr-1.5 absolute top-[15px]" />
-        <TabsList className="mx-auto mb-4">
-          <TabsTrigger value={TabsEnum.BLOCKS_QUEUE}>My blocks queue</TabsTrigger>
-          <TabsTrigger value={TabsEnum.BLOCKS_LIST}>My blocks list</TabsTrigger>
-        </TabsList>
-      </div>
-      <TabsContent className="flex flex-col mt-0" value={TabsEnum.BLOCKS_QUEUE}>
-        <BlocksQueue {...blockQueueState} onRunQueueClick={runQueue}></BlocksQueue>
-      </TabsContent>
-      <TabsContent value={TabsEnum.BLOCKS_LIST}>
-        <XUsersTable BadgesComponent={BlockUserReasons} blockedUsers={blockedUsers} rowGridCols="grid-cols-[1fr_107px_140px]" />
-      </TabsContent>
-    </Tabs>
+    <>
+      <header className="flex justify-between p-3 pb-0">
+        <img src="/icon/48.png" className="w-7 h-7 mr-1.5" />
+        {accessToken ? (
+          <ProfileIcon email={userEmail} />
+        ) : (
+          <Button onClick={navigateTo}>{pathname === ROUTES.Home ? 'Login' : 'Back'}</Button>
+        )}
+      </header>
+      <Outlet />
+    </>
   );
 }

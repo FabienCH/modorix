@@ -1,5 +1,5 @@
 import { LoginUserRequest } from '@modorix-commons/domain/login/models/user-login';
-import { UserSession } from '@modorix-commons/domain/sign-up/models/user-sign-up';
+import { UserSession } from '@modorix-commons/domain/login/models/user-session';
 import { Inject, Injectable } from '@nestjs/common';
 import { AuthResponse } from '@supabase/supabase-js';
 import { SupabaseAuthClient } from '@supabase/supabase-js/dist/module/lib/SupabaseAuthClient';

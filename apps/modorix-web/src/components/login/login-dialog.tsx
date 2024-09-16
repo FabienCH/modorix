@@ -1,3 +1,6 @@
+import LoginForm, { LoginFromValues } from '@modorix-commons/components/login-form';
+import { loginUser } from '@modorix-commons/domain/login/user-login-usecase';
+import { login } from '@modorix-commons/gateways/http-user-gateway';
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -8,16 +11,14 @@ import {
 } from '@modorix-ui/components/alert-dialog';
 import { Button } from '@modorix-ui/components/button';
 import { useState } from 'react';
-import { login } from '../../adapters/gateways/http-user-gateway';
-import { loginUser } from '../../domain/user-login-usecase';
-import LoginForm, { LoginFromValues } from './login-form';
+import { saveUserSessionInCookies } from '../../adapters/storage/cookies-user-session-storage';
 
 export function LoginDialog() {
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
   const [open, setOpen] = useState(false);
 
   async function handleLogin(fromValues: LoginFromValues): Promise<void> {
-    const { errorMessage } = await loginUser(fromValues, login);
+    const { errorMessage } = await loginUser(fromValues, login, saveUserSessionInCookies);
     setErrorMessage(errorMessage);
     if (!errorMessage) {
       setOpen(false);

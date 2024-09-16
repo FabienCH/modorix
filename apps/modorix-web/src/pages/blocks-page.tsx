@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@modorix-ui/components
 import { useEffect, useState } from 'react';
 import { XUser } from '../../../../packages/modorix-commons/src/domain/models/x-user';
 import { addToBlockQueue, getBlockQueueCandidates } from '../adapters/gateways/block-x-user-gateway';
+import { getAccessTokenFromCookies } from '../adapters/storage/cookies-user-session-storage';
 import { AddToQueueButton } from '../components/shared/add-to-queue-button';
 import { AutoResizeBadgesWithTooltip } from '../components/shared/auto-resize-badges-with-tooltip';
 
@@ -30,14 +31,14 @@ export default function BlocksPage() {
 
   useEffect(() => {
     (async () => {
-      setBlockedUsers(await getBlockedUsers('1'));
+      setBlockedUsers(await getBlockedUsers('1', getAccessTokenFromCookies));
       setBlockQueueCandidates(await getBlockQueueCandidates('1'));
     })();
   }, []);
 
   useEffect(() => {
     (async () => {
-      setBlockQueue(await getBlockQueue('1'));
+      setBlockQueue(await getBlockQueue('1', getAccessTokenFromCookies));
     })();
   }, [blockQueueCandidates]);
 

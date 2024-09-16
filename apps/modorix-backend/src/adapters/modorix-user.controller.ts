@@ -1,4 +1,4 @@
-import { UserSession } from '@modorix-commons/domain/sign-up/models/user-sign-up';
+import { UserSession } from '@modorix-commons/domain/login/models/user-session';
 import { BadRequestException, Body, Controller, HttpCode, HttpException, HttpStatus, Post } from '@nestjs/common';
 import { isAuthApiError } from '@supabase/supabase-js';
 import { Public } from 'src/infrastructure/auth/public.decorator';

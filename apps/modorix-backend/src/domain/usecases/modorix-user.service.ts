@@ -1,5 +1,6 @@
 import { LoginUserRequest } from '@modorix-commons/domain/login/models/user-login';
-import { ConfirmSignUpUserRequest, SignUpUserRequest, UserSession } from '@modorix-commons/domain/sign-up/models/user-sign-up';
+import { UserSession } from '@modorix-commons/domain/login/models/user-session';
+import { ConfirmSignUpUserRequest, SignUpUserRequest } from '@modorix-commons/domain/sign-up/models/user-sign-up';
 import { passwordCharactersRegexp } from '@modorix-commons/domain/sign-up/password-validation-regexp';
 import { Inject, Injectable } from '@nestjs/common';
 import { UserSignUpEmailValidationError } from '../errors/user-sign-up-email-validation-error';

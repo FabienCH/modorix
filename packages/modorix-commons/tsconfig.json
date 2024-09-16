@@ -1,6 +1,6 @@
 {
   "extends": "@modorix/typescript-config/react-library.json",
-  "include": ["src"],
+  "include": ["src", "../../apps/modorix-web/src/adapters/storage"],
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "dist",

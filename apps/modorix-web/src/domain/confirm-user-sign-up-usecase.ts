@@ -1,5 +1,5 @@
+import { isUserSession } from '@modorix-commons/domain/login/type-guards/user-session-guard';
 import { UserSession } from '@modorix/commons';
-import { isUserSession } from './type-guards/user-session-guard';
 
 export async function confirmUserSignUp(
   runConfirmSignUp: () => Promise<UserSession | { error: 'expired' | 'other' }>,

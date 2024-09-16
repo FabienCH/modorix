@@ -1,5 +1,5 @@
+import { isUserSession } from '@modorix-commons/domain/login/type-guards/user-session-guard';
 import { ConfirmSignUpUserRequest, UserSession } from '@modorix/commons';
-import { isUserSession } from '../../domain/type-guards/user-session-guard';
 
 const usersBaseUrl = `${import.meta.env.VITE_API_BASE_URL}/users`;
 

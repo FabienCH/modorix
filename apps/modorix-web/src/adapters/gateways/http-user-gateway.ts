@@ -1,6 +1,5 @@
-import { LoginUserRequest, SignUpUserRequest, UserSession } from '@modorix/commons';
-import { LoginGateway, SignUpGateway } from '../../domain/gateways/user-gateway';
-import { isUserSession } from '../../domain/type-guards/user-session-guard';
+import { SignUpGateway } from '@modorix-commons/domain/login/gateways/user-gateway';
+import { SignUpUserRequest } from '@modorix/commons';
 
 const usersBaseUrl = `${import.meta.env.VITE_API_BASE_URL}/users`;
 
@@ -29,40 +28,4 @@ async function handleSignUpError(signUpTextResponse: string): Promise<{ error: '
     return { error: 'email-used' };
   }
   return { error: 'unknown-error' };
-}
-
-export const login: LoginGateway = async ({
-  email,
-  password,
-}: LoginUserRequest): Promise<UserSession | { error: 'invalid-credentials' | 'email-not-confirmed' | 'unknown-error' }> => {
-  const loginJsonResponse = await (
-    await fetch(`${usersBaseUrl}/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    })
-  ).json();
-
-  if (isUserSession(loginJsonResponse)) {
-    return loginJsonResponse;
-  }
-
-  return handleLoginError(loginJsonResponse);
-};
-
-function handleLoginError(loginJsonResponse: unknown): { error: 'invalid-credentials' | 'email-not-confirmed' | 'unknown-error' } {
-  const handledErrors = ['invalid_credentials', 'email_not_confirmed'];
-  if (loginJsonResponseAsCode(loginJsonResponse) && handledErrors.includes(loginJsonResponse.message)) {
-    return { error: loginJsonResponse.message.replace(/_/g, '-') as 'invalid-credentials' | 'email-not-confirmed' };
-  }
-  return { error: 'unknown-error' };
-}
-
-function loginJsonResponseAsCode(loginJsonResponse: unknown): loginJsonResponse is { message: string } {
-  return (
-    !!loginJsonResponse &&
-    typeof loginJsonResponse === 'object' &&
-    'message' in loginJsonResponse &&
-    typeof loginJsonResponse.message === 'string'
-  );
 }
