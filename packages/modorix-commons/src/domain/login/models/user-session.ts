@@ -3,3 +3,8 @@ export interface UserSession {
   refreshToken: string;
   email: string;
 }
+
+export interface UserSessionInfos {
+  hasValidAccessToken: boolean;
+  userEmail: string | null;
+}

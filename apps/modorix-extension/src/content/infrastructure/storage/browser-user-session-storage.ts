@@ -1,4 +1,5 @@
-import { GetAccessTokenStorage, GetUserEmailStorage, SaveUserSessionStorage, UserSession } from '@modorix/commons';
+import { GetAccessTokenStorage, GetUserInfosStorage, SaveUserSessionStorage, UserSession, UserSessionInfos } from '@modorix/commons';
+import { jwtDecode } from 'jwt-decode';
 
 enum StorageKey {
   AccessToken = 'access-token',
@@ -12,12 +13,18 @@ export const saveUserSessionInBrowserStorage: SaveUserSessionStorage = (userSess
   chrome.storage.local.set({ [StorageKey.UserEmail]: userSession.email });
 };
 
-export const getAccessTokenFromBrowserStorage: GetAccessTokenStorage<Promise<string>> = async () => {
+export const getAccessTokenFromBrowserStorage: GetAccessTokenStorage<Promise<string | null>> = async () => {
   const storageValue = await chrome.storage.local.get(StorageKey.AccessToken);
-  return storageValue[StorageKey.AccessToken] ?? '';
+  return storageValue[StorageKey.AccessToken] ?? null;
 };
 
-export const getUserEmailFromBrowserStorage: GetUserEmailStorage<Promise<string>> = async () => {
-  const storageValue = await chrome.storage.local.get(StorageKey.UserEmail);
-  return storageValue[StorageKey.UserEmail] ?? '';
+export const getUserInfosFromBrowserStorage: GetUserInfosStorage<Promise<UserSessionInfos>> = async () => {
+  const token = await getAccessTokenFromBrowserStorage();
+  const decodedToken = token ? jwtDecode(token) : undefined;
+  const hasValidAccessToken = decodedToken?.exp !== undefined && decodedToken.exp * 1000 > Date.now();
+
+  const emailStorageValue = await chrome.storage.local.get(StorageKey.UserEmail);
+  const userEmail = emailStorageValue[StorageKey.UserEmail] ?? null;
+
+  return { hasValidAccessToken, userEmail };
 };

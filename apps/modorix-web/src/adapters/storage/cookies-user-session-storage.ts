@@ -1,5 +1,6 @@
-import { GetAccessTokenStorage, GetUserEmailStorage, SaveUserSessionStorage, UserSession } from '@modorix/commons';
+import { GetAccessTokenStorage, GetUserInfosStorage, SaveUserSessionStorage, UserSession, UserSessionInfos } from '@modorix/commons';
 import Cookies from 'js-cookie';
+import { jwtDecode } from 'jwt-decode';
 
 enum CookiesKey {
   AccessToken = 'access-token',
@@ -13,10 +14,13 @@ export const saveUserSessionInCookies: SaveUserSessionStorage = (userSession: Us
   Cookies.set(CookiesKey.UserEmail, userSession.email, { secure: true, sameSite: 'strict' });
 };
 
-export const getAccessTokenFromCookies: GetAccessTokenStorage<string> = () => {
-  return Cookies.get(CookiesKey.AccessToken) ?? '';
+export const getAccessTokenFromCookies: GetAccessTokenStorage<string | null> = () => {
+  return Cookies.get(CookiesKey.AccessToken) ?? null;
 };
 
-export const getUserEmailFromCookies: GetUserEmailStorage<string> = () => {
-  return Cookies.get(CookiesKey.UserEmail) ?? '';
+export const getUserInfosFromCookies: GetUserInfosStorage<UserSessionInfos> = () => {
+  const token = getAccessTokenFromCookies();
+  const decodedToken = token ? jwtDecode(token) : undefined;
+  const hasValidAccessToken = decodedToken?.exp !== undefined && decodedToken.exp * 1000 > Date.now();
+  return { hasValidAccessToken, userEmail: Cookies.get(CookiesKey.UserEmail) ?? null };
 };

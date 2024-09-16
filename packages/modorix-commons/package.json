@@ -6,7 +6,10 @@
   },
   "license": "MIT",
   "scripts": {
-    "lint": "eslint \"**/*.tsx\""
+    "lint": "eslint \"**/*.tsx\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ci": "vitest run --coverage"
   },
   "devDependencies": {
     "@modorix/eslint-config": "*",
@@ -23,6 +26,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "tailwind-merge": "^2.3.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "vitest": "^2.1.1"
   }
 }

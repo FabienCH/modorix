@@ -18,6 +18,7 @@
     "@modorix/ui": "*",
     "install": "^0.13.0",
     "js-cookie": "^3.0.5",
+    "jwt-decode": "^4.0.0",
     "npm": "^10.8.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
