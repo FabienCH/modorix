@@ -10,7 +10,6 @@ export async function saveBlockUser(xId: string, xUsername: string, blockReasonI
     xUsername,
     blockedAt: new Date().toISOString(),
     blockReasonIds,
-    blockingModorixUserId: '1',
   };
   return fetchWithAuth(blockedXUsersBaseUrl, getAccessTokenFromBrowserStorage, {
     method: 'POST',
@@ -20,7 +19,7 @@ export async function saveBlockUser(xId: string, xUsername: string, blockReasonI
 }
 
 export async function updateBlockedUser(xUserId: string): Promise<Response> {
-  return fetchWithAuth(`${blockedXUsersBaseUrl}/from-queue/1`, getAccessTokenFromBrowserStorage, {
+  return fetchWithAuth(`${blockedXUsersBaseUrl}/from-queue`, getAccessTokenFromBrowserStorage, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ xUserId }),

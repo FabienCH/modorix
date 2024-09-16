@@ -21,11 +21,11 @@ export default function BlockUsers() {
   useEffect(() => {
     (async () => {
       onRunBlocksQueueUpdate(setBlockQueueState);
-      const blockedXUsers = await getBlockedUsers('1', getAccessTokenFromBrowserStorage);
+      const blockedXUsers = await getBlockedUsers(getAccessTokenFromBrowserStorage);
       if (blockedXUsers?.length) {
         setBlockedUsers(blockedXUsers);
       }
-      const blockQueue = await getBlockQueue('1', getAccessTokenFromBrowserStorage);
+      const blockQueue = await getBlockQueue(getAccessTokenFromBrowserStorage);
       if (blockQueue?.length) {
         setBlockQueueState({ blockQueue, runQueueStatus: 'ready' });
       }

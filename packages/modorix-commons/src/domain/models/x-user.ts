@@ -9,6 +9,9 @@ interface BaseXUser {
 export interface BlockXUserRequest extends BaseXUser {
   blockReasonIds: string[];
   blockedInGroupsIds?: string[];
+}
+
+export interface BlockXUser extends BlockXUserRequest {
   blockingModorixUserId: string;
 }
 

@@ -17,7 +17,9 @@ export class GroupsDrizzleRepository implements GroupsRepository {
   }
 
   async groupsByIds(ids: string[]): Promise<Group[]> {
-    const groups = await this.pgDatabase.select().from(pgGroups).where(inArray(pgGroups.id, ids));
+    const groups = ids.length
+      ? await this.pgDatabase.select().from(pgGroups).where(inArray(pgGroups.id, ids))
+      : await this.pgDatabase.select().from(pgGroups);
     return Promise.all(groups.map(async (group) => this.mapPgGroupToGroup(group)));
   }
 

@@ -20,7 +20,6 @@ describe('BlockUserController', () => {
       xUsername: '@1-username',
       blockedAt: '2024-05-27T18:01:45Z',
       blockReasonIds,
-      blockingModorixUserId: '1',
     };
   }
 
@@ -50,7 +49,7 @@ describe('BlockUserController', () => {
 
   describe('Block X user', () => {
     it('should block a X user', async () => {
-      await blockXUserController.blockXUser(getXUser(['1']));
+      await blockXUserController.blockXUser({ sub: '1' }, getXUser(['1']));
       expect(blockXUserSpy).toHaveBeenCalledWith({
         xId: '1',
         xUsername: '@1-username',
@@ -62,13 +61,13 @@ describe('BlockUserController', () => {
 
     it('should not block a X user without reason', async () => {
       await expect(async () => {
-        await blockXUserController.blockXUser(getXUser([]));
+        await blockXUserController.blockXUser({ sub: '1' }, getXUser([]));
       }).rejects.toThrow(new BadRequestException('could not block user "@1-username" because no reason was given'));
     });
 
     it('should not block a X user with non existing reason', async () => {
       await expect(async () => {
-        await blockXUserController.blockXUser(getXUser(['12']));
+        await blockXUserController.blockXUser({ sub: '1' }, getXUser(['12']));
       }).rejects.toThrow(new BadRequestException('could not block user "@1-username" because at least one reason does not exist'));
     });
   });
@@ -77,7 +76,7 @@ describe('BlockUserController', () => {
     it('should block a X user', async () => {
       blockXUserFromQueueSpy.mockImplementationOnce(() => {});
 
-      await blockXUserController.blockXUserFromQueue({ modorixUserId: '1' }, { xUserId: '862285194' });
+      await blockXUserController.blockXUserFromQueue({ sub: '1' }, { xUserId: '862285194' });
 
       expect(blockXUserFromQueueSpy).toHaveBeenCalledWith('862285194', '1');
     });
@@ -88,7 +87,7 @@ describe('BlockUserController', () => {
       });
 
       await expect(async () => {
-        await blockXUserController.blockXUserFromQueue({ modorixUserId: '1' }, { xUserId: '2' });
+        await blockXUserController.blockXUserFromQueue({ sub: '1' }, { xUserId: '2' });
       }).rejects.toThrow(new NotFoundException('X user with id "2" was not found'));
     });
 
@@ -98,7 +97,7 @@ describe('BlockUserController', () => {
       });
 
       await expect(async () => {
-        await blockXUserController.blockXUserFromQueue({ modorixUserId: '1' }, { xUserId: '862285194' });
+        await blockXUserController.blockXUserFromQueue({ sub: '1' }, { xUserId: '862285194' });
       }).rejects.toThrow(new BadRequestException('X user with id "862285194" is not in Modorix\'s user queue'));
     });
   });
@@ -107,14 +106,14 @@ describe('BlockUserController', () => {
     it('should add a X user to Modorix user block queue', async () => {
       addXUserToBlockQueueSpy.mockImplementationOnce(() => {});
 
-      await blockXUserController.addXUserToBlockQueue({ modorixUserId: 'modorix-user-id' }, { xUserId: '862285194' });
+      await blockXUserController.addXUserToBlockQueue({ sub: 'modorix-user-id' }, { xUserId: '862285194' });
 
       expect(addXUserToBlockQueueSpy).toHaveBeenCalledWith('862285194', 'modorix-user-id');
     });
 
     it("should not add X user to block queue if he hasn't been blocked by any Modorix user", async () => {
       await expect(async () => {
-        await blockXUserController.addXUserToBlockQueue({ modorixUserId: 'modorix-user-id' }, { xUserId: '0' });
+        await blockXUserController.addXUserToBlockQueue({ sub: 'modorix-user-id' }, { xUserId: '0' });
       }).rejects.toThrow(new NotFoundException('X user with id "0" was not found'));
     });
   });

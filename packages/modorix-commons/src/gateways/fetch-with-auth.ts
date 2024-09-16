@@ -2,7 +2,7 @@ import { GetAccessTokenStorage } from '../domain/login/storage/user-session-stor
 
 export async function fetchWithAuth(
   input: string | URL | globalThis.Request,
-  getAccessToken: GetAccessTokenStorage<Promise<string> | string>,
+  getAccessToken: GetAccessTokenStorage<Promise<string | null> | string | null>,
   init?: RequestInit,
 ) {
   const accessTokenFromStorage = getAccessToken();

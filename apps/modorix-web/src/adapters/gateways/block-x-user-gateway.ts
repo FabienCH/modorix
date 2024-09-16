@@ -4,16 +4,16 @@ import { getAccessTokenFromCookies } from '../storage/cookies-user-session-stora
 
 const blockedXUsersBaseUrl = `${import.meta.env.VITE_API_BASE_URL}/block-x-users`;
 
-export async function getBlockQueueCandidates(modorixUserId: string): Promise<XUser[]> {
+export async function getBlockQueueCandidates(): Promise<XUser[]> {
   return (
-    await fetchWithAuth(`${blockedXUsersBaseUrl}/queue/candidates/${modorixUserId}`, getAccessTokenFromCookies, {
+    await fetchWithAuth(`${blockedXUsersBaseUrl}/queue/candidates`, getAccessTokenFromCookies, {
       method: 'GET',
     })
   ).json();
 }
 
-export function addToBlockQueue(modorixUserId: string, xUserId: string): Promise<Response> {
-  return fetchWithAuth(`${blockedXUsersBaseUrl}/queue/${modorixUserId}`, getAccessTokenFromCookies, {
+export function addToBlockQueue(xUserId: string): Promise<Response> {
+  return fetchWithAuth(`${blockedXUsersBaseUrl}/queue`, getAccessTokenFromCookies, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ xUserId }),

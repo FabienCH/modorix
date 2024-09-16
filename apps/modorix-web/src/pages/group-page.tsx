@@ -20,7 +20,7 @@ export default function GroupPage() {
 
   const addXUserToQueue = useCallback(
     async (xUser: XUser): Promise<void> => {
-      await addToBlockQueue('1', xUser.xId);
+      await addToBlockQueue(xUser.xId);
       setGroup(await getGroup(group.id));
     },
     [group],

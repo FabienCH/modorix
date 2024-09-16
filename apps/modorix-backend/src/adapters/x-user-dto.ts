@@ -19,10 +19,6 @@ export class BlockXUserRequestDto implements BlockXUserRequest {
   @IsString({ each: true })
   blockReasonIds!: string[];
 
-  @IsNotEmpty()
-  @IsString()
-  blockingModorixUserId!: string;
-
   @IsArray()
   @IsString({ each: true })
   @IsOptional()

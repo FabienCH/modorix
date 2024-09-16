@@ -31,20 +31,20 @@ export default function BlocksPage() {
 
   useEffect(() => {
     (async () => {
-      setBlockedUsers(await getBlockedUsers('1', getAccessTokenFromCookies));
-      setBlockQueueCandidates(await getBlockQueueCandidates('1'));
+      setBlockedUsers(await getBlockedUsers(getAccessTokenFromCookies));
+      setBlockQueueCandidates(await getBlockQueueCandidates());
     })();
   }, []);
 
   useEffect(() => {
     (async () => {
-      setBlockQueue(await getBlockQueue('1', getAccessTokenFromCookies));
+      setBlockQueue(await getBlockQueue(getAccessTokenFromCookies));
     })();
   }, [blockQueueCandidates]);
 
   async function addXUserToQueue(xUser: XUser): Promise<void> {
-    await addToBlockQueue('1', xUser.xId);
-    setBlockQueueCandidates(await getBlockQueueCandidates('1'));
+    await addToBlockQueue(xUser.xId);
+    setBlockQueueCandidates(await getBlockQueueCandidates());
   }
 
   return (
