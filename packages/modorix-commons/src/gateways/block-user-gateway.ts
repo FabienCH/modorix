@@ -5,7 +5,7 @@ import { fetchWithAuth } from './fetch-with-auth';
 
 const blockedXUsersBaseUrl = () => `${getGatewayBaseUrl()}/block-x-users`;
 
-export async function getBlockedUsers(getAccessToken: GetAccessTokenStorage<Promise<string | null> | string | null>): Promise<XUser[]> {
+export async function getBlockedUsers(getAccessToken: GetAccessTokenStorage): Promise<XUser[]> {
   return (
     await fetchWithAuth(`${blockedXUsersBaseUrl()}`, getAccessToken, {
       method: 'GET',
@@ -13,7 +13,7 @@ export async function getBlockedUsers(getAccessToken: GetAccessTokenStorage<Prom
   ).json();
 }
 
-export async function getBlockQueue(getAccessToken: GetAccessTokenStorage<Promise<string | null> | string | null>): Promise<XUser[]> {
+export async function getBlockQueue(getAccessToken: GetAccessTokenStorage): Promise<XUser[]> {
   return (
     await fetchWithAuth(`${blockedXUsersBaseUrl()}/queue`, getAccessToken, {
       method: 'GET',

@@ -1,14 +1,6 @@
 {
   "extends": "@modorix/typescript-config/react-library.json",
-<<<<<<< Updated upstream
-  "include": ["src", "../../apps/modorix-web/src/adapters/storage"],
-=======
-<<<<<<< Updated upstream
-  "include": ["src"],
-=======
   "include": ["src", "vite.config.ts"],
->>>>>>> Stashed changes
->>>>>>> Stashed changes
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "dist",

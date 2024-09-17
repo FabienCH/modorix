@@ -71,16 +71,6 @@ describe('ModorixUserController', () => {
         });
       }).rejects.toThrow(new BadRequestException('Email email-used@domain.com is already used'));
     });
-
-    it('should not sign up a new user if email is already used', async () => {
-      await expect(async () => {
-        await modorixUserController.signUp({
-          email: 'email-used@domain.com',
-          password: 'UserPassword123',
-          confirmPassword: 'UserPassword123',
-        });
-      }).rejects.toThrow(new BadRequestException('Email email-used@domain.com is already used'));
-    });
   });
 
   describe('Confirm a user sign up', () => {
@@ -137,22 +127,13 @@ describe('ModorixUserController', () => {
       }).rejects.toThrow(new HttpException('invalid-credentials', 400));
     });
 
-    it('should not login the user if credential are invalid', async () => {
+    it('should not login the user if email has not been confirmed', async () => {
       await expect(async () => {
         await modorixUserController.login({
           email: '',
           password: 'UserPassword123',
         });
       }).rejects.toThrow(new HttpException('email-not-confirmed', 400));
-    });
-
-    it('should not login the user if credential are invalid', async () => {
-      await expect(async () => {
-        await modorixUserController.login({
-          email: 'john.doe@test.com',
-          password: '',
-        });
-      }).rejects.toThrow(new HttpException('invalid-credentials', 400));
     });
 
     it('should not confirm the new user sign up if an unexpected error occurs', async () => {
