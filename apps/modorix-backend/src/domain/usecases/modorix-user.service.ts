@@ -1,4 +1,6 @@
-import { ConfirmSignUpUserRequest, SignUpUserRequest, UserSession } from '@modorix-commons/domain/sign-up/models/user-sign-up';
+import { LoginUserRequest } from '@modorix-commons/domain/login/models/user-login';
+import { UserSession } from '@modorix-commons/domain/login/models/user-session';
+import { ConfirmSignUpUserRequest, SignUpUserRequest } from '@modorix-commons/domain/sign-up/models/user-sign-up';
 import { passwordCharactersRegexp } from '@modorix-commons/domain/sign-up/password-validation-regexp';
 import { Inject, Injectable } from '@nestjs/common';
 import { UserSignUpEmailValidationError } from '../errors/user-sign-up-email-validation-error';
@@ -6,7 +8,7 @@ import { UserSignUpPasswordValidationError } from '../errors/user-sign-up-passwo
 import { ModorixUserRepository, ModorixUserRepositoryToken } from '../repositories/modorix-user.repository';
 
 @Injectable()
-export class ModorixXUserService {
+export class ModorixUserService {
   constructor(@Inject(ModorixUserRepositoryToken) private readonly modorixUserRepository: ModorixUserRepository) {}
 
   async signUp({ email, password, confirmPassword }: SignUpUserRequest): Promise<void> {
@@ -33,5 +35,9 @@ export class ModorixXUserService {
 
   async resendAccountConfirmation(email: string): Promise<void> {
     return this.modorixUserRepository.resendAccountConfirmation(email);
+  }
+
+  async login(loginUserRequest: LoginUserRequest): Promise<UserSession> {
+    return this.modorixUserRepository.login(loginUserRequest);
   }
 }

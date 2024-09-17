@@ -1,5 +1,7 @@
-import { UserSession } from '@modorix-commons/domain/sign-up/models/user-sign-up';
+import { LoginUserRequest } from '@modorix-commons/domain/login/models/user-login';
+import { UserSession } from '@modorix-commons/domain/login/models/user-session';
 import { Inject, Injectable } from '@nestjs/common';
+import { AuthResponse } from '@supabase/supabase-js';
 import { SupabaseAuthClient } from '@supabase/supabase-js/dist/module/lib/SupabaseAuthClient';
 import { eq } from 'drizzle-orm';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
@@ -38,7 +40,22 @@ export class ModorixUserSupabaseRepository implements ModorixUserRepository {
   }
 
   async confirmSignUp({ type, tokenHash }: SupabaseConfirmSignUpUser): Promise<UserSession> {
-    const { data, error } = await this.supabaseAuthClient.verifyOtp({ type, token_hash: tokenHash });
+    const authResponse = await this.supabaseAuthClient.verifyOtp({ type, token_hash: tokenHash });
+
+    return this.mapToUserSession(authResponse);
+  }
+
+  async resendAccountConfirmation(email: string): Promise<void> {
+    await this.supabaseAuthClient.resend({ type: 'signup', email });
+  }
+
+  async login(loginUserRequest: LoginUserRequest): Promise<UserSession> {
+    const authResponse = await this.supabaseAuthClient.signInWithPassword(loginUserRequest);
+
+    return this.mapToUserSession(authResponse);
+  }
+
+  private mapToUserSession({ data, error }: AuthResponse): UserSession {
     if (error) {
       throw error;
     }
@@ -49,9 +66,5 @@ export class ModorixUserSupabaseRepository implements ModorixUserRepository {
     }
 
     return { email: user.email, accessToken: session.access_token, refreshToken: session.refresh_token };
-  }
-
-  async resendAccountConfirmation(email: string): Promise<void> {
-    await this.supabaseAuthClient.resend({ type: 'signup', email });
   }
 }

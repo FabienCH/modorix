@@ -1,4 +1,4 @@
-import { BlockXUserRequest, XUser } from '@modorix-commons/domain/models/x-user';
+import { BlockXUser, XUser } from '@modorix-commons/domain/models/x-user';
 import { Inject, Injectable } from '@nestjs/common';
 import { BlockReasonError } from '../errors/block-reason-error';
 import { XUserNotFoundError } from '../errors/x-user-not-found-error';
@@ -15,7 +15,7 @@ export class BlockXUsersService {
     @Inject(BlockReasonsRepositoryToken) private readonly blockReasonsRepository: BlockReasonsRepository,
   ) {}
 
-  async blockXUser(blockXUserRequest: BlockXUserRequest): Promise<void> {
+  async blockXUser(blockXUserRequest: BlockXUser): Promise<void> {
     const { xId, xUsername, blockedAt, blockReasonIds, blockedInGroupsIds, blockingModorixUserId } = blockXUserRequest;
     if (!blockReasonIds.length) {
       throw new BlockReasonError(xUsername, 'empty');

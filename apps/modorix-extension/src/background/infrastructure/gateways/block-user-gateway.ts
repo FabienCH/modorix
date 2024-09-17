@@ -1,4 +1,6 @@
 import { BlockXUserRequest } from '@modorix-commons/domain/models/x-user';
+import { fetchWithAuth } from '@modorix-commons/gateways/fetch-with-auth';
+import { getAccessTokenFromBrowserStorage } from '../../../content/infrastructure/storage/browser-user-session-storage';
 
 const blockedXUsersBaseUrl = `${import.meta.env.VITE_API_BASE_URL}/block-x-users`;
 
@@ -8,9 +10,8 @@ export async function saveBlockUser(xId: string, xUsername: string, blockReasonI
     xUsername,
     blockedAt: new Date().toISOString(),
     blockReasonIds,
-    blockingModorixUserId: '1',
   };
-  return fetch(blockedXUsersBaseUrl, {
+  return fetchWithAuth(blockedXUsersBaseUrl, getAccessTokenFromBrowserStorage, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(bodyData),
@@ -18,7 +19,7 @@ export async function saveBlockUser(xId: string, xUsername: string, blockReasonI
 }
 
 export async function updateBlockedUser(xUserId: string): Promise<Response> {
-  return fetch(`${blockedXUsersBaseUrl}/from-queue/1`, {
+  return fetchWithAuth(`${blockedXUsersBaseUrl}/from-queue`, getAccessTokenFromBrowserStorage, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ xUserId }),
