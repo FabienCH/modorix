@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 import { Group } from '../../../../packages/modorix-commons/src/domain/models/group';
 import { getGroups } from '../adapters/gateways/group-gateway';
 import MembershipButton from '../components/groups/membership-button';
-import { toggleMembership } from '../domain/toggle-group-membership-usecase';
+import { toggleMembership } from '../domain/group/toggle-group-membership-usecase';
 import { ROUTES } from '../routes';
 
 const columns = ['Group', 'Description', 'Blocked Users', 'Membership'];

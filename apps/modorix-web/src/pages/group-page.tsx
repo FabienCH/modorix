@@ -11,7 +11,7 @@ import { getGroup } from '../adapters/gateways/group-gateway';
 import GroupAddToBlockQueueCell from '../components/groups/group-add-to-block-queue-cell';
 import MembershipButton from '../components/groups/membership-button';
 import { AutoResizeBadgesWithTooltip } from '../components/shared/auto-resize-badges-with-tooltip';
-import { toggleMembership } from '../domain/toggle-group-membership-usecase';
+import { toggleMembership } from '../domain/group/toggle-group-membership-usecase';
 import { ROUTES } from '../routes';
 
 export default function GroupPage() {

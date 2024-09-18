@@ -7,6 +7,9 @@ import { addToBlockQueue, getBlockQueueCandidates } from '../adapters/gateways/b
 import { getAccessTokenFromCookies } from '../adapters/storage/cookies-user-session-storage';
 import { AddToQueueButton } from '../components/shared/add-to-queue-button';
 import { AutoResizeBadgesWithTooltip } from '../components/shared/auto-resize-badges-with-tooltip';
+import { retrieveBlockQueueCandidates } from '../domain/block-x-user/retrieve-block-queue-candidates-usecase';
+import { retrieveBlockQueue } from '../domain/block-x-user/retrieve-block-queue-usecase';
+import { retrieveBlockedUsers } from '../domain/block-x-user/retrieve-blocked-users-usecase';
 
 export default function BlocksPage() {
   const [blockedUsers, setBlockedUsers] = useState<XUser[]>([]);
@@ -31,25 +34,30 @@ export default function BlocksPage() {
 
   useEffect(() => {
     (async () => {
-      setBlockedUsers(await getBlockedUsers(getAccessTokenFromCookies));
-      setBlockQueueCandidates(await getBlockQueueCandidates());
+      await retrieveBlockQueue(getBlockQueue, setBlockQueue, getAccessTokenFromCookies);
     })();
   }, []);
 
-  useEffect(() => {
-    (async () => {
-      setBlockQueue(await getBlockQueue(getAccessTokenFromCookies));
-    })();
-  }, [blockQueueCandidates]);
-
   async function addXUserToQueue(xUser: XUser): Promise<void> {
     await addToBlockQueue(xUser.xId);
-    setBlockQueueCandidates(await getBlockQueueCandidates());
+    const blockQueueCandidatesRes = await getBlockQueueCandidates();
+    if ('error' in blockQueueCandidatesRes === false) {
+      setBlockQueueCandidates(blockQueueCandidatesRes);
+    }
+  }
+
+  async function loadBlockList(value: string): Promise<void> {
+    if (value === 'add-to-blocks-queue' && blockQueueCandidates.length === 0) {
+      await retrieveBlockQueueCandidates(getBlockQueueCandidates, setBlockQueueCandidates);
+    }
+    if (value === 'my-blocks-list' && blockedUsers.length === 0) {
+      await retrieveBlockedUsers(getBlockedUsers, setBlockedUsers, getAccessTokenFromCookies);
+    }
   }
 
   return (
     <section className="w-full mx-auto max-w-screen-lg">
-      <Tabs defaultValue="my-blocks-queue">
+      <Tabs defaultValue="my-blocks-queue" onValueChange={loadBlockList}>
         <TabsList className="mx-auto mb-4">
           <TabsTrigger value="my-blocks-queue">My blocks queue</TabsTrigger>
           <TabsTrigger value="add-to-blocks-queue">Add to blocks queue</TabsTrigger>
