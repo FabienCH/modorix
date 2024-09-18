@@ -9,7 +9,7 @@ export async function getBlockQueueCandidates(): Promise<XUser[]> {
     await fetchWithAuth(`${blockedXUsersBaseUrl}/queue/candidates`, getAccessTokenFromCookies, {
       method: 'GET',
     })
-  ).json();
+  )?.json();
 }
 
 export function addToBlockQueue(xUserId: string): Promise<Response> {

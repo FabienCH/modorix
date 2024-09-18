@@ -55,6 +55,12 @@ export class ModorixUserSupabaseRepository implements ModorixUserRepository {
     return this.mapToUserSession(authResponse);
   }
 
+  async refreshToken(refreshToken: string): Promise<UserSession> {
+    const authResponse = await this.supabaseAuthClient.refreshSession({ refresh_token: refreshToken });
+
+    return this.mapToUserSession(authResponse);
+  }
+
   private mapToUserSession({ data, error }: AuthResponse): UserSession {
     if (error) {
       throw error;

@@ -10,4 +10,5 @@ export interface ModorixUserRepository {
   confirmSignUp(confirmSignUpUser: ConfirmSignUpUserRequest): Promise<UserSession>;
   resendAccountConfirmation(email: string): Promise<void>;
   login(loginUserRequest: LoginUserRequest): Promise<UserSession>;
+  refreshToken(refreshToken: string): Promise<UserSession>;
 }

@@ -21,6 +21,21 @@ export const login: LoginGateway = async ({ email, password }: LoginUserRequest)
   return handleLoginError(loginJsonResponse);
 };
 
+export async function refreshAccessToken(refreshToken: string): Promise<UserSession | null> {
+  const response = await (
+    await fetch(`${usersBaseUrl()}/refresh-token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refreshToken }),
+    })
+  ).json();
+
+  if (isUserSession(response)) {
+    return response;
+  }
+  return null;
+}
+
 function handleLoginError(loginJsonResponse: unknown): LoginError {
   const handledErrors = ['invalid_credentials', 'email_not_confirmed'];
   if (loginJsonResponseHasMessage(loginJsonResponse) && handledErrors.includes(loginJsonResponse.message)) {
