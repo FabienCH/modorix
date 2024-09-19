@@ -1,15 +1,16 @@
-import { GetAccessTokenStorage } from '../domain/login/storage/user-session-storage';
-import { getRefreshToken, saveUserSession } from '../storage/cookies-user-session-storage';
+import { GetAccessTokenStorage, GetRefreshTokenStorage, SaveUserSessionStorage } from '../domain/login/storage/user-session-storage';
 import { refreshAccessToken } from './http-user-gateway';
 
 export async function fetchWithAuth(
   input: string | URL | globalThis.Request,
   getAccessToken: GetAccessTokenStorage,
+  getRefreshToken: GetRefreshTokenStorage,
+  saveUserSession: SaveUserSessionStorage,
   init: RequestInit,
 ): Promise<Response> {
   const response = await runFetchWithAuth(input, getAccessToken, init);
   if (response.status === 401) {
-    const { success } = await tryRefreshAccessToken();
+    const { success } = await tryRefreshAccessToken(getRefreshToken, saveUserSession);
     if (success) {
       return await runFetchWithAuth(input, getAccessToken, init);
     }
@@ -34,16 +35,18 @@ async function runFetchWithAuth(
   getAccessToken: GetAccessTokenStorage<Promise<string | null> | string | null>,
   init: RequestInit,
 ): Promise<Response> {
-  const accessTokenFromStorage = getAccessToken();
-  const accessToken = typeof accessTokenFromStorage === 'string' ? accessTokenFromStorage : await accessTokenFromStorage;
+  const accessToken = await getTokenFromStorage(getAccessToken);
   if (!accessToken) {
-    return new Response(null, { status: 401 });
+    return Response.json({ statusCode: 401 });
   }
   return await fetch(input, { ...init, headers: { ...init?.headers, Authorization: `Bearer ${accessToken}` } });
 }
 
-async function tryRefreshAccessToken(): Promise<{ success: boolean }> {
-  const refreshToken = getRefreshToken();
+async function tryRefreshAccessToken(
+  getRefreshToken: GetRefreshTokenStorage<Promise<string | null> | string | null>,
+  saveUserSession: SaveUserSessionStorage,
+): Promise<{ success: boolean }> {
+  const refreshToken = await getTokenFromStorage(getRefreshToken);
   if (!refreshToken) {
     return { success: false };
   }
@@ -52,4 +55,13 @@ async function tryRefreshAccessToken(): Promise<{ success: boolean }> {
     saveUserSession(userSession);
   }
   return { success: !!userSession };
+
+  async function getTokenFromStorage(
+    getToken:
+      | GetAccessTokenStorage<Promise<string | null> | string | null>
+      | GetRefreshTokenStorage<Promise<string | null> | string | null>,
+  ): Promise<string | null> {
+    const tokenFromStorage = getToken();
+    return typeof tokenFromStorage === 'string' ? tokenFromStorage : await tokenFromStorage;
+  }
 }

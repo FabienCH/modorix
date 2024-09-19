@@ -28,11 +28,23 @@ export function BlockReasonDialog({ container, username, onSubmit }: BlockReason
   const [open, setOpen] = useState(false);
   const [hasSubmit, setHasSubmit] = useState(false);
   const [noReasonSelected, setNoReasonSelected] = useState(false);
+  const [loadReasonsError, setLoadReasonsError] = useState<string | null>(null);
   const [blockReasonsData, setBlockReasonsData] = useState<FormBlockReason[]>([]);
 
   async function retrieveBlockedUsersList() {
     const blockReasons = await getBlockReasons();
-    setBlockReasonsData(blockReasons.map((blockReason) => ({ ...blockReason, checked: false })));
+    if ('error' in blockReasons) {
+      setLoadReasonsError(
+        `Couldn't load block reasons. ${
+          blockReasons.error === 'auth'
+            ? 'You are not logged in the Modorix extension. Please log in and try again.'
+            : 'Something went wrong, please try again.'
+        }`,
+      );
+    } else {
+      setLoadReasonsError(null);
+      setBlockReasonsData(blockReasons.map((blockReason) => ({ ...blockReason, checked: false })));
+    }
   }
 
   function handleOpenChange(open: boolean): void {
@@ -89,11 +101,15 @@ export function BlockReasonDialog({ container, username, onSubmit }: BlockReason
             <DialogTitle>Block {username}</DialogTitle>
             <DialogDescription>Please choose at least one reason to block {username}</DialogDescription>
           </DialogHeader>
-          <BlockReasonForm
-            formBlockReasons={blockReasonsData}
-            displayNoSelectionError={noReasonSelected}
-            onCheckedChange={handleCheckedChange}
-          ></BlockReasonForm>
+          {loadReasonsError ? (
+            <p className="text-error">{loadReasonsError}</p>
+          ) : (
+            <BlockReasonForm
+              formBlockReasons={blockReasonsData}
+              displayNoSelectionError={noReasonSelected}
+              onCheckedChange={handleCheckedChange}
+            ></BlockReasonForm>
+          )}
           <DialogFooter>
             <DialogClose asChild>
               <Button variant="ghost">Cancel</Button>

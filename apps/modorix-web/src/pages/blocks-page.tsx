@@ -4,7 +4,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@modorix-ui/components
 import { useEffect, useState } from 'react';
 import { XUser } from '../../../../packages/modorix-commons/src/domain/models/x-user';
 import { addToBlockQueue, getBlockQueueCandidates } from '../adapters/gateways/block-x-user-gateway';
-import { getAccessTokenFromCookies } from '../adapters/storage/cookies-user-session-storage';
+import {
+  getAccessTokenFromCookies,
+  getRefreshTokenFromCookies,
+  saveUserSessionInCookies,
+} from '../adapters/storage/cookies-user-session-storage';
 import { AddToQueueButton } from '../components/shared/add-to-queue-button';
 import { AutoResizeBadgesWithTooltip } from '../components/shared/auto-resize-badges-with-tooltip';
 import { retrieveBlockQueueCandidates } from '../domain/block-x-user/retrieve-block-queue-candidates-usecase';
@@ -34,12 +38,21 @@ export default function BlocksPage() {
 
   useEffect(() => {
     (async () => {
-      await retrieveBlockQueue(getBlockQueue, setBlockQueue, getAccessTokenFromCookies);
+      await retrieveBlockQueue(
+        getBlockQueue,
+        setBlockQueue,
+        getAccessTokenFromCookies,
+        getRefreshTokenFromCookies,
+        saveUserSessionInCookies,
+      );
     })();
   }, []);
 
   async function addXUserToQueue(xUser: XUser): Promise<void> {
-    await addToBlockQueue(xUser.xId);
+    const addToBlockQueueRes = await addToBlockQueue(xUser.xId);
+    if (addToBlockQueueRes && 'error' in addToBlockQueueRes) {
+      console.log('addToBlockQueue auth error');
+    }
     const blockQueueCandidatesRes = await getBlockQueueCandidates();
     if ('error' in blockQueueCandidatesRes === false) {
       setBlockQueueCandidates(blockQueueCandidatesRes);
@@ -51,7 +64,13 @@ export default function BlocksPage() {
       await retrieveBlockQueueCandidates(getBlockQueueCandidates, setBlockQueueCandidates);
     }
     if (value === 'my-blocks-list' && blockedUsers.length === 0) {
-      await retrieveBlockedUsers(getBlockedUsers, setBlockedUsers, getAccessTokenFromCookies);
+      await retrieveBlockedUsers(
+        getBlockedUsers,
+        setBlockedUsers,
+        getAccessTokenFromCookies,
+        getRefreshTokenFromCookies,
+        saveUserSessionInCookies,
+      );
     }
   }
 

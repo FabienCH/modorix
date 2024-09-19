@@ -97,9 +97,9 @@ export default function SignUpForm({
                 </FormControl>
                 <FormMessage />
                 {signUpForm.formState.errors.root?.passwordsMissmatch?.message ? (
-                  <p className="text-destructive text-sm font-medium">{signUpForm.formState.errors.root?.passwordsMissmatch?.message}</p>
+                  <p className="text-error font-medium">{signUpForm.formState.errors.root?.passwordsMissmatch?.message}</p>
                 ) : null}
-                {signUpErrorMessage ? <p className="text-destructive text-sm font-medium">{signUpErrorMessage}</p> : null}
+                {signUpErrorMessage ? <p className="text-error font-medium">{signUpErrorMessage}</p> : null}
               </FormItem>
             );
           }}

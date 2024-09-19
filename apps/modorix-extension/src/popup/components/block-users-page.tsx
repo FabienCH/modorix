@@ -3,7 +3,11 @@ import { XUser } from '@modorix-commons/domain/models/x-user';
 import { getBlockedUsers, getBlockQueue } from '@modorix-commons/gateways/block-user-gateway';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@modorix-ui/components/tabs';
 import { useEffect, useState } from 'react';
-import { getAccessTokenFromBrowserStorage } from '../../content/infrastructure/storage/browser-user-session-storage';
+import {
+  getAccessTokenFromBrowserStorage,
+  getRefreshTokenFromBrowserStorage,
+  saveUserSessionInBrowserStorage,
+} from '../../content/infrastructure/storage/browser-user-session-storage';
 import { BlocksQueueUpdateMessageData } from '../../shared/messages/event-message';
 import { onRunBlocksQueueUpdate, requestRunBlocksQueue } from '../popup-handler';
 import { BlockUserReasons } from './block-user-reasons';
@@ -21,12 +25,20 @@ export default function BlockUsers() {
   useEffect(() => {
     (async () => {
       onRunBlocksQueueUpdate(setBlockQueueState);
-      const blockedXUsers = await getBlockedUsers(getAccessTokenFromBrowserStorage);
-      if (blockedXUsers?.length) {
+      const blockedXUsers = await getBlockedUsers(
+        getAccessTokenFromBrowserStorage,
+        getRefreshTokenFromBrowserStorage,
+        saveUserSessionInBrowserStorage,
+      );
+      if ('error' in blockedXUsers === false && blockedXUsers?.length) {
         setBlockedUsers(blockedXUsers);
       }
-      const blockQueue = await getBlockQueue(getAccessTokenFromBrowserStorage);
-      if (blockQueue?.length) {
+      const blockQueue = await getBlockQueue(
+        getAccessTokenFromBrowserStorage,
+        getRefreshTokenFromBrowserStorage,
+        saveUserSessionInBrowserStorage,
+      );
+      if ('error' in blockQueue === false && blockQueue?.length) {
         setBlockQueueState({ blockQueue, runQueueStatus: 'ready' });
       }
     })();
