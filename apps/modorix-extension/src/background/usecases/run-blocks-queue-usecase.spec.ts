@@ -1,3 +1,5 @@
+import { UserSessionStorage } from '@modorix-commons/domain/login/storage/user-session-storage';
+import { UserSession } from '@modorix/commons';
 import { MockInstance } from 'vitest';
 import { BlocksQueueUpdateMessageData } from '../../shared/messages/event-message';
 import * as BlockXUserGateway from '../infrastructure/gateways/block-user-gateway';
@@ -36,6 +38,15 @@ describe('Running blocks queue', () => {
     presenterNotifierState[presenterNotifierCallNth] = state;
     presenterNotifierCallNth++;
   };
+  const userSessionStorage: UserSessionStorage = {
+    getAccessToken: () => null,
+    getRefreshToken: () => null,
+    saveUserSession: (_: UserSession) => null,
+    getUserInfos: () => ({
+      hasValidAccessToken: false,
+      userEmail: null,
+    }),
+  };
 
   beforeEach(async () => {
     vi.spyOn(Math, 'random').mockReturnValue(0.1);
@@ -51,14 +62,14 @@ describe('Running blocks queue', () => {
   });
 
   it('should block a user on X and save it on modorix', async () => {
-    await runBlocksQueue([blockQueueUsers[0]], presenterNotifier);
+    await runBlocksQueue([blockQueueUsers[0]], presenterNotifier, userSessionStorage);
 
     expect(blockUserOnXSpy).toHaveBeenCalledWith('1', {});
-    expect(updateBlockedXUserSpy).toHaveBeenCalledWith('1');
+    expect(updateBlockedXUserSpy).toHaveBeenCalledWith('1', userSessionStorage);
   });
 
   it('should have a delay between each block request to avoid X logout or account suspension', async () => {
-    await runBlocksQueue(blockQueueUsers, presenterNotifier);
+    await runBlocksQueue(blockQueueUsers, presenterNotifier, userSessionStorage);
 
     expect(updateBlockedXUserSpy).toHaveBeenCalledTimes(2);
     expect(blockUserOnXSpy).toHaveBeenCalledTimes(2);
@@ -67,7 +78,7 @@ describe('Running blocks queue', () => {
   });
 
   it('should update the view after each block request', async () => {
-    await runBlocksQueue(blockQueueUsers, presenterNotifier);
+    await runBlocksQueue(blockQueueUsers, presenterNotifier, userSessionStorage);
 
     expect(presenterNotifierState[0]).toEqual({
       runQueueStatus: 'waitingHeaders',
@@ -85,7 +96,7 @@ describe('Running blocks queue', () => {
       return { status: 403 };
     });
 
-    await runBlocksQueue(blockQueueUsers, presenterNotifier);
+    await runBlocksQueue(blockQueueUsers, presenterNotifier, userSessionStorage);
 
     expect(blockUserOnXSpy).toHaveBeenCalledTimes(1);
     expect(updateBlockedXUserSpy).toHaveBeenCalledTimes(0);

@@ -1,3 +1,4 @@
+import { useDependenciesContext } from '@modorix-commons/infrastructure/dependencies-context';
 import { Button } from '@modorix-ui/components/button';
 import {
   Dialog,
@@ -30,9 +31,10 @@ export function BlockReasonDialog({ container, username, onSubmit }: BlockReason
   const [noReasonSelected, setNoReasonSelected] = useState(false);
   const [loadReasonsError, setLoadReasonsError] = useState<string | null>(null);
   const [blockReasonsData, setBlockReasonsData] = useState<FormBlockReason[]>([]);
+  const { dependencies } = useDependenciesContext();
 
   async function retrieveBlockedUsersList() {
-    const blockReasons = await getBlockReasons();
+    const blockReasons = await getBlockReasons(dependencies.userSessionStorage);
     if ('error' in blockReasons) {
       setLoadReasonsError(
         `Couldn't load block reasons. ${

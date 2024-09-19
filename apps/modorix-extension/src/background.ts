@@ -11,11 +11,13 @@ import {
   sendNewXTabToListenLoadedMessage,
 } from './background/infrastructure/messages-handlers/messages-sender';
 import { runBlocksQueue } from './background/usecases/run-blocks-queue-usecase';
+import { dependencies } from './dependencies';
 import { BlocksQueueUpdateMessageData } from './shared/messages/event-message';
 
 console.log('background loaded !');
 
 setGatewayBaseUrl(import.meta.env.VITE_API_BASE_URL);
+
 let blockUserTab: chrome.tabs.Tab | null = null;
 const tabIdsListenedTo: number[] = [];
 
@@ -35,6 +37,6 @@ onRequestRunBlocksQueueMessage(async (data) => {
   const notify = (queueUpdateData: BlocksQueueUpdateMessageData) => {
     sendBlockQueueUpdateMessage(queueUpdateData);
   };
-  await runBlocksQueue(data.blockQueue, notify);
+  await runBlocksQueue(data.blockQueue, notify, dependencies.userSessionStorage);
 });
 onUserBlockedMessage(async (data) => await handleBlockedUser(data));

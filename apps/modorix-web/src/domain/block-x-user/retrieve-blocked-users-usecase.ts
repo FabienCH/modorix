@@ -1,17 +1,12 @@
-import { GetAccessTokenStorage, GetRefreshTokenStorage, SaveUserSessionStorage, XUser } from '@modorix/commons';
+import { AuthError } from '@modorix-commons/gateways/fetch-with-auth';
+import { UserSessionStorage, XUser } from '@modorix/commons';
 
 export async function retrieveBlockedUsers(
-  getBlockedUsers: (
-    getAccessToken: GetAccessTokenStorage<Promise<string | null> | string | null>,
-    getRefreshToken: GetRefreshTokenStorage<Promise<string | null> | string | null>,
-    saveUserSession: SaveUserSessionStorage,
-  ) => Promise<XUser[] | { error: 'auth' | 'other' }>,
+  getBlockedUsers: (userSessionStorage: UserSessionStorage) => Promise<XUser[] | AuthError>,
   setBlockedUsers: (blockedUser: XUser[]) => void,
-  getAccessToken: GetAccessTokenStorage<string | null>,
-  getRefreshToken: GetRefreshTokenStorage<Promise<string | null> | string | null>,
-  saveUserSession: SaveUserSessionStorage,
+  userSessionStorage: UserSessionStorage,
 ): Promise<void> {
-  const blockedUsersRes = await getBlockedUsers(getAccessToken, getRefreshToken, saveUserSession);
+  const blockedUsersRes = await getBlockedUsers(userSessionStorage);
   if ('error' in blockedUsersRes) {
     console.log('blockedUsersRes AUTH ERRORRR');
   } else {

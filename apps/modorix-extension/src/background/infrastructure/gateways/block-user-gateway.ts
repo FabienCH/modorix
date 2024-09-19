@@ -1,14 +1,15 @@
 import { BlockXUserRequest } from '@modorix-commons/domain/models/x-user';
 import { fetchWithAuth } from '@modorix-commons/gateways/fetch-with-auth';
-import {
-  getAccessTokenFromBrowserStorage,
-  getRefreshTokenFromBrowserStorage,
-  saveUserSessionInBrowserStorage,
-} from '../../../content/infrastructure/storage/browser-user-session-storage';
+import { UserSessionStorage } from '@modorix/commons';
 
 const blockedXUsersBaseUrl = `${import.meta.env.VITE_API_BASE_URL}/block-x-users`;
 
-export async function saveBlockUser(xId: string, xUsername: string, blockReasonIds: string[]): Promise<Response> {
+export async function saveBlockUser(
+  xId: string,
+  xUsername: string,
+  blockReasonIds: string[],
+  userSessionStorage: UserSessionStorage,
+): Promise<Response> {
   const bodyData: BlockXUserRequest = {
     xId,
     xUsername,
@@ -17,27 +18,23 @@ export async function saveBlockUser(xId: string, xUsername: string, blockReasonI
   };
   return fetchWithAuth(
     blockedXUsersBaseUrl,
-    getAccessTokenFromBrowserStorage,
-    getRefreshTokenFromBrowserStorage,
-    saveUserSessionInBrowserStorage,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(bodyData),
     },
+    userSessionStorage,
   );
 }
 
-export async function updateBlockedUser(xUserId: string): Promise<Response> {
+export async function updateBlockedUser(xUserId: string, userSessionStorage: UserSessionStorage): Promise<Response> {
   return fetchWithAuth(
     `${blockedXUsersBaseUrl}/from-queue`,
-    getAccessTokenFromBrowserStorage,
-    getRefreshTokenFromBrowserStorage,
-    saveUserSessionInBrowserStorage,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ xUserId }),
     },
+    userSessionStorage,
   );
 }

@@ -1,12 +1,19 @@
-import { GetAccessTokenStorage, GetRefreshTokenStorage, SaveUserSessionStorage } from '../domain/login/storage/user-session-storage';
+import {
+  GetAccessTokenStorage,
+  GetRefreshTokenStorage,
+  SaveUserSessionStorage,
+  UserSessionStorage,
+} from '../domain/login/storage/user-session-storage';
 import { refreshAccessToken } from './http-user-gateway';
+
+export interface AuthError {
+  error: 'auth' | 'other';
+}
 
 export async function fetchWithAuth(
   input: string | URL | globalThis.Request,
-  getAccessToken: GetAccessTokenStorage,
-  getRefreshToken: GetRefreshTokenStorage,
-  saveUserSession: SaveUserSessionStorage,
   init: RequestInit,
+  { getAccessToken, getRefreshToken, saveUserSession }: UserSessionStorage,
 ): Promise<Response> {
   const response = await runFetchWithAuth(input, getAccessToken, init);
   if (response.status === 401) {
@@ -20,7 +27,7 @@ export async function fetchWithAuth(
   return response;
 }
 
-export function mapResponseWithAuth<T extends object>(response: T | { statusCode: number }): T | { error: 'auth' | 'other' } {
+export function mapResponseWithAuth<T extends object>(response: T | { statusCode: number }): T | AuthError {
   if ('statusCode' in response) {
     if (response.statusCode === 401) {
       return { error: 'auth' };
@@ -32,7 +39,7 @@ export function mapResponseWithAuth<T extends object>(response: T | { statusCode
 
 async function runFetchWithAuth(
   input: string | URL | globalThis.Request,
-  getAccessToken: GetAccessTokenStorage<Promise<string | null> | string | null>,
+  getAccessToken: GetAccessTokenStorage,
   init: RequestInit,
 ): Promise<Response> {
   const accessToken = await getTokenFromStorage(getAccessToken);
@@ -43,7 +50,7 @@ async function runFetchWithAuth(
 }
 
 async function tryRefreshAccessToken(
-  getRefreshToken: GetRefreshTokenStorage<Promise<string | null> | string | null>,
+  getRefreshToken: GetRefreshTokenStorage,
   saveUserSession: SaveUserSessionStorage,
 ): Promise<{ success: boolean }> {
   const refreshToken = await getTokenFromStorage(getRefreshToken);
@@ -55,13 +62,9 @@ async function tryRefreshAccessToken(
     saveUserSession(userSession);
   }
   return { success: !!userSession };
+}
 
-  async function getTokenFromStorage(
-    getToken:
-      | GetAccessTokenStorage<Promise<string | null> | string | null>
-      | GetRefreshTokenStorage<Promise<string | null> | string | null>,
-  ): Promise<string | null> {
-    const tokenFromStorage = getToken();
-    return typeof tokenFromStorage === 'string' ? tokenFromStorage : await tokenFromStorage;
-  }
+async function getTokenFromStorage(getToken: GetAccessTokenStorage | GetRefreshTokenStorage): Promise<string | null> {
+  const tokenFromStorage = getToken();
+  return typeof tokenFromStorage === 'string' ? tokenFromStorage : await tokenFromStorage;
 }

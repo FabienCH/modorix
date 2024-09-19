@@ -1,3 +1,4 @@
+import { dependencies } from '../dependencies';
 import {
   BlockUserMessageData,
   RequestBlockUserMessageData,
@@ -27,7 +28,7 @@ export async function handleRequestBlockUser(data: RequestBlockUserMessageData) 
 export async function handleBlockedUser(data: UserBlockedMessageData): Promise<void> {
   if (isUserBlockedSuccessData(data) && requestBlockUserMessageData?.xUsername === data.xUsername) {
     try {
-      await saveBlockUser(data.xUserId, data.xUsername, requestBlockUserMessageData.blockReasonIds);
+      await saveBlockUser(data.xUserId, data.xUsername, requestBlockUserMessageData.blockReasonIds, dependencies.userSessionStorage);
     } catch (error) {
       console.error(`Modorix: Could not saved blocked user ${data.xUsername}`);
     }
