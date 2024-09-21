@@ -1,5 +1,6 @@
 import '@modorix-ui/globals.css';
 import { createRoot } from 'react-dom/client';
+import { DependenciesProvider } from '../../../shared/infrastructure/dependencies-provider';
 import { BlockReasonDialog } from './block-reason-dialog';
 
 export function renderBlockButton(
@@ -17,5 +18,9 @@ export function renderBlockButton(
   const splitedHref = linkElement.href.split('/');
   const username = splitedHref[splitedHref.length - 1];
   const root = createRoot(blockButtonContainer!);
-  root.render(<BlockReasonDialog container={dialogContainer} username={username} onSubmit={confirmBlock} />);
+  root.render(
+    <DependenciesProvider>
+      <BlockReasonDialog container={dialogContainer} username={username} onSubmit={confirmBlock} />
+    </DependenciesProvider>,
+  );
 }

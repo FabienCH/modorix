@@ -2,7 +2,7 @@ import { LoginUserRequest } from '@modorix-commons/domain/login/models/user-logi
 import { UserSession } from '@modorix-commons/domain/login/models/user-session';
 import { ConfirmSignUpUserRequest } from '@modorix-commons/domain/sign-up/models/user-sign-up';
 import { Injectable } from '@nestjs/common';
-import { AuthApiError } from '@supabase/supabase-js';
+import { AuthApiError, AuthSessionMissingError } from '@supabase/supabase-js';
 import { ModorixUserRepository } from '../../../domain/repositories/modorix-user.repository';
 
 @Injectable()
@@ -41,7 +41,10 @@ export class ModorixUserInMemoryRepository implements ModorixUserRepository {
     return { accessToken: 'valid-access-token', refreshToken: 'refresh-token', email: 'john.doe@test.com' };
   }
 
-  refreshToken(_: string): Promise<UserSession> {
-    throw new Error('Method not implemented.');
+  async refreshToken(refreshToken: string): Promise<UserSession> {
+    if (!refreshToken) {
+      throw new AuthSessionMissingError();
+    }
+    return { accessToken: 'valid-access-token', refreshToken: 'refresh-token', email: 'john.doe@test.com' };
   }
 }

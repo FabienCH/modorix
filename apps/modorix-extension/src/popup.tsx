@@ -3,7 +3,7 @@ import '@modorix-ui/globals.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import Popup from './popup/components/Popup';
-import { DependenciesProvider } from './popup/infrastructure/dependencies-provider';
+import { DependenciesProvider } from './shared/infrastructure/dependencies-provider';
 
 setGatewayBaseUrl(import.meta.env.VITE_API_BASE_URL);
 

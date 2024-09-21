@@ -72,7 +72,7 @@ export class ModorixUserController {
 
   private getAuthError(error: unknown): HttpException {
     if (isAuthApiError(error) || error instanceof AuthSessionMissingError) {
-      return new HttpException(error.code ?? 'An unexpected error occurred', error.status);
+      return new HttpException(error.code ?? error.message ?? 'An unexpected error occurred', error.status);
     }
     return new HttpException('An unexpected error occurred', HttpStatus.INTERNAL_SERVER_ERROR);
   }

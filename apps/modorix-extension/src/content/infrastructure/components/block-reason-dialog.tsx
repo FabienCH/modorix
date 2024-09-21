@@ -14,6 +14,7 @@ import {
   contentClassName,
 } from '@modorix-ui/components/dialog';
 import { useState } from 'react';
+import { retrieveBlockedUsersList } from '../../domain/usecases/retrieve-block-reasons-usecase';
 import { validateSelectedReasons } from '../../domain/validate-block-reasons';
 import { FormBlockReason } from '../../models/form-block-reason';
 import { getBlockReasons } from '../gateways/block-reasons-gateway';
@@ -33,24 +34,14 @@ export function BlockReasonDialog({ container, username, onSubmit }: BlockReason
   const [blockReasonsData, setBlockReasonsData] = useState<FormBlockReason[]>([]);
   const { dependencies } = useDependenciesContext();
 
-  async function retrieveBlockedUsersList() {
-    const blockReasons = await getBlockReasons(dependencies.userSessionStorage);
-    if ('error' in blockReasons) {
-      setLoadReasonsError(
-        `Couldn't load block reasons. ${
-          blockReasons.error === 'auth'
-            ? 'You are not logged in the Modorix extension. Please log in and try again.'
-            : 'Something went wrong, please try again.'
-        }`,
-      );
-    } else {
-      setLoadReasonsError(null);
-      setBlockReasonsData(blockReasons.map((blockReason) => ({ ...blockReason, checked: false })));
-    }
+  async function runRetrieveBlockedUsersList() {
+    const { blockReasons, errorMessage } = await retrieveBlockedUsersList(getBlockReasons, dependencies.userSessionStorage);
+    setLoadReasonsError(errorMessage);
+    setBlockReasonsData(blockReasons.map((blockReason) => ({ ...blockReason, checked: false })));
   }
 
   function handleOpenChange(open: boolean): void {
-    retrieveBlockedUsersList();
+    runRetrieveBlockedUsersList();
     setOpen(open);
   }
 
