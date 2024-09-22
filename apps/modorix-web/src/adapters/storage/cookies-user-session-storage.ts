@@ -1,4 +1,11 @@
-import { GetAccessTokenStorage, GetUserInfosStorage, SaveUserSessionStorage, UserSession, UserSessionInfos } from '@modorix/commons';
+import {
+  GetAccessTokenStorage,
+  GetRefreshTokenStorage,
+  GetUserInfosStorage,
+  SaveUserSessionStorage,
+  UserSession,
+  UserSessionInfos,
+} from '@modorix/commons';
 import Cookies from 'js-cookie';
 import { jwtDecode } from 'jwt-decode';
 
@@ -16,6 +23,10 @@ export const saveUserSessionInCookies: SaveUserSessionStorage = (userSession: Us
 
 export const getAccessTokenFromCookies: GetAccessTokenStorage<string | null> = () => {
   return Cookies.get(CookiesKey.AccessToken) ?? null;
+};
+
+export const getRefreshTokenFromCookies: GetRefreshTokenStorage<string | null> = () => {
+  return Cookies.get(CookiesKey.RefreshToken) ?? null;
 };
 
 export const getUserInfosFromCookies: GetUserInfosStorage<UserSessionInfos> = () => {

@@ -79,4 +79,7 @@
     @apply text-2xl pb-4 font-medium text-modorix-800;
   }
 
+  .text-error {
+    @apply text-destructive text-sm;
+  }
 }

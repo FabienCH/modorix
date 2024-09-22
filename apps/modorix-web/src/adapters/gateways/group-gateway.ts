@@ -1,6 +1,6 @@
 import { Group, GroupDetails } from '@modorix-commons/domain/models/group';
-import { fetchWithAuth } from '@modorix-commons/gateways/fetch-with-auth';
-import { getAccessTokenFromCookies } from '../storage/cookies-user-session-storage';
+import { AuthError, fetchWithAuth, mapResponseWithAuth } from '@modorix-commons/gateways/fetch-with-auth';
+import { UserSessionStorage } from '@modorix/commons';
 
 const groupBaseUrl = `${import.meta.env.VITE_API_BASE_URL}/groups`;
 
@@ -12,14 +12,36 @@ export async function getGroup(groupId: string): Promise<GroupDetails> {
   return (await fetch(`${groupBaseUrl}/${groupId}`, { method: 'GET' })).json();
 }
 
-export async function joinGroup(groupId: string): Promise<void> {
-  await fetchWithAuth(`${groupBaseUrl}/join/${groupId}`, getAccessTokenFromCookies, {
-    method: 'POST',
-  });
+export async function joinGroup(groupId: string, userSessionStorage: UserSessionStorage): Promise<void | AuthError> {
+  const response = await fetchWithAuth(
+    `${groupBaseUrl}/join/${groupId}`,
+    {
+      method: 'POST',
+    },
+    userSessionStorage,
+  );
+
+  const textResponse = await response.text();
+  if (!textResponse) {
+    return;
+  }
+
+  return mapResponseWithAuth(JSON.parse(textResponse));
 }
 
-export async function leaveGroup(groupId: string): Promise<void> {
-  await fetchWithAuth(`${groupBaseUrl}/leave/${groupId}`, getAccessTokenFromCookies, {
-    method: 'POST',
-  });
+export async function leaveGroup(groupId: string, userSessionStorage: UserSessionStorage): Promise<void | AuthError> {
+  const response = await fetchWithAuth(
+    `${groupBaseUrl}/leave/${groupId}`,
+    {
+      method: 'POST',
+    },
+    userSessionStorage,
+  );
+
+  const textResponse = await response.text();
+  if (!textResponse) {
+    return;
+  }
+
+  return mapResponseWithAuth(JSON.parse(textResponse));
 }

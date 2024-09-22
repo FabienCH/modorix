@@ -12,6 +12,7 @@ describe('ModorixUserController', () => {
   let signUpSpy: MockInstance;
   let confirmSignUpSpy: MockInstance;
   let loginSpy: MockInstance;
+  let refreshTokenSpy: MockInstance;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
@@ -24,6 +25,7 @@ describe('ModorixUserController', () => {
     signUpSpy = vi.spyOn(modorixUserService, 'signUp');
     confirmSignUpSpy = vi.spyOn(modorixUserService, 'confirmSignUp');
     loginSpy = vi.spyOn(modorixUserService, 'login');
+    refreshTokenSpy = vi.spyOn(modorixUserService, 'refreshToken');
   });
 
   describe('Sign up a user', () => {
@@ -147,6 +149,20 @@ describe('ModorixUserController', () => {
           password: 'UserPassword123',
         });
       }).rejects.toThrow(new HttpException('An unexpected error occurred', 500));
+    });
+  });
+
+  describe('Refresh a user access token', () => {
+    it('should refresh the user access token', async () => {
+      await modorixUserController.refreshToken({ refreshToken: 'refresh-token' });
+
+      expect(refreshTokenSpy).toHaveBeenCalledWith('refresh-token');
+    });
+
+    it('should not refresh the user access token if refresh token is invalid', async () => {
+      await expect(async () => {
+        await modorixUserController.refreshToken({ refreshToken: '' });
+      }).rejects.toThrow(new HttpException('Auth session missing!', 400));
     });
   });
 });

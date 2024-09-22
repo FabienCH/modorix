@@ -1,21 +1,26 @@
+import { Group } from '@modorix-commons//domain/models/group';
+import { useDependenciesContext } from '@modorix-commons/infrastructure/dependencies-context';
 import { ModorixTable } from '@modorix-ui/components/modorix-table';
 import { useCallback, useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Group } from '../../../../packages/modorix-commons/src/domain/models/group';
 import { getGroups } from '../adapters/gateways/group-gateway';
 import MembershipButton from '../components/groups/membership-button';
-import { toggleMembership } from '../domain/toggle-group-membership-usecase';
+import { toggleMembership } from '../domain/group/toggle-group-membership-usecase';
 import { ROUTES } from '../routes';
 
 const columns = ['Group', 'Description', 'Blocked Users', 'Membership'];
 
 export default function GroupsPage() {
   const [groupsData, setGroupsData] = useState<(string | JSX.Element)[][]>([]);
+  const { dependencies } = useDependenciesContext();
 
-  const handleClick = useCallback(async (group: Group) => {
-    await toggleMembership(group);
-    await retrieveGroupsList(handleClick);
-  }, []);
+  const handleClick = useCallback(
+    async (group: Group) => {
+      await toggleMembership(group, dependencies.userSessionStorage);
+      await retrieveGroupsList(handleClick);
+    },
+    [dependencies],
+  );
 
   useEffect(() => {
     retrieveGroupsList(handleClick);

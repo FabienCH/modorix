@@ -9,7 +9,7 @@ import {
 import { Button } from '@modorix-ui/components/button';
 import { useState } from 'react';
 import { signUp } from '../../adapters/gateways/http-user-gateway';
-import { signUpUser } from '../../domain/user-sign-up-usecase';
+import { signUpUser } from '../../domain/modorix-user/user-sign-up-usecase';
 import SignUpForm, { SignUpFromValues } from './sign-up-form';
 import SignUpSuccess from './sign-up-success';
 

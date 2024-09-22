@@ -1,22 +1,34 @@
-import { GetAccessTokenStorage } from '../domain/login/storage/user-session-storage';
+import { UserSessionStorage } from '../domain/login/storage/user-session-storage';
 import { XUser } from '../domain/models/x-user';
 import { getGatewayBaseUrl } from './base-url-config';
-import { fetchWithAuth } from './fetch-with-auth';
+import { AuthError, fetchWithAuth, mapResponseWithAuth } from './fetch-with-auth';
 
 const blockedXUsersBaseUrl = () => `${getGatewayBaseUrl()}/block-x-users`;
 
-export async function getBlockedUsers(getAccessToken: GetAccessTokenStorage): Promise<XUser[]> {
-  return (
-    await fetchWithAuth(`${blockedXUsersBaseUrl()}`, getAccessToken, {
-      method: 'GET',
-    })
+export async function getBlockedUsers(userSessionStorage: UserSessionStorage): Promise<XUser[] | AuthError> {
+  const response = await (
+    await fetchWithAuth(
+      blockedXUsersBaseUrl(),
+      {
+        method: 'GET',
+      },
+      userSessionStorage,
+    )
   ).json();
+
+  return mapResponseWithAuth(response);
 }
 
-export async function getBlockQueue(getAccessToken: GetAccessTokenStorage): Promise<XUser[]> {
-  return (
-    await fetchWithAuth(`${blockedXUsersBaseUrl()}/queue`, getAccessToken, {
-      method: 'GET',
-    })
+export async function getBlockQueue(userSessionStorage: UserSessionStorage): Promise<XUser[] | AuthError> {
+  const response = await (
+    await fetchWithAuth(
+      `${blockedXUsersBaseUrl()}/queue`,
+      {
+        method: 'GET',
+      },
+      userSessionStorage,
+    )
   ).json();
+
+  return mapResponseWithAuth(response);
 }

@@ -12,3 +12,4 @@ export * from './domain/sign-up/password-validation-regexp';
 export * from './domain/login/models/user-login';
 export * from './domain/login/models/user-session';
 export * from './domain/login/storage/user-session-storage';
+export * from './domain/login/type-guards/user-session-guard';

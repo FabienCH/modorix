@@ -40,4 +40,8 @@ export class ModorixUserService {
   async login(loginUserRequest: LoginUserRequest): Promise<UserSession> {
     return this.modorixUserRepository.login(loginUserRequest);
   }
+
+  async refreshToken(refreshToken: string): Promise<UserSession> {
+    return this.modorixUserRepository.refreshToken(refreshToken);
+  }
 }

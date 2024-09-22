@@ -8,7 +8,7 @@ import GroupLogo from '../../public/icon/people-group-solid.svg?react';
 import { getUserInfosFromCookies } from '../adapters/storage/cookies-user-session-storage';
 import { ROUTES } from '../routes';
 import { LoginDialog } from './login/login-dialog';
-import { SignUpDialog } from './sign-up/sign-up-form-dialog';
+import { SignUpDialog } from './sign-up/sign-up-dialog';
 
 export default function Header() {
   const { userSessionInfos, setUserSessionInfos } = useUserSessionInfos();

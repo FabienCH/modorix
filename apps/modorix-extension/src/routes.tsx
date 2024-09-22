@@ -1,7 +1,7 @@
 import { createMemoryRouter } from 'react-router-dom';
 import BlockUsers from './popup/components/block-users-page';
+import Layout from './popup/components/Layout';
 import Login from './popup/components/login-page';
-import Popup from './popup/components/Popup';
 
 export enum ROUTES {
   Home = '/',
@@ -11,7 +11,7 @@ export enum ROUTES {
 export const router = createMemoryRouter([
   {
     path: ROUTES.Home,
-    element: <Popup />,
+    element: <Layout />,
     children: [
       {
         index: true,

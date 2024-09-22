@@ -1,9 +1,9 @@
 import { XUsersTable } from '@modorix-commons/components/x-users-table';
 import { XUser } from '@modorix-commons/domain/models/x-user';
 import { getBlockedUsers, getBlockQueue } from '@modorix-commons/gateways/block-user-gateway';
+import { useDependenciesContext } from '@modorix-commons/infrastructure/dependencies-context';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@modorix-ui/components/tabs';
 import { useEffect, useState } from 'react';
-import { getAccessTokenFromBrowserStorage } from '../../content/infrastructure/storage/browser-user-session-storage';
 import { BlocksQueueUpdateMessageData } from '../../shared/messages/event-message';
 import { onRunBlocksQueueUpdate, requestRunBlocksQueue } from '../popup-handler';
 import { BlockUserReasons } from './block-user-reasons';
@@ -17,20 +17,21 @@ enum TabsEnum {
 export default function BlockUsers() {
   const [blockedUsers, setBlockedUsers] = useState<XUser[]>([]);
   const [blockQueueState, setBlockQueueState] = useState<BlocksQueueUpdateMessageData>({ blockQueue: [], runQueueStatus: 'ready' });
+  const { dependencies } = useDependenciesContext();
 
   useEffect(() => {
     (async () => {
       onRunBlocksQueueUpdate(setBlockQueueState);
-      const blockedXUsers = await getBlockedUsers(getAccessTokenFromBrowserStorage);
-      if (blockedXUsers?.length) {
+      const blockedXUsers = await getBlockedUsers(dependencies.userSessionStorage);
+      if ('error' in blockedXUsers === false && blockedXUsers?.length) {
         setBlockedUsers(blockedXUsers);
       }
-      const blockQueue = await getBlockQueue(getAccessTokenFromBrowserStorage);
-      if (blockQueue?.length) {
+      const blockQueue = await getBlockQueue(dependencies.userSessionStorage);
+      if ('error' in blockQueue === false && blockQueue?.length) {
         setBlockQueueState({ blockQueue, runQueueStatus: 'ready' });
       }
     })();
-  }, []);
+  }, [dependencies]);
 
   useEffect(() => {
     if (blockQueueState.runQueueStatus === 'error') {
