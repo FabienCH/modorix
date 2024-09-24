@@ -4,6 +4,7 @@ import { ModorixTable } from '@modorix-ui/components/modorix-table';
 import { useCallback, useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { getGroups } from '../adapters/gateways/group-gateway';
+import { showErrorToast } from '../components/errors/show-error-toast';
 import MembershipButton from '../components/groups/membership-button';
 import { toggleMembership } from '../domain/group/toggle-group-membership-usecase';
 import { ROUTES } from '../routes';
@@ -16,7 +17,7 @@ export default function GroupsPage() {
 
   const handleClick = useCallback(
     async (group: Group) => {
-      await toggleMembership(group, dependencies.userSessionStorage);
+      await toggleMembership(group, showErrorToast, dependencies.userSessionStorage);
       await retrieveGroupsList(handleClick);
     },
     [dependencies],

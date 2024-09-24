@@ -20,11 +20,9 @@ export async function addToBlockQueue(xUserId: string, userSessionStorage: UserS
     },
     userSessionStorage,
   );
-
-  const textResponse = await response.text();
-  if (!textResponse) {
+  if (response.ok) {
     return;
   }
 
-  return mapResponseWithAuth(JSON.parse(textResponse));
+  return mapResponseWithAuth(await response.json());
 }

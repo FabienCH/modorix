@@ -14,7 +14,7 @@ import {
   contentClassName,
 } from '@modorix-ui/components/dialog';
 import { useState } from 'react';
-import { retrieveBlockedUsersList } from '../../domain/usecases/retrieve-block-reasons-usecase';
+import { retrieveBlockReasonsList } from '../../domain/usecases/retrieve-block-reasons-usecase';
 import { validateSelectedReasons } from '../../domain/validate-block-reasons';
 import { FormBlockReason } from '../../models/form-block-reason';
 import { getBlockReasons } from '../gateways/block-reasons-gateway';
@@ -34,14 +34,14 @@ export function BlockReasonDialog({ container, username, onSubmit }: BlockReason
   const [blockReasonsData, setBlockReasonsData] = useState<FormBlockReason[]>([]);
   const { dependencies } = useDependenciesContext();
 
-  async function runRetrieveBlockedUsersList() {
-    const { blockReasons, errorMessage } = await retrieveBlockedUsersList(getBlockReasons, dependencies.userSessionStorage);
+  async function runRetrieveBlockReasonsList() {
+    const { blockReasons, errorMessage } = await retrieveBlockReasonsList(getBlockReasons, dependencies.userSessionStorage);
     setLoadReasonsError(errorMessage);
     setBlockReasonsData(blockReasons.map((blockReason) => ({ ...blockReason, checked: false })));
   }
 
   function handleOpenChange(open: boolean): void {
-    runRetrieveBlockedUsersList();
+    runRetrieveBlockReasonsList();
     setOpen(open);
   }
 

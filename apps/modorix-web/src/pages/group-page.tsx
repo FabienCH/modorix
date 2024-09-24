@@ -9,6 +9,7 @@ import { NavLink, useLoaderData } from 'react-router-dom';
 import BackIcon from '../../public/icon/back-arrow.svg?react';
 import { addToBlockQueue } from '../adapters/gateways/block-x-user-gateway';
 import { getGroup } from '../adapters/gateways/group-gateway';
+import { showErrorToast } from '../components/errors/show-error-toast';
 import GroupAddToBlockQueueCell from '../components/groups/group-add-to-block-queue-cell';
 import MembershipButton from '../components/groups/membership-button';
 import { AutoResizeBadgesWithTooltip } from '../components/shared/auto-resize-badges-with-tooltip';
@@ -24,7 +25,7 @@ export default function GroupPage() {
     async (xUser: XUser): Promise<void> => {
       const addToBlockQueueRes = await addToBlockQueue(xUser.xId, dependencies.userSessionStorage);
       if (addToBlockQueueRes && 'error' in addToBlockQueueRes) {
-        console.log('addToBlockQueue auth error');
+        showErrorToast(`Couldn't add ${xUser.xUsername} to block queue`, addToBlockQueueRes.error);
       }
 
       setGroup(await getGroup(group.id));
@@ -44,7 +45,7 @@ export default function GroupPage() {
   }, [group, addXUserToQueue]);
 
   async function handleMembershipClick(group: GroupDetails) {
-    await toggleMembership(group, dependencies.userSessionStorage);
+    await toggleMembership(group, showErrorToast, dependencies.userSessionStorage);
     setGroup(await getGroup(group.id));
   }
 

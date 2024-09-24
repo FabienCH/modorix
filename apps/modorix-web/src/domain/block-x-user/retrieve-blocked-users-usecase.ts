@@ -3,13 +3,14 @@ import { UserSessionStorage, XUser } from '@modorix/commons';
 
 export async function retrieveBlockedUsers(
   getBlockedUsers: (userSessionStorage: UserSessionStorage) => Promise<XUser[] | AuthError>,
-  setBlockedUsers: (blockedUser: XUser[]) => void,
+  onBlockedUsersRetrieved: (blockedUser: XUser[]) => void,
+  onError: (title: string, error: AuthError['error']) => void,
   userSessionStorage: UserSessionStorage,
 ): Promise<void> {
   const blockedUsersRes = await getBlockedUsers(userSessionStorage);
   if ('error' in blockedUsersRes) {
-    console.log('blockedUsersRes AUTH ERRORRR');
+    onError("Couldn't retrieve your list of blocked X users", blockedUsersRes.error);
   } else {
-    setBlockedUsers(blockedUsersRes);
+    onBlockedUsersRetrieved(blockedUsersRes);
   }
 }

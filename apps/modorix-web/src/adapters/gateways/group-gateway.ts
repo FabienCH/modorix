@@ -21,12 +21,11 @@ export async function joinGroup(groupId: string, userSessionStorage: UserSession
     userSessionStorage,
   );
 
-  const textResponse = await response.text();
-  if (!textResponse) {
+  if (response.ok) {
     return;
   }
 
-  return mapResponseWithAuth(JSON.parse(textResponse));
+  return mapResponseWithAuth(await response.json());
 }
 
 export async function leaveGroup(groupId: string, userSessionStorage: UserSessionStorage): Promise<void | AuthError> {
@@ -38,10 +37,9 @@ export async function leaveGroup(groupId: string, userSessionStorage: UserSessio
     userSessionStorage,
   );
 
-  const textResponse = await response.text();
-  if (!textResponse) {
+  if (response.ok) {
     return;
   }
 
-  return mapResponseWithAuth(JSON.parse(textResponse));
+  return mapResponseWithAuth(await response.json());
 }

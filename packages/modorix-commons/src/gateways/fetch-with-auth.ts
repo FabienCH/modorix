@@ -27,9 +27,9 @@ export async function fetchWithAuth(
   return response;
 }
 
-export function mapResponseWithAuth<T extends object>(response: T | { status: number }): T | AuthError {
-  if ('status' in response) {
-    if (response.status === 401) {
+export function mapResponseWithAuth<T extends object>(response: T | { statusCode: number }): T | AuthError {
+  if ('statusCode' in response) {
+    if (response.statusCode === 401) {
       return { error: 'auth' };
     }
     return { error: 'other' };
@@ -44,7 +44,7 @@ async function runFetchWithAuth(
 ): Promise<Response> {
   const accessToken = await getTokenFromStorage(getAccessToken);
   if (!accessToken) {
-    return Response.json({}, { status: 401 });
+    return Response.json({ statusCode: 401 }, { status: 401 });
   }
   return await fetch(input, { ...init, headers: { ...init?.headers, Authorization: `Bearer ${accessToken}` } });
 }

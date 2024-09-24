@@ -1,5 +1,5 @@
 import { UserSession, UserSessionStorage } from '@modorix/commons';
-import { retrieveBlockedUsersList } from './retrieve-block-reasons-usecase';
+import { retrieveBlockReasonsList } from './retrieve-block-reasons-usecase';
 
 describe('Retrieve block reasons', () => {
   const userSessionStorage: UserSessionStorage = {
@@ -20,13 +20,13 @@ describe('Retrieve block reasons', () => {
       },
     ];
 
-    const retrieveBlockedUsersListResult = await retrieveBlockedUsersList(async () => blockReasons, userSessionStorage);
+    const retrieveBlockedUsersListResult = await retrieveBlockReasonsList(async () => blockReasons, userSessionStorage);
 
     expect(retrieveBlockedUsersListResult).toEqual({ blockReasons, errorMessage: null });
   });
 
   it('should give an error message if user is not authenticated', async () => {
-    const retrieveBlockedUsersListResult = await retrieveBlockedUsersList(async () => ({ error: 'auth' }), userSessionStorage);
+    const retrieveBlockedUsersListResult = await retrieveBlockReasonsList(async () => ({ error: 'auth' }), userSessionStorage);
 
     expect(retrieveBlockedUsersListResult).toEqual({
       blockReasons: [],
@@ -35,7 +35,7 @@ describe('Retrieve block reasons', () => {
   });
 
   it('should give an error message if there is an other error', async () => {
-    const retrieveBlockedUsersListResult = await retrieveBlockedUsersList(async () => ({ error: 'other' }), userSessionStorage);
+    const retrieveBlockedUsersListResult = await retrieveBlockReasonsList(async () => ({ error: 'other' }), userSessionStorage);
 
     expect(retrieveBlockedUsersListResult).toEqual({
       blockReasons: [],
