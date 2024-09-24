@@ -5,7 +5,7 @@ describe('Retrieve block reasons', () => {
   const userSessionStorage: UserSessionStorage = {
     getAccessToken: () => null,
     getRefreshToken: () => null,
-    saveUserSession: (_: UserSession) => null,
+    saveUserSession: (_: UserSession | null) => null,
     getUserInfos: () => ({
       hasValidAccessToken: false,
       userEmail: null,

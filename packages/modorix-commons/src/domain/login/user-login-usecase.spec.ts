@@ -14,7 +14,7 @@ describe('login a user', () => {
     return async (_: LoginUserRequest): Promise<LoginError> => ({ error });
   }
 
-  function onLoggedIn(_: UserSession) {
+  function onLoggedIn(_: UserSession | null) {
     onLoggedInCalled = true;
   }
 

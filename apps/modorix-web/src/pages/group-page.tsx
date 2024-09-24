@@ -2,6 +2,7 @@ import { OptionalColConfig, XUsersTable } from '@modorix-commons/components/x-us
 import { GroupDetails } from '@modorix-commons/domain/models/group';
 import { XUser } from '@modorix-commons/domain/models/x-user';
 import { useDependenciesContext } from '@modorix-commons/infrastructure/dependencies-context';
+import { useUserSessionInfos } from '@modorix-commons/infrastructure/user-session-context';
 import { buttonVariants } from '@modorix-ui/components/button';
 import { cn } from '@modorix-ui/utils/utils';
 import { useCallback, useEffect, useState } from 'react';
@@ -20,17 +21,18 @@ export default function GroupPage() {
   const [group, setGroup] = useState<GroupDetails>(useLoaderData() as GroupDetails);
   const [optionalColsConfig, setOptionalColsConfig] = useState<OptionalColConfig[] | undefined>();
   const { dependencies } = useDependenciesContext();
+  const { setUserSessionInfos } = useUserSessionInfos();
 
   const addXUserToQueue = useCallback(
     async (xUser: XUser): Promise<void> => {
       const addToBlockQueueRes = await addToBlockQueue(xUser.xId, dependencies.userSessionStorage);
       if (addToBlockQueueRes && 'error' in addToBlockQueueRes) {
-        showErrorToast(`Couldn't add ${xUser.xUsername} to block queue`, addToBlockQueueRes.error);
+        showErrorToast(`Couldn't add ${xUser.xUsername} to block queue`, addToBlockQueueRes.error, setUserSessionInfos);
       }
 
       setGroup(await getGroup(group.id));
     },
-    [group, dependencies],
+    [group, dependencies, setUserSessionInfos],
   );
 
   useEffect(() => {
@@ -45,7 +47,7 @@ export default function GroupPage() {
   }, [group, addXUserToQueue]);
 
   async function handleMembershipClick(group: GroupDetails) {
-    await toggleMembership(group, showErrorToast, dependencies.userSessionStorage);
+    await toggleMembership(group, showErrorToast, { ...dependencies.userSessionStorage, setUserSessionInfos });
     setGroup(await getGroup(group.id));
   }
 

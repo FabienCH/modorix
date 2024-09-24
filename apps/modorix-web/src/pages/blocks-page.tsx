@@ -1,6 +1,7 @@
 import { XUsersTable } from '@modorix-commons/components/x-users-table';
 import { getBlockedUsers, getBlockQueue } from '@modorix-commons/gateways/block-user-gateway';
 import { useDependenciesContext } from '@modorix-commons/infrastructure/dependencies-context';
+import { useUserSessionInfos } from '@modorix-commons/infrastructure/user-session-context';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@modorix-ui/components/tabs';
 import { useCallback, useEffect, useState } from 'react';
 import { XUser } from '../../../../packages/modorix-commons/src/domain/models/x-user';
@@ -17,6 +18,7 @@ export default function BlocksPage() {
   const [blockQueue, setBlockQueue] = useState<XUser[]>([]);
   const [blockQueueCandidates, setBlockQueueCandidates] = useState<XUser[]>([]);
   const { dependencies } = useDependenciesContext();
+  const { setUserSessionInfos } = useUserSessionInfos();
 
   const blockedInGroupsColConfig = {
     index: 2,
@@ -35,8 +37,8 @@ export default function BlocksPage() {
   };
 
   const runRetrieveBlockQueue = useCallback(async () => {
-    await retrieveBlockQueue(getBlockQueue, setBlockQueue, showErrorToast, dependencies.userSessionStorage);
-  }, [dependencies]);
+    await retrieveBlockQueue(getBlockQueue, setBlockQueue, showErrorToast, { ...dependencies.userSessionStorage, setUserSessionInfos });
+  }, [dependencies, setUserSessionInfos]);
 
   useEffect(() => {
     runRetrieveBlockQueue();
@@ -45,7 +47,7 @@ export default function BlocksPage() {
   async function addXUserToQueue(xUser: XUser): Promise<void> {
     const addToBlockQueueRes = await addToBlockQueue(xUser.xId, dependencies.userSessionStorage);
     if (addToBlockQueueRes && 'error' in addToBlockQueueRes) {
-      showErrorToast(`Couldn't add ${xUser.xUsername} to block queue`, addToBlockQueueRes.error);
+      showErrorToast(`Couldn't add ${xUser.xUsername} to block queue`, addToBlockQueueRes.error, setUserSessionInfos);
     } else {
       const blockQueueCandidatesRes = await getBlockQueueCandidates(dependencies.userSessionStorage);
       if ('error' in blockQueueCandidatesRes === false) {
@@ -56,10 +58,16 @@ export default function BlocksPage() {
 
   async function loadBlockList(value: string): Promise<void> {
     if (value === 'add-to-blocks-queue' && blockQueueCandidates.length === 0) {
-      await retrieveBlockQueueCandidates(getBlockQueueCandidates, setBlockQueueCandidates, showErrorToast, dependencies.userSessionStorage);
+      await retrieveBlockQueueCandidates(getBlockQueueCandidates, setBlockQueueCandidates, showErrorToast, {
+        ...dependencies.userSessionStorage,
+        setUserSessionInfos,
+      });
     }
     if (value === 'my-blocks-list' && blockedUsers.length === 0) {
-      await retrieveBlockedUsers(getBlockedUsers, setBlockedUsers, showErrorToast, dependencies.userSessionStorage);
+      await retrieveBlockedUsers(getBlockedUsers, setBlockedUsers, showErrorToast, {
+        ...dependencies.userSessionStorage,
+        setUserSessionInfos,
+      });
     }
   }
 

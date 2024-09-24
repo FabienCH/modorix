@@ -1,5 +1,6 @@
 import { Group } from '@modorix-commons//domain/models/group';
 import { useDependenciesContext } from '@modorix-commons/infrastructure/dependencies-context';
+import { useUserSessionInfos } from '@modorix-commons/infrastructure/user-session-context';
 import { ModorixTable } from '@modorix-ui/components/modorix-table';
 import { useCallback, useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
@@ -14,13 +15,14 @@ const columns = ['Group', 'Description', 'Blocked Users', 'Membership'];
 export default function GroupsPage() {
   const [groupsData, setGroupsData] = useState<(string | JSX.Element)[][]>([]);
   const { dependencies } = useDependenciesContext();
+  const { setUserSessionInfos } = useUserSessionInfos();
 
   const handleClick = useCallback(
     async (group: Group) => {
-      await toggleMembership(group, showErrorToast, dependencies.userSessionStorage);
+      await toggleMembership(group, showErrorToast, { ...dependencies.userSessionStorage, setUserSessionInfos });
       await retrieveGroupsList(handleClick);
     },
-    [dependencies],
+    [dependencies, setUserSessionInfos],
   );
 
   useEffect(() => {

@@ -5,7 +5,7 @@ import { UserSessionStorage } from '@modorix/commons';
 const blockReasonsBaseUrl = `${import.meta.env.VITE_API_BASE_URL}/block-reasons`;
 
 export async function getBlockReasons(userSessionStorage: UserSessionStorage): Promise<BlockReason[] | AuthError> {
-  const response = await (await fetchWithAuth(blockReasonsBaseUrl, { method: 'GET' }, userSessionStorage))?.json();
+  const response = await fetchWithAuth(blockReasonsBaseUrl, { method: 'GET' }, userSessionStorage);
 
   return mapResponseWithAuth(response);
 }

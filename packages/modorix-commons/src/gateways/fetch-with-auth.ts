@@ -21,20 +21,26 @@ export async function fetchWithAuth(
     if (success) {
       return await runFetchWithAuth(input, getAccessToken, init);
     }
+    saveUserSession(null);
     return response;
   }
 
   return response;
 }
 
-export function mapResponseWithAuth<T extends object>(response: T | { statusCode: number }): T | AuthError {
-  if ('statusCode' in response) {
-    if (response.statusCode === 401) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function mapResponseWithAuth(response: Response): any | AuthError {
+  if (!response.ok) {
+    if (response.status === 401) {
       return { error: 'auth' };
     }
     return { error: 'other' };
   }
-  return response;
+  try {
+    return response.json();
+  } catch (_) {
+    return;
+  }
 }
 
 async function runFetchWithAuth(

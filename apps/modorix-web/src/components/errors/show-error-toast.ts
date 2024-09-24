@@ -1,7 +1,16 @@
 import { AuthError } from '@modorix-commons/gateways/fetch-with-auth';
 import { toast } from '@modorix-ui/hooks/use-toast';
+import { UserSessionInfos } from '@modorix/commons';
 
-export function showErrorToast(title: string, error: AuthError['error']): void {
+export function showErrorToast(
+  title: string,
+  error: AuthError['error'],
+  setUserSessionInfos: (userSessionInfos: UserSessionInfos) => void,
+): void {
+  if (error === 'auth') {
+    setUserSessionInfos({ hasValidAccessToken: false, userEmail: null });
+  }
+
   const description =
     error === 'auth'
       ? `You are not logged in or your session has expired. Please login and try again.`

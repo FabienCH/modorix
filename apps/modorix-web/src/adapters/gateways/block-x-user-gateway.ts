@@ -5,7 +5,7 @@ import { UserSessionStorage } from '@modorix/commons';
 const blockedXUsersBaseUrl = `${import.meta.env.VITE_API_BASE_URL}/block-x-users`;
 
 export async function getBlockQueueCandidates(userSessionStorage: UserSessionStorage): Promise<XUser[] | AuthError> {
-  const response = await (await fetchWithAuth(`${blockedXUsersBaseUrl}/queue/candidates`, { method: 'GET' }, userSessionStorage))?.json();
+  const response = await fetchWithAuth(`${blockedXUsersBaseUrl}/queue/candidates`, { method: 'GET' }, userSessionStorage);
 
   return mapResponseWithAuth(response);
 }
@@ -20,9 +20,6 @@ export async function addToBlockQueue(xUserId: string, userSessionStorage: UserS
     },
     userSessionStorage,
   );
-  if (response.ok) {
-    return;
-  }
 
-  return mapResponseWithAuth(await response.json());
+  return mapResponseWithAuth(response);
 }

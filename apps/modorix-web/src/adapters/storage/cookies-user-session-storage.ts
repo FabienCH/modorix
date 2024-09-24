@@ -15,10 +15,17 @@ enum CookiesKey {
   UserEmail = 'user-email',
 }
 
-export const saveUserSessionInCookies: SaveUserSessionStorage = (userSession: UserSession) => {
-  Cookies.set(CookiesKey.AccessToken, userSession.accessToken, { secure: true, sameSite: 'strict' });
-  Cookies.set(CookiesKey.RefreshToken, userSession.refreshToken, { secure: true, sameSite: 'strict' });
-  Cookies.set(CookiesKey.UserEmail, userSession.email, { secure: true, sameSite: 'strict' });
+export const saveUserSessionInCookies: SaveUserSessionStorage = (userSession: UserSession | null) => {
+  console.log('🚀 ~ userSession:', userSession);
+  if (!userSession) {
+    Cookies.remove(CookiesKey.AccessToken);
+    Cookies.remove(CookiesKey.RefreshToken);
+    Cookies.remove(CookiesKey.UserEmail);
+  } else {
+    Cookies.set(CookiesKey.AccessToken, userSession.accessToken, { secure: true, sameSite: 'strict' });
+    Cookies.set(CookiesKey.RefreshToken, userSession.refreshToken, { secure: true, sameSite: 'strict' });
+    Cookies.set(CookiesKey.UserEmail, userSession.email, { secure: true, sameSite: 'strict' });
+  }
 };
 
 export const getAccessTokenFromCookies: GetAccessTokenStorage<string | null> = () => {
