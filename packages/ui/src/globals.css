@@ -80,6 +80,6 @@
   }
 
   .text-error {
-    @apply text-destructive text-sm;
+    @apply text-destructive text-sm font-medium;
   }
 }

@@ -13,12 +13,7 @@ describe('Retrieve block reasons', () => {
   };
 
   it('should give a list of block reasons', async () => {
-    const blockReasons = [
-      {
-        id: 'id',
-        label: 'Block reason label',
-      },
-    ];
+    const blockReasons = [{ id: 'id', label: 'Block reason label' }];
 
     const retrieveBlockedUsersListResult = await retrieveBlockReasonsList(async () => blockReasons, userSessionStorage);
 

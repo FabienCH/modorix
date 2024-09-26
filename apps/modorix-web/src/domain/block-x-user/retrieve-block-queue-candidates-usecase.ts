@@ -13,6 +13,7 @@ export async function retrieveBlockQueueCandidates(
   const blockQueueCandidatesRes = await getBlockQueueCandidates(userSessionStorage);
   if ('error' in blockQueueCandidatesRes) {
     onError("Couldn't retrieve your list of block queue candidates", blockQueueCandidatesRes.error, setUserSessionInfos);
+    setBlockQueueCandidates([]);
   } else {
     setBlockQueueCandidates(blockQueueCandidatesRes);
   }

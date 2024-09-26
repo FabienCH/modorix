@@ -1,6 +1,7 @@
 import ProfileIcon from '@modorix-commons/components/profile-icon';
 import { useUserSessionInfos } from '@modorix-commons/infrastructure/user-session-context';
 import { Button } from '@modorix-ui/components/button';
+import { Toaster } from '@modorix-ui/components/toaster';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../routes';
 
@@ -24,6 +25,7 @@ export default function Layout() {
         )}
       </header>
       <Outlet />
+      <Toaster />
     </>
   );
 }

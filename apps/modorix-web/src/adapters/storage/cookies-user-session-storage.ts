@@ -16,7 +16,6 @@ enum CookiesKey {
 }
 
 export const saveUserSessionInCookies: SaveUserSessionStorage = (userSession: UserSession | null) => {
-  console.log('🚀 ~ userSession:', userSession);
   if (!userSession) {
     Cookies.remove(CookiesKey.AccessToken);
     Cookies.remove(CookiesKey.RefreshToken);

@@ -13,6 +13,7 @@ export async function retrieveBlockedUsers(
   const blockedUsersRes = await getBlockedUsers(userSessionStorage);
   if ('error' in blockedUsersRes) {
     onError("Couldn't retrieve your list of blocked X users", blockedUsersRes.error, setUserSessionInfos);
+    onBlockedUsersRetrieved([]);
   } else {
     onBlockedUsersRetrieved(blockedUsersRes);
   }

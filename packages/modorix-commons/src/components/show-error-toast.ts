@@ -1,6 +1,6 @@
-import { AuthError } from '@modorix-commons/gateways/fetch-with-auth';
 import { toast } from '@modorix-ui/hooks/use-toast';
 import { UserSessionInfos } from '@modorix/commons';
+import { AuthError } from '../gateways/fetch-with-auth';
 
 export function showErrorToast(
   title: string,

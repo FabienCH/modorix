@@ -1,7 +1,9 @@
+import { showErrorToast } from '@modorix-commons/components/show-error-toast';
 import { XUsersTable } from '@modorix-commons/components/x-users-table';
 import { XUser } from '@modorix-commons/domain/models/x-user';
 import { getBlockedUsers, getBlockQueue } from '@modorix-commons/gateways/block-user-gateway';
 import { useDependenciesContext } from '@modorix-commons/infrastructure/dependencies-context';
+import { useUserSessionInfos } from '@modorix-commons/infrastructure/user-session-context';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@modorix-ui/components/tabs';
 import { useEffect, useState } from 'react';
 import { BlocksQueueUpdateMessageData } from '../../shared/messages/event-message';
@@ -18,20 +20,27 @@ export default function BlockUsers() {
   const [blockedUsers, setBlockedUsers] = useState<XUser[]>([]);
   const [blockQueueState, setBlockQueueState] = useState<BlocksQueueUpdateMessageData>({ blockQueue: [], runQueueStatus: 'ready' });
   const { dependencies } = useDependenciesContext();
+  const { setUserSessionInfos } = useUserSessionInfos();
 
   useEffect(() => {
     (async () => {
       onRunBlocksQueueUpdate(setBlockQueueState);
       const blockedXUsers = await getBlockedUsers(dependencies.userSessionStorage);
-      if ('error' in blockedXUsers === false && blockedXUsers?.length) {
+      if ('error' in blockedXUsers === false) {
         setBlockedUsers(blockedXUsers);
+      } else {
+        showErrorToast('error blocked list', blockedXUsers.error, setUserSessionInfos);
+        setBlockedUsers([]);
       }
       const blockQueue = await getBlockQueue(dependencies.userSessionStorage);
-      if ('error' in blockQueue === false && blockQueue?.length) {
+      if ('error' in blockQueue === false) {
         setBlockQueueState({ blockQueue, runQueueStatus: 'ready' });
+      } else {
+        setBlockQueueState({ blockQueue: [], runQueueStatus: 'ready' });
+        showErrorToast('error queue', blockQueue.error, setUserSessionInfos);
       }
     })();
-  }, [dependencies]);
+  }, [dependencies, setUserSessionInfos]);
 
   useEffect(() => {
     if (blockQueueState.runQueueStatus === 'error') {

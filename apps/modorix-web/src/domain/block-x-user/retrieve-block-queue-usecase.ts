@@ -13,6 +13,7 @@ export async function retrieveBlockQueue(
   const blockQueueRes = await getBlockQueue(userSessionStorage);
   if ('error' in blockQueueRes) {
     onError("Couldn't retrieve your block queue", blockQueueRes.error, setUserSessionInfos);
+    setBlockQueue([]);
   } else {
     setBlockQueue(blockQueueRes);
   }

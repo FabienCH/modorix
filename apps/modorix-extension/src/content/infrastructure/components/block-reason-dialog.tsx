@@ -95,7 +95,7 @@ export function BlockReasonDialog({ container, username, onSubmit }: BlockReason
             <DialogDescription>Please choose at least one reason to block {username}</DialogDescription>
           </DialogHeader>
           {loadReasonsError ? (
-            <p className="text-error">{loadReasonsError}</p>
+            <p className="text-error py-2">{loadReasonsError}</p>
           ) : (
             <BlockReasonForm
               formBlockReasons={blockReasonsData}
@@ -107,7 +107,7 @@ export function BlockReasonDialog({ container, username, onSubmit }: BlockReason
             <DialogClose asChild>
               <Button variant="ghost">Cancel</Button>
             </DialogClose>
-            <Button variant="destructive" onClick={handleSubmit}>
+            <Button variant="destructive" disabled={!!loadReasonsError} onClick={handleSubmit}>
               Block {username}
             </Button>
           </DialogFooter>

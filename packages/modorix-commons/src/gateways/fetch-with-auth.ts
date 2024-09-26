@@ -29,7 +29,7 @@ export async function fetchWithAuth(
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function mapResponseWithAuth(response: Response): any | AuthError {
+export async function mapResponseWithAuth(response: Response): Promise<any | AuthError> {
   if (!response.ok) {
     if (response.status === 401) {
       return { error: 'auth' };
@@ -37,7 +37,7 @@ export function mapResponseWithAuth(response: Response): any | AuthError {
     return { error: 'other' };
   }
   try {
-    return response.json();
+    return await response.json();
   } catch (_) {
     return;
   }
