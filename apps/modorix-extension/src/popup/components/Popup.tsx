@@ -1,4 +1,4 @@
-import { UserSessionProvider, useUserSessionInfos } from '@modorix-commons/infrastructure/user-session-context';
+import { useUserSessionInfos } from '@modorix-commons/infrastructure/user-session-context';
 import { useEffect } from 'react';
 import { RouterProvider } from 'react-router-dom';
 import { getUserInfosFromBrowserStorage } from '../../content/infrastructure/storage/browser-user-session-storage';
@@ -13,9 +13,5 @@ export default function Popup() {
     })();
   }, [setUserSessionInfos]);
 
-  return (
-    <UserSessionProvider>
-      <RouterProvider router={router} />
-    </UserSessionProvider>
-  );
+  return <RouterProvider router={router} />;
 }

@@ -1,12 +1,15 @@
+import { showErrorToast } from '@modorix-commons/components/show-error-toast';
 import { XUsersTable } from '@modorix-commons/components/x-users-table';
 import { getBlockedUsers, getBlockQueue } from '@modorix-commons/gateways/block-user-gateway';
 import { useDependenciesContext } from '@modorix-commons/infrastructure/dependencies-context';
+import { useUserSessionInfos } from '@modorix-commons/infrastructure/user-session-context';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@modorix-ui/components/tabs';
 import { useCallback, useEffect, useState } from 'react';
 import { XUser } from '../../../../packages/modorix-commons/src/domain/models/x-user';
 import { addToBlockQueue, getBlockQueueCandidates } from '../adapters/gateways/block-x-user-gateway';
 import { AddToQueueButton } from '../components/shared/add-to-queue-button';
 import { AutoResizeBadgesWithTooltip } from '../components/shared/auto-resize-badges-with-tooltip';
+import { addXUserToQueue } from '../domain/block-x-user/add-user-to-queue-usecase';
 import { retrieveBlockQueueCandidates } from '../domain/block-x-user/retrieve-block-queue-candidates-usecase';
 import { retrieveBlockQueue } from '../domain/block-x-user/retrieve-block-queue-usecase';
 import { retrieveBlockedUsers } from '../domain/block-x-user/retrieve-blocked-users-usecase';
@@ -16,6 +19,7 @@ export default function BlocksPage() {
   const [blockQueue, setBlockQueue] = useState<XUser[]>([]);
   const [blockQueueCandidates, setBlockQueueCandidates] = useState<XUser[]>([]);
   const { dependencies } = useDependenciesContext();
+  const { setUserSessionInfos } = useUserSessionInfos();
 
   const blockedInGroupsColConfig = {
     index: 2,
@@ -30,34 +34,41 @@ export default function BlocksPage() {
   const addToBlockQueueColConfig = {
     index: 4,
     columnLabel: 'Add To Queue',
-    getCellElem: (xUser: XUser) => <AddToQueueButton onClick={() => addXUserToQueue(xUser)}></AddToQueueButton>,
+    getCellElem: (xUser: XUser) => <AddToQueueButton onClick={() => runAddXUserToQueue(xUser)}></AddToQueueButton>,
   };
 
   const runRetrieveBlockQueue = useCallback(async () => {
-    await retrieveBlockQueue(getBlockQueue, setBlockQueue, dependencies.userSessionStorage);
-  }, [dependencies]);
+    await retrieveBlockQueue(getBlockQueue, setBlockQueue, showErrorToast, { ...dependencies.userSessionStorage, setUserSessionInfos });
+  }, [dependencies, setUserSessionInfos]);
 
   useEffect(() => {
     runRetrieveBlockQueue();
   }, [runRetrieveBlockQueue]);
 
-  async function addXUserToQueue(xUser: XUser): Promise<void> {
-    const addToBlockQueueRes = await addToBlockQueue(xUser.xId, dependencies.userSessionStorage);
-    if (addToBlockQueueRes && 'error' in addToBlockQueueRes) {
-      console.log('addToBlockQueue auth error');
-    }
-    const blockQueueCandidatesRes = await getBlockQueueCandidates(dependencies.userSessionStorage);
-    if ('error' in blockQueueCandidatesRes === false) {
-      setBlockQueueCandidates(blockQueueCandidatesRes);
-    }
+  async function runAddXUserToQueue(xUser: XUser): Promise<void> {
+    const { userSessionStorage } = dependencies;
+    await addXUserToQueue(xUser, addToBlockQueue, runRetrieveBlockQueueCandidates, showErrorToast, {
+      userSessionStorage,
+      setUserSessionInfos,
+    });
+  }
+
+  async function runRetrieveBlockQueueCandidates() {
+    await retrieveBlockQueueCandidates(getBlockQueueCandidates, setBlockQueueCandidates, showErrorToast, {
+      ...dependencies.userSessionStorage,
+      setUserSessionInfos,
+    });
   }
 
   async function loadBlockList(value: string): Promise<void> {
     if (value === 'add-to-blocks-queue' && blockQueueCandidates.length === 0) {
-      await retrieveBlockQueueCandidates(getBlockQueueCandidates, setBlockQueueCandidates, dependencies.userSessionStorage);
+      await runRetrieveBlockQueueCandidates();
     }
     if (value === 'my-blocks-list' && blockedUsers.length === 0) {
-      await retrieveBlockedUsers(getBlockedUsers, setBlockedUsers, dependencies.userSessionStorage);
+      await retrieveBlockedUsers(getBlockedUsers, setBlockedUsers, showErrorToast, {
+        ...dependencies.userSessionStorage,
+        setUserSessionInfos,
+      });
     }
   }
 

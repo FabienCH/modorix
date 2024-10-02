@@ -41,7 +41,7 @@ describe('Running blocks queue', () => {
   const userSessionStorage: UserSessionStorage = {
     getAccessToken: () => null,
     getRefreshToken: () => null,
-    saveUserSession: (_: UserSession) => null,
+    saveUserSession: (_: UserSession | null) => null,
     getUserInfos: () => ({
       hasValidAccessToken: false,
       userEmail: null,

@@ -1,7 +1,7 @@
 import { AuthError } from '@modorix-commons/gateways/fetch-with-auth';
 import { BlockReason, UserSessionStorage } from '@modorix/commons';
 
-export async function retrieveBlockedUsersList(
+export async function retrieveBlockReasonsList(
   getBlockReasons: (userSessionStorage: UserSessionStorage) => Promise<BlockReason[] | AuthError>,
   userSessionStorage: UserSessionStorage,
 ): Promise<{ blockReasons: BlockReason[]; errorMessage: string | null }> {

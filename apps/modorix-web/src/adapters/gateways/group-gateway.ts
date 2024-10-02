@@ -13,35 +13,13 @@ export async function getGroup(groupId: string): Promise<GroupDetails> {
 }
 
 export async function joinGroup(groupId: string, userSessionStorage: UserSessionStorage): Promise<void | AuthError> {
-  const response = await fetchWithAuth(
-    `${groupBaseUrl}/join/${groupId}`,
-    {
-      method: 'POST',
-    },
-    userSessionStorage,
-  );
+  const response = await fetchWithAuth(`${groupBaseUrl}/join/${groupId}`, { method: 'POST' }, userSessionStorage);
 
-  const textResponse = await response.text();
-  if (!textResponse) {
-    return;
-  }
-
-  return mapResponseWithAuth(JSON.parse(textResponse));
+  return mapResponseWithAuth(response);
 }
 
 export async function leaveGroup(groupId: string, userSessionStorage: UserSessionStorage): Promise<void | AuthError> {
-  const response = await fetchWithAuth(
-    `${groupBaseUrl}/leave/${groupId}`,
-    {
-      method: 'POST',
-    },
-    userSessionStorage,
-  );
+  const response = await fetchWithAuth(`${groupBaseUrl}/leave/${groupId}`, { method: 'POST' }, userSessionStorage);
 
-  const textResponse = await response.text();
-  if (!textResponse) {
-    return;
-  }
-
-  return mapResponseWithAuth(JSON.parse(textResponse));
+  return mapResponseWithAuth(response);
 }

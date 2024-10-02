@@ -1,5 +1,7 @@
 import { Group } from '@modorix-commons//domain/models/group';
+import { showErrorToast } from '@modorix-commons/components/show-error-toast';
 import { useDependenciesContext } from '@modorix-commons/infrastructure/dependencies-context';
+import { useUserSessionInfos } from '@modorix-commons/infrastructure/user-session-context';
 import { ModorixTable } from '@modorix-ui/components/modorix-table';
 import { useCallback, useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
@@ -8,32 +10,43 @@ import MembershipButton from '../components/groups/membership-button';
 import { toggleMembership } from '../domain/group/toggle-group-membership-usecase';
 import { ROUTES } from '../routes';
 
-const columns = ['Group', 'Description', 'Blocked Users', 'Membership'];
+const defaultColumns = ['Group', 'Description', 'Blocked Users'];
 
 export default function GroupsPage() {
   const [groupsData, setGroupsData] = useState<(string | JSX.Element)[][]>([]);
   const { dependencies } = useDependenciesContext();
+  const { userSessionInfos, setUserSessionInfos } = useUserSessionInfos();
+  const columns = defaultColumns;
 
   const handleClick = useCallback(
     async (group: Group) => {
-      await toggleMembership(group, dependencies.userSessionStorage);
-      await retrieveGroupsList(handleClick);
+      await toggleMembership(group, showErrorToast, { ...dependencies.userSessionStorage, setUserSessionInfos });
+      await retrieveGroupsList(handleClick, userSessionInfos.hasValidAccessToken);
     },
-    [dependencies],
+    [dependencies, setUserSessionInfos, userSessionInfos],
   );
 
   useEffect(() => {
-    retrieveGroupsList(handleClick);
-  }, [handleClick]);
+    retrieveGroupsList(handleClick, userSessionInfos.hasValidAccessToken);
+    if (userSessionInfos.hasValidAccessToken && columns.length === 3) {
+      columns.push('Membership');
+    }
+  }, [handleClick, userSessionInfos, columns]);
 
-  async function retrieveGroupsList(handleClickFn: (group: Group) => Promise<void>) {
+  async function retrieveGroupsList(handleClickFn: (group: Group) => Promise<void>, hasValidAccessToken: boolean) {
     const groups = await getGroups();
-    const groupsData = groups.map((group) => [
-      <NavLink to={`${ROUTES.Groups}/${group.id}`}>{group.name}</NavLink>,
-      group.description,
-      group.blockedXUserIds.length.toString(),
-      <MembershipButton group={group} size={'sm'} onClick={() => handleClickFn(group)} />,
-    ]);
+    const groupsData = groups.map((group) => {
+      const rowData = [
+        <NavLink to={`${ROUTES.Groups}/${group.id}`}>{group.name}</NavLink>,
+        group.description,
+        group.blockedXUserIds.length.toString(),
+      ];
+      if (hasValidAccessToken) {
+        rowData.push(<MembershipButton group={group} size={'sm'} onClick={() => handleClickFn(group)} />);
+      }
+
+      return rowData;
+    });
     setGroupsData(groupsData);
   }
 

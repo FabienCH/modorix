@@ -14,10 +14,16 @@ enum StorageKey {
   UserEmail = 'user-email',
 }
 
-export const saveUserSessionInBrowserStorage: SaveUserSessionStorage = (userSession: UserSession) => {
-  chrome.storage.local.set({ [StorageKey.AccessToken]: userSession.accessToken });
-  chrome.storage.local.set({ [StorageKey.RefreshToken]: userSession.refreshToken });
-  chrome.storage.local.set({ [StorageKey.UserEmail]: userSession.email });
+export const saveUserSessionInBrowserStorage: SaveUserSessionStorage = (userSession: UserSession | null) => {
+  if (!userSession) {
+    chrome.storage.local.remove(StorageKey.AccessToken);
+    chrome.storage.local.remove(StorageKey.RefreshToken);
+    chrome.storage.local.remove(StorageKey.UserEmail);
+  } else {
+    chrome.storage.local.set({ [StorageKey.AccessToken]: userSession.accessToken });
+    chrome.storage.local.set({ [StorageKey.RefreshToken]: userSession.refreshToken });
+    chrome.storage.local.set({ [StorageKey.UserEmail]: userSession.email });
+  }
 };
 
 export const getAccessTokenFromBrowserStorage: GetAccessTokenStorage<Promise<string | null>> = async () => {

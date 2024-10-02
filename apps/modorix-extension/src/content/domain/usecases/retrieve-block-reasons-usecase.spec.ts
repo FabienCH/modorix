@@ -1,11 +1,11 @@
 import { UserSession, UserSessionStorage } from '@modorix/commons';
-import { retrieveBlockedUsersList } from './retrieve-block-reasons-usecase';
+import { retrieveBlockReasonsList } from './retrieve-block-reasons-usecase';
 
 describe('Retrieve block reasons', () => {
   const userSessionStorage: UserSessionStorage = {
     getAccessToken: () => null,
     getRefreshToken: () => null,
-    saveUserSession: (_: UserSession) => null,
+    saveUserSession: (_: UserSession | null) => null,
     getUserInfos: () => ({
       hasValidAccessToken: false,
       userEmail: null,
@@ -13,20 +13,15 @@ describe('Retrieve block reasons', () => {
   };
 
   it('should give a list of block reasons', async () => {
-    const blockReasons = [
-      {
-        id: 'id',
-        label: 'Block reason label',
-      },
-    ];
+    const blockReasons = [{ id: 'id', label: 'Block reason label' }];
 
-    const retrieveBlockedUsersListResult = await retrieveBlockedUsersList(async () => blockReasons, userSessionStorage);
+    const retrieveBlockedUsersListResult = await retrieveBlockReasonsList(async () => blockReasons, userSessionStorage);
 
     expect(retrieveBlockedUsersListResult).toEqual({ blockReasons, errorMessage: null });
   });
 
   it('should give an error message if user is not authenticated', async () => {
-    const retrieveBlockedUsersListResult = await retrieveBlockedUsersList(async () => ({ error: 'auth' }), userSessionStorage);
+    const retrieveBlockedUsersListResult = await retrieveBlockReasonsList(async () => ({ error: 'auth' }), userSessionStorage);
 
     expect(retrieveBlockedUsersListResult).toEqual({
       blockReasons: [],
@@ -35,7 +30,7 @@ describe('Retrieve block reasons', () => {
   });
 
   it('should give an error message if there is an other error', async () => {
-    const retrieveBlockedUsersListResult = await retrieveBlockedUsersList(async () => ({ error: 'other' }), userSessionStorage);
+    const retrieveBlockedUsersListResult = await retrieveBlockReasonsList(async () => ({ error: 'other' }), userSessionStorage);
 
     expect(retrieveBlockedUsersListResult).toEqual({
       blockReasons: [],

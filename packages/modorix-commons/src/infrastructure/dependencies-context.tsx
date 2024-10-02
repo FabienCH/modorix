@@ -10,7 +10,7 @@ const defaultDependencies = {
     getRefreshToken: () => {
       throw new Error('Missing dependencies UserSessionStorage.getRefreshToken');
     },
-    saveUserSession: (_: UserSession) => {
+    saveUserSession: (_: UserSession | null) => {
       throw new Error('Missing dependencies UserSessionStorage.saveUserSession');
     },
     getUserInfos: () => {

@@ -21,20 +21,26 @@ export async function fetchWithAuth(
     if (success) {
       return await runFetchWithAuth(input, getAccessToken, init);
     }
+    saveUserSession(null);
     return response;
   }
 
   return response;
 }
 
-export function mapResponseWithAuth<T extends object>(response: T | { status: number }): T | AuthError {
-  if ('status' in response) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function mapResponseWithAuth(response: Response): Promise<any | AuthError> {
+  if (!response.ok) {
     if (response.status === 401) {
       return { error: 'auth' };
     }
     return { error: 'other' };
   }
-  return response;
+  try {
+    return await response.json();
+  } catch (_) {
+    return;
+  }
 }
 
 async function runFetchWithAuth(
@@ -44,7 +50,7 @@ async function runFetchWithAuth(
 ): Promise<Response> {
   const accessToken = await getTokenFromStorage(getAccessToken);
   if (!accessToken) {
-    return Response.json({}, { status: 401 });
+    return Response.json({ statusCode: 401 }, { status: 401 });
   }
   return await fetch(input, { ...init, headers: { ...init?.headers, Authorization: `Bearer ${accessToken}` } });
 }
