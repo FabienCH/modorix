@@ -1,11 +1,12 @@
 import { AuthError } from '@modorix-commons/gateways/fetch-with-auth';
 import { UserSessionInfos, UserSessionStorage, XUser } from '@modorix/commons';
+import { OnErrorCallback } from '../model/on-error-callback';
 
 export async function addXUserToQueue(
   xUser: XUser,
   addToBlockQueue: (xUserId: string, userSessionStorage: UserSessionStorage) => Promise<void | AuthError>,
   onUserAddedToQueue: () => void,
-  onError: (title: string, error: AuthError['error'], setUserSessionInfos: (userSessionInfos: UserSessionInfos) => void) => void,
+  onError: OnErrorCallback,
   {
     userSessionStorage,
     setUserSessionInfos,

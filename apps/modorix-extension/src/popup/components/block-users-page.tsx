@@ -29,7 +29,7 @@ export default function BlockUsers() {
       if ('error' in blockedXUsers === false) {
         setBlockedUsers(blockedXUsers);
       } else {
-        showErrorToast('error blocked list', blockedXUsers.error, setUserSessionInfos);
+        showErrorToast("Couldn't retrieve your list of blocked X users", blockedXUsers.error, setUserSessionInfos);
         setBlockedUsers([]);
       }
       const blockQueue = await getBlockQueue(dependencies.userSessionStorage);
@@ -37,7 +37,7 @@ export default function BlockUsers() {
         setBlockQueueState({ blockQueue, runQueueStatus: 'ready' });
       } else {
         setBlockQueueState({ blockQueue: [], runQueueStatus: 'ready' });
-        showErrorToast('error queue', blockQueue.error, setUserSessionInfos);
+        showErrorToast("Couldn't retrieve your block queue", blockQueue.error, setUserSessionInfos);
       }
     })();
   }, [dependencies, setUserSessionInfos]);

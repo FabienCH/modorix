@@ -1,10 +1,10 @@
-import { AuthError } from '@modorix-commons/gateways/fetch-with-auth';
 import { Group, GroupDetails, UserSessionInfos, UserSessionStorage } from '@modorix/commons';
 import { joinGroup, leaveGroup } from '../../adapters/gateways/group-gateway';
+import { OnErrorCallback } from '../model/on-error-callback';
 
 export async function toggleMembership(
   group: Group | GroupDetails,
-  onError: (title: string, error: AuthError['error'], setUserSessionInfos: (userSessionInfos: UserSessionInfos) => void) => void,
+  onError: OnErrorCallback,
   {
     setUserSessionInfos,
     ...userSessionStorage
