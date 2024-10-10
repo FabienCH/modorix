@@ -46,7 +46,7 @@ export default function Header() {
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
-        {userSessionInfos.hasValidAccessToken ? (
+        {userSessionInfos?.hasValidAccessToken ? (
           <ProfileIcon email={userSessionInfos.userEmail} />
         ) : (
           <div>

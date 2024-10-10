@@ -9,7 +9,7 @@ export async function retrieveBlockedUsers(
   {
     setUserSessionInfos,
     ...userSessionStorage
-  }: UserSessionStorage & { setUserSessionInfos: (userSessionInfos: UserSessionInfos) => void },
+  }: UserSessionStorage & { setUserSessionInfos: (userSessionInfos: UserSessionInfos | null) => void },
 ): Promise<void> {
   const blockedUsersRes = await getBlockedUsers(userSessionStorage);
   if ('error' in blockedUsersRes) {

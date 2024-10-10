@@ -8,7 +8,8 @@ describe('Retrieve block reasons', () => {
     saveUserSession: (_: UserSession | null) => null,
     getUserInfos: () => ({
       hasValidAccessToken: false,
-      userEmail: null,
+      userEmail: '',
+      userId: '',
     }),
   };
 

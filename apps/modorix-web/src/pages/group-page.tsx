@@ -36,12 +36,13 @@ export default function GroupPage() {
   );
 
   useEffect(() => {
-    if (userSessionInfos.hasValidAccessToken) {
+    if (userSessionInfos?.hasValidAccessToken) {
       const addToBlockQueueColConfig = {
         index: 4,
         columnLabel: 'Add To Queue',
         getCellElem: (xUser: XUser) => (
           <GroupAddToBlockQueueCell
+            modorixUserId={userSessionInfos.userId}
             xUser={xUser}
             isGroupJoined={group.isJoined}
             onButtonClick={runAddXUserToQueue}
@@ -64,7 +65,7 @@ export default function GroupPage() {
       </NavLink>
       <div className="flex justify-between items-center	my-3">
         <h1 className="main-title pb-0">{group.name}</h1>
-        {userSessionInfos.hasValidAccessToken ? <MembershipButton group={group} onClick={() => handleMembershipClick(group)} /> : null}
+        {userSessionInfos?.hasValidAccessToken ? <MembershipButton group={group} onClick={() => handleMembershipClick(group)} /> : null}
       </div>
       <p className="mb-4">{group.description}</p>
       <XUsersTable

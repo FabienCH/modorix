@@ -8,7 +8,7 @@ export async function toggleMembership(
   {
     setUserSessionInfos,
     ...userSessionStorage
-  }: UserSessionStorage & { setUserSessionInfos: (userSessionInfos: UserSessionInfos) => void },
+  }: UserSessionStorage & { setUserSessionInfos: (userSessionInfos: UserSessionInfos | null) => void },
 ): Promise<void> {
   const gateway = group.isJoined ? leaveGroup : joinGroup;
   const result = await gateway(group.id, userSessionStorage);

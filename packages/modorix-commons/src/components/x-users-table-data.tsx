@@ -22,8 +22,8 @@ export const mapToXUsersData = ({ BadgesComponent, blockedUsers, additionalRows 
   return blockedUsers.map((user) => {
     const xUsersData: XUserRow = [
       user.xUsername,
-      new Date(user.blockedAt).toLocaleDateString(),
-      <BadgesComponent items={user.blockReasons} badgeVariant="secondary"></BadgesComponent>,
+      new Date(user.blockEvents[0].blockedAt).toLocaleDateString(),
+      <BadgesComponent items={user.blockEvents[0].blockReasons} badgeVariant="secondary"></BadgesComponent>,
     ];
     additionalRows?.forEach((row) => {
       xUsersData.splice(row.index, 0, row.getCellElem(user));

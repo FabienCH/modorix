@@ -18,7 +18,7 @@ export default function Layout() {
     <>
       <header className="flex justify-between p-3 pb-0">
         <img src="/icon/48.png" className="w-7 h-7 mr-1.5" />
-        {userSessionInfos.hasValidAccessToken ? (
+        {userSessionInfos?.hasValidAccessToken ? (
           <ProfileIcon email={userSessionInfos.userEmail} />
         ) : (
           <Button onClick={navigateTo}>{pathname === ROUTES.Home ? 'Login' : 'Back'}</Button>

@@ -18,19 +18,27 @@ describe('Running blocks queue', () => {
     {
       xId: '1',
       xUsername: '1',
-      blockedAt: '2024-06-19T18:41:45Z',
-      blockReasons: [],
-      blockedInGroups: [{ id: 'UK', name: 'United Kingdom' }],
-      blockingModorixUserIds: [],
+      blockEvents: [
+        {
+          blockedAt: '2024-06-19T18:41:45Z',
+          blockReasons: [],
+          blockedInGroups: [{ id: 'UK', name: 'United Kingdom' }],
+          modorixUserId: 'initial-modorix-user-id',
+        },
+      ],
       blockQueueModorixUserIds: [],
     },
     {
       xId: '2',
       xUsername: '2',
-      blockedAt: '2024-06-20T18:41:45Z',
-      blockReasons: [],
-      blockedInGroups: [{ id: 'FR', name: 'France' }],
-      blockingModorixUserIds: [],
+      blockEvents: [
+        {
+          blockedAt: '2024-06-20T18:41:45Z',
+          blockReasons: [],
+          blockedInGroups: [{ id: 'FR', name: 'France' }],
+          modorixUserId: 'initial-modorix-user-id',
+        },
+      ],
       blockQueueModorixUserIds: [],
     },
   ];
@@ -44,7 +52,8 @@ describe('Running blocks queue', () => {
     saveUserSession: (_: UserSession | null) => null,
     getUserInfos: () => ({
       hasValidAccessToken: false,
-      userEmail: null,
+      userEmail: '',
+      userId: '',
     }),
   };
 

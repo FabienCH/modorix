@@ -18,7 +18,7 @@ describe('Get user infos from browser storage', () => {
 
     const userSessionInfos = await getUserInfosFromBrowserStorage();
 
-    expect(userSessionInfos).toEqual({ hasValidAccessToken: true, userEmail: 'john.doe@test.com' });
+    expect(userSessionInfos).toEqual({ hasValidAccessToken: true, userEmail: 'john.doe@test.com', userId: 'user-id' });
   });
 
   it('should not have a valid token if expired', async () => {
@@ -28,7 +28,7 @@ describe('Get user infos from browser storage', () => {
 
     const userSessionInfos = await getUserInfosFromBrowserStorage();
 
-    expect(userSessionInfos).toEqual({ hasValidAccessToken: false, userEmail: 'john.doe@test.com' });
+    expect(userSessionInfos).toEqual({ hasValidAccessToken: false, userEmail: 'john.doe@test.com', userId: 'user-id' });
   });
 });
 
@@ -42,6 +42,9 @@ function mockChromeLocalStorage(accessToken: string) {
           }
           if (key === 'user-email') {
             return { [key]: 'john.doe@test.com' };
+          }
+          if (key === 'user-id') {
+            return { [key]: 'user-id' };
           }
           return { [key]: '' };
         },

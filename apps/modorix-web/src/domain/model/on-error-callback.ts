@@ -4,5 +4,5 @@ import { UserSessionInfos } from '@modorix/commons';
 export type OnErrorCallback = (
   title: string,
   error: AuthError['error'],
-  setUserSessionInfos: (userSessionInfos: UserSessionInfos) => void,
+  setUserSessionInfos: (userSessionInfos: UserSessionInfos | null) => void,
 ) => void;

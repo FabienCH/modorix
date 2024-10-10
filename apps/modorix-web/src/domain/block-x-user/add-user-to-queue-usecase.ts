@@ -10,7 +10,7 @@ export async function addXUserToQueue(
   {
     userSessionStorage,
     setUserSessionInfos,
-  }: { userSessionStorage: UserSessionStorage; setUserSessionInfos: (userSessionInfos: UserSessionInfos) => void },
+  }: { userSessionStorage: UserSessionStorage; setUserSessionInfos: (userSessionInfos: UserSessionInfos | null) => void },
 ): Promise<void> {
   const addToBlockQueueRes = await addToBlockQueue(xUser.xId, userSessionStorage);
   if (addToBlockQueueRes && 'error' in addToBlockQueueRes) {

@@ -14,6 +14,7 @@ describe('Confirm User Sign Up', () => {
       accessToken: 'valid access token',
       refreshToken: 'valid refresh token',
       email: 'user@domain.com',
+      userId: 'user-id',
     });
     const onConfirm = () => {
       hasBeenConfirmed = true;

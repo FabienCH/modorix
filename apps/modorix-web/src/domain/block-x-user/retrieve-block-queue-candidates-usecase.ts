@@ -9,7 +9,7 @@ export async function retrieveBlockQueueCandidates(
   {
     setUserSessionInfos,
     ...userSessionStorage
-  }: UserSessionStorage & { setUserSessionInfos: (userSessionInfos: UserSessionInfos) => void },
+  }: UserSessionStorage & { setUserSessionInfos: (userSessionInfos: UserSessionInfos | null) => void },
 ): Promise<void> {
   const blockQueueCandidatesRes = await getBlockQueueCandidates(userSessionStorage);
   if ('error' in blockQueueCandidatesRes) {
