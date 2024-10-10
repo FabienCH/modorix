@@ -1,3 +1,5 @@
+import { BlockEvent } from '@modorix-commons/domain/models/block-event';
+import { BlockReason } from '@modorix-commons/domain/models/block-reason';
 import { BlockXUser, XUser } from '@modorix-commons/domain/models/x-user';
 import { Inject, Injectable } from '@nestjs/common';
 import { BlockReasonError } from '../errors/block-reason-error';
@@ -25,18 +27,29 @@ export class BlockXUsersService {
     if (blockReasons.length !== blockReasonIds.length) {
       throw new BlockReasonError(xUsername, 'notFound');
     }
-    const blockedInGroups = await this.groupsRepository.groupsByIds(blockedInGroupsIds ?? []);
-
-    const xUser: XUser = {
-      xId,
-      xUsername,
+    const blockedInGroups = (await this.groupsRepository.groupsByIds(blockedInGroupsIds ?? [])).map((group) => ({
+      id: group.id,
+      name: group.name,
+    }));
+    const blockEvent: BlockEvent = {
+      modorixUserId: blockingModorixUserId,
       blockedAt,
       blockReasons,
-      blockingModorixUserIds: [blockingModorixUserId],
       blockedInGroups,
-      blockQueueModorixUserIds: [],
     };
-    await this.blockXUsersRepository.blockXUser(xUser);
+    const xUser = await this.blockXUsersRepository.blockedXUsersByXId(xId);
+    console.log('🚀 ~ BlockXUsersService ~ blockXUser ~ xUser:', xUser);
+    if (xUser) {
+      await this.blockXUsersRepository.addBlockEvent(xId, blockEvent);
+    } else {
+      const xUserToAdd: XUser = {
+        xId,
+        xUsername,
+        blockEvents: [blockEvent],
+        blockQueueModorixUserIds: [],
+      };
+      await this.blockXUsersRepository.blockXUser(xUserToAdd);
+    }
   }
 
   async blockXUserFromQueue(xUserId: string, modorixUserId: string): Promise<void> {
@@ -51,7 +64,37 @@ export class BlockXUsersService {
     }
 
     xUser.blockQueueModorixUserIds = xUser.blockQueueModorixUserIds.filter((currModorixUserId) => currModorixUserId !== modorixUserId);
-    xUser.blockingModorixUserIds.push(modorixUserId);
+    const { blockReasons, blockedInGroups } = xUser.blockEvents.reduce<{
+      blockReasons: BlockReason[];
+      blockedInGroups: Array<{
+        id: string;
+        name: string;
+      }>;
+    }>(
+      (eventValues, blockEvent) => {
+        blockEvent.blockReasons.forEach((eventBlockReason) => {
+          if (!eventValues.blockReasons.find((blockReason) => blockReason.id === eventBlockReason.id)) {
+            eventValues.blockReasons.push(eventBlockReason);
+          }
+        });
+        blockEvent.blockedInGroups.forEach((eventBlockedInGroups) => {
+          if (!eventValues.blockedInGroups.find((blockedInGroups) => blockedInGroups.id === eventBlockedInGroups.id)) {
+            eventValues.blockedInGroups.push(eventBlockedInGroups);
+          }
+        });
+        return eventValues;
+      },
+      { blockReasons: [], blockedInGroups: [] },
+    );
+
+    const blockEvent: BlockEvent = {
+      modorixUserId,
+      blockedAt: new Date().toISOString(),
+      blockReasons,
+      blockedInGroups,
+    };
+    xUser.blockEvents.push(blockEvent);
+
     await this.blockXUsersRepository.updateXUser(xUser);
   }
 
@@ -72,7 +115,8 @@ export class BlockXUsersService {
   async blockQueueCandidates(modorixUserId: string): Promise<XUser[]> {
     return (await this.blockXUsersRepository.getAllBlockedXUsers()).filter(
       (blockedXUser) =>
-        !blockedXUser.blockingModorixUserIds.includes(modorixUserId) && !blockedXUser.blockQueueModorixUserIds.includes(modorixUserId),
+        !blockedXUser.blockEvents.find((blockEvent) => blockEvent.modorixUserId === modorixUserId) &&
+        !blockedXUser.blockQueueModorixUserIds.includes(modorixUserId),
     );
   }
 

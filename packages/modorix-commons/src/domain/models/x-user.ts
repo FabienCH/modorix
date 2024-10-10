@@ -1,12 +1,12 @@
-import { BlockReason } from './block-reason';
+import { BlockEvent } from './block-event';
 
 interface BaseXUser {
   xId: string;
   xUsername: string;
-  blockedAt: string;
 }
 
 export interface BlockXUserRequest extends BaseXUser {
+  blockedAt: string;
   blockReasonIds: string[];
   blockedInGroupsIds?: string[];
 }
@@ -16,8 +16,6 @@ export interface BlockXUser extends BlockXUserRequest {
 }
 
 export interface XUser extends BaseXUser {
-  blockReasons: BlockReason[];
-  blockedInGroups?: { id: string; name: string }[];
-  blockingModorixUserIds: string[];
+  blockEvents: BlockEvent[];
   blockQueueModorixUserIds: string[];
 }

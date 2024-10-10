@@ -1,3 +1,4 @@
+import { BlockEvent } from '@modorix-commons/domain/models/block-event';
 import { XUser } from '@modorix-commons/domain/models/x-user';
 import { Injectable } from '@nestjs/common';
 import { BlockXUsersRepository } from '../../../domain/repositories/block-x-user.repository';
@@ -15,6 +16,16 @@ export class BlockXUsersInMemoryRepository implements BlockXUsersRepository {
     return;
   }
 
+  async addBlockEvent(id: string, blockEvent: BlockEvent): Promise<void> {
+    const xUser = await this.blockedXUsersByXId(id);
+    console.log('🚀 ~ BlockXUsersInMemoryRepository ~ addBlockEvent ~ xUser:', xUser);
+    if (xUser) {
+      xUser.blockEvents.push(blockEvent);
+      console.log('🚀 ~ BlockXUsersInMemoryRepository ~ addBlockEvent ~ xUser:', xUser);
+      this.updateXUser(xUser);
+    }
+  }
+
   async updateXUser(xUser: XUser): Promise<void> {
     this.blockedXUsers = this.blockedXUsers.map((currentXUser) => {
       if (currentXUser.xId === xUser.xId) {
@@ -26,7 +37,9 @@ export class BlockXUsersInMemoryRepository implements BlockXUsersRepository {
   }
 
   async blockedXUsersList(modorixUserId: string): Promise<XUser[]> {
-    return this.blockedXUsers.filter((blockedXUser) => blockedXUser.blockingModorixUserIds.includes(modorixUserId));
+    return this.blockedXUsers.filter((blockedXUser) =>
+      blockedXUser.blockEvents.find((blockEvent) => blockEvent.modorixUserId === modorixUserId),
+    );
   }
 
   async getAllBlockedXUsers(): Promise<XUser[]> {
