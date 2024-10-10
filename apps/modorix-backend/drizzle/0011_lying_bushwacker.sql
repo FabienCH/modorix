@@ -1,0 +1,1 @@
+ALTER TABLE "block-event" ALTER COLUMN "blocked_at" SET DATA TYPE timestamp;

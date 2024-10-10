@@ -11,10 +11,7 @@ interface GroupAddToBlockQueueCellProps {
 
 export default function GroupAddToBlockQueueCell({ xUser, isGroupJoined, modorixUserId, onButtonClick }: GroupAddToBlockQueueCellProps) {
   const alreadyBlocked = xUser.blockEvents.find((event) => event.modorixUserId === modorixUserId);
-  console.log('🚀 ~ GroupAddToBlockQueueCell ~ alreadyBlocked:', alreadyBlocked);
   const alreadyInQueue = xUser.blockQueueModorixUserIds.includes(modorixUserId);
-  console.log('🚀 ~ GroupAddToBlockQueueCell ~ alreadyInQueue:', alreadyInQueue);
-  console.log('🚀 ~ GroupAddToBlockQueueCell ~ isGroupJoined:', isGroupJoined);
   const tooltipContent = !isGroupJoined
     ? 'Join group to add this X user to your queue'
     : `Already ${alreadyBlocked ? 'blocked' : 'in queue'}`;

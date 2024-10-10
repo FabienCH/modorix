@@ -53,7 +53,7 @@ describe('BlockUserController', () => {
       expect(blockXUserSpy).toHaveBeenCalledWith({
         xId: '1',
         xUsername: '@1-username',
-        blockedAt: '2024-05-27T18:01:45Z',
+        blockedAt: new Date('2024-05-27T18:01:45Z'),
         blockReasonIds: ['1'],
         blockingModorixUserId: '1',
       });

@@ -11,7 +11,8 @@ export interface BlockXUserRequest extends BaseXUser {
   blockedInGroupsIds?: string[];
 }
 
-export interface BlockXUser extends BlockXUserRequest {
+export interface BlockXUser extends Omit<BlockXUserRequest, 'blockedAt'> {
+  blockedAt: Date;
   blockingModorixUserId: string;
 }
 

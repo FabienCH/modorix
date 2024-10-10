@@ -79,10 +79,14 @@ describe('GroupsService', () => {
       await blockUsersRepository.blockXUser({
         xId: '1',
         xUsername: '@username',
-        blockedAt: '2024-06-14T19:01:45Z',
-        blockReasons: [{ id: '2', label: 'Spreading fake news' }],
-        blockingModorixUserIds: ['1'],
-        blockedInGroups: [{ id: 'UK', name: 'United Kingdom' }],
+        blockEvents: [
+          {
+            modorixUserId: '1',
+            blockedAt: new Date('2024-06-14T19:01:45Z'),
+            blockReasons: [{ id: '2', label: 'Spreading fake news' }],
+            blockedInGroups: [{ id: 'UK', name: 'United Kingdom' }],
+          },
+        ],
         blockQueueModorixUserIds: [],
       });
 
@@ -101,10 +105,14 @@ describe('GroupsService', () => {
           {
             xId: '1',
             xUsername: '@username',
-            blockedAt: '2024-06-14T19:01:45Z',
-            blockReasons: [{ id: '2', label: 'Spreading fake news' }],
-            blockingModorixUserIds: ['1'],
-            blockedInGroups: [{ id: 'UK', name: 'United Kingdom' }],
+            blockEvents: [
+              {
+                modorixUserId: '1',
+                blockedAt: new Date('2024-06-14T19:01:45Z'),
+                blockReasons: [{ id: '2', label: 'Spreading fake news' }],
+                blockedInGroups: [{ id: 'UK', name: 'United Kingdom' }],
+              },
+            ],
             blockQueueModorixUserIds: [],
           },
         ],

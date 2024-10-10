@@ -4,7 +4,7 @@ import { OnErrorCallback } from '../model/on-error-callback';
 
 export async function addXUserToQueue(
   xUser: XUser,
-  addToBlockQueue: (xUserId: string, userSessionStorage: UserSessionStorage) => Promise<void | AuthError>,
+  addToBlockQueue: (xUserXId: string, userSessionStorage: UserSessionStorage) => Promise<void | AuthError>,
   onUserAddedToQueue: () => void,
   onError: OnErrorCallback,
   {

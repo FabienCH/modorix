@@ -20,7 +20,7 @@ describe('Running blocks queue', () => {
       xUsername: '1',
       blockEvents: [
         {
-          blockedAt: '2024-06-19T18:41:45Z',
+          blockedAt: new Date('2024-06-19T18:41:45Z'),
           blockReasons: [],
           blockedInGroups: [{ id: 'UK', name: 'United Kingdom' }],
           modorixUserId: 'initial-modorix-user-id',
@@ -33,7 +33,7 @@ describe('Running blocks queue', () => {
       xUsername: '2',
       blockEvents: [
         {
-          blockedAt: '2024-06-20T18:41:45Z',
+          blockedAt: new Date('2024-06-20T18:41:45Z'),
           blockReasons: [],
           blockedInGroups: [{ id: 'FR', name: 'France' }],
           modorixUserId: 'initial-modorix-user-id',

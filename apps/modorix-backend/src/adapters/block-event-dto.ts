@@ -1,14 +1,18 @@
 import { BlockEvent } from '@modorix-commons/domain/models/block-event';
 import { BlockReason } from '@modorix-commons/domain/models/block-reason';
-import { IsArray, IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsDateString, IsNotEmpty, IsString } from 'class-validator';
 
-export class BlockEventDto implements BlockEvent {
+interface IBlockEvent extends Omit<BlockEvent, 'blockedAt'> {
+  blockedAt: string;
+}
+
+export class BlockEventDto implements IBlockEvent {
   @IsNotEmpty()
   @IsString()
   modorixUserId!: string;
 
   @IsNotEmpty()
-  @IsString()
+  @IsDateString()
   blockedAt!: string;
 
   @IsArray()

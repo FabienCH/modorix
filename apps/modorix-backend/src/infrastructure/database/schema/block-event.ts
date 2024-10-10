@@ -1,12 +1,12 @@
 import { relations } from 'drizzle-orm';
-import { date, pgTable, text, uuid } from 'drizzle-orm/pg-core';
+import { pgTable, timestamp, uuid } from 'drizzle-orm/pg-core';
 import { pgXUsers } from './x-user';
 
 export const pgBlockEvent = pgTable('block-event', {
   id: uuid('id').primaryKey(),
-  xUserId: text('x_user_id').notNull(),
-  modorixUserId: text('modorix_user_id').notNull(),
-  blockedAt: date('blocked_at').notNull(),
+  xUserId: uuid('x_user_id').notNull(),
+  modorixUserId: uuid('modorix_user_id').notNull(),
+  blockedAt: timestamp('blocked_at').notNull(),
 });
 
 export const blockEventRelations = relations(pgBlockEvent, ({ one }) => ({

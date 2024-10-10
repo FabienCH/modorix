@@ -10,5 +10,5 @@ export interface BlockXUsersRepository {
   blockedXUsersList(modorixUserId: string): Promise<XUser[]>;
   getAllBlockedXUsers(): Promise<XUser[]>;
   blockedXUsersByIds(ids: string[]): Promise<XUser[]>;
-  blockedXUsersByXId(xId: string): Promise<XUser | undefined>;
+  blockedXUserByXId(xId: string): Promise<XUser | undefined>;
 }

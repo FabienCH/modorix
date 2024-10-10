@@ -37,8 +37,7 @@ export class BlockXUsersService {
       blockReasons,
       blockedInGroups,
     };
-    const xUser = await this.blockXUsersRepository.blockedXUsersByXId(xId);
-    console.log('🚀 ~ BlockXUsersService ~ blockXUser ~ xUser:', xUser);
+    const xUser = await this.blockXUsersRepository.blockedXUserByXId(xId);
     if (xUser) {
       await this.blockXUsersRepository.addBlockEvent(xId, blockEvent);
     } else {
@@ -52,15 +51,15 @@ export class BlockXUsersService {
     }
   }
 
-  async blockXUserFromQueue(xUserId: string, modorixUserId: string): Promise<void> {
-    const xUser = await this.blockXUsersRepository.blockedXUsersByXId(xUserId);
+  async blockXUserFromQueue(xUserXId: string, modorixUserId: string): Promise<void> {
+    const xUser = await this.blockXUsersRepository.blockedXUserByXId(xUserXId);
     if (!xUser) {
-      throw new XUserNotFoundError(xUserId);
+      throw new XUserNotFoundError(xUserXId);
     }
 
     const xUserNotInQueue = !xUser.blockQueueModorixUserIds.find((currModorixUserId) => currModorixUserId === modorixUserId);
     if (xUserNotInQueue) {
-      throw new XUserNotInQueueError(xUserId);
+      throw new XUserNotInQueueError(xUserXId);
     }
 
     xUser.blockQueueModorixUserIds = xUser.blockQueueModorixUserIds.filter((currModorixUserId) => currModorixUserId !== modorixUserId);
@@ -89,17 +88,16 @@ export class BlockXUsersService {
 
     const blockEvent: BlockEvent = {
       modorixUserId,
-      blockedAt: new Date().toISOString(),
+      blockedAt: new Date(),
       blockReasons,
       blockedInGroups,
     };
-    xUser.blockEvents.push(blockEvent);
 
-    await this.blockXUsersRepository.updateXUser(xUser);
+    await this.blockXUsersRepository.updateXUser(xUser, blockEvent);
   }
 
   async addToBlockQueue(xUserId: string, modorixUserId: string): Promise<void> {
-    const xUser = await this.blockXUsersRepository.blockedXUsersByXId(xUserId);
+    const xUser = await this.blockXUsersRepository.blockedXUserByXId(xUserId);
     if (!xUser) {
       throw new XUserNotFoundError(xUserId);
     }

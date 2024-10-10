@@ -18,7 +18,7 @@ describe('BlockXUsersService', () => {
     return {
       xId: '1',
       xUsername: '@username',
-      blockedAt: '2024-05-27T18:01:45Z',
+      blockedAt: new Date('2024-05-27T18:01:45Z'),
       blockReasonIds,
       blockedInGroupsIds,
       blockingModorixUserId: '1',
@@ -26,7 +26,9 @@ describe('BlockXUsersService', () => {
   }
 
   function checkExpectedXUser(blockedXUser: XUser | undefined, blockReasons: BlockReason[]) {
-    const blockEvents: BlockEvent[] = [{ modorixUserId: '1', blockedAt: '2024-05-27T18:01:45Z', blockedInGroups: [], blockReasons }];
+    const blockEvents: BlockEvent[] = [
+      { modorixUserId: '1', blockedAt: new Date('2024-05-27T18:01:45Z'), blockedInGroups: [], blockReasons },
+    ];
 
     const xUser: XUser = {
       xId: '1',
@@ -61,7 +63,7 @@ describe('BlockXUsersService', () => {
       blockEvents: [
         {
           modorixUserId: '2',
-          blockedAt: '2024-06-19T18:41:45Z',
+          blockedAt: new Date('2024-06-19T18:41:45Z'),
           blockReasons: [
             { id: '0', label: 'Harassment' },
             { id: '2', label: 'Spreading fake news' },
@@ -110,7 +112,7 @@ describe('BlockXUsersService', () => {
       await blockXUsersService.blockXUser({
         xId: '862285194',
         xUsername: '@UltraEurope',
-        blockedAt: '2024-08-27T18:11:45Z',
+        blockedAt: new Date('2024-08-27T18:11:45Z'),
         blockReasonIds: ['2', '4'],
         blockedInGroupsIds: ['FR'],
         blockingModorixUserId: '1',
@@ -126,7 +128,7 @@ describe('BlockXUsersService', () => {
           blockEvents: [
             {
               modorixUserId: '2',
-              blockedAt: '2024-06-19T18:41:45Z',
+              blockedAt: new Date('2024-06-19T18:41:45Z'),
               blockReasons: [
                 { id: '0', label: 'Harassment' },
                 { id: '2', label: 'Spreading fake news' },
@@ -138,7 +140,7 @@ describe('BlockXUsersService', () => {
             },
             {
               modorixUserId: '1',
-              blockedAt: '2024-08-27T18:11:45Z',
+              blockedAt: new Date('2024-08-27T18:11:45Z'),
               blockReasons: [
                 { id: '2', label: 'Spreading fake news' },
                 { id: '4', label: 'Incitement to hatred, violence or discrimination' },
@@ -173,13 +175,13 @@ describe('BlockXUsersService', () => {
 
       await blockXUsersService.blockXUserFromQueue('862285194', '1');
 
-      const blockedXUser = await blockXUsersRepository.blockedXUsersByXId('862285194');
+      const blockedXUser = await blockXUsersRepository.blockedXUserByXId('862285194');
       expect(blockedXUser).toEqual(
         expect.objectContaining({
           blockEvents: [
             {
               modorixUserId: '2',
-              blockedAt: '2024-06-19T18:41:45Z',
+              blockedAt: new Date('2024-06-19T18:41:45Z'),
               blockReasons: [
                 { id: '0', label: 'Harassment' },
                 { id: '2', label: 'Spreading fake news' },
@@ -191,7 +193,7 @@ describe('BlockXUsersService', () => {
             },
             {
               modorixUserId: '1',
-              blockedAt: '2024-09-13T17:34:13.000Z',
+              blockedAt: new Date('2024-09-13T17:34:13.000Z'),
               blockReasons: [
                 { id: '0', label: 'Harassment' },
                 { id: '2', label: 'Spreading fake news' },
@@ -221,7 +223,7 @@ describe('BlockXUsersService', () => {
         blockEvents: [
           {
             modorixUserId: '2',
-            blockedAt: '2024-06-19T18:41:45Z',
+            blockedAt: new Date('2024-06-19T18:41:45Z'),
             blockReasons: [
               { id: '0', label: 'Harassment' },
               { id: '2', label: 'Spreading fake news' },
@@ -249,7 +251,7 @@ describe('BlockXUsersService', () => {
         blockEvents: [
           {
             modorixUserId: '1',
-            blockedAt: '2024-05-27T18:01:45Z',
+            blockedAt: new Date('2024-05-27T18:01:45Z'),
             blockReasons: [{ id: '1', label: 'Racism / Xenophobia' }],
             blockedInGroups: [{ id: 'US', name: 'United States' }],
           },
@@ -268,7 +270,7 @@ describe('BlockXUsersService', () => {
           blockEvents: [
             {
               modorixUserId: '2',
-              blockedAt: '2024-06-19T18:41:45Z',
+              blockedAt: new Date('2024-06-19T18:41:45Z'),
               blockReasons: [
                 { id: '0', label: 'Harassment' },
                 { id: '2', label: 'Spreading fake news' },
@@ -291,7 +293,7 @@ describe('BlockXUsersService', () => {
         blockEvents: [
           {
             modorixUserId: '2',
-            blockedAt: '2024-06-19T18:41:45Z',
+            blockedAt: new Date('2024-06-19T18:41:45Z'),
             blockReasons: [
               { id: '0', label: 'Harassment' },
               { id: '2', label: 'Spreading fake news' },
@@ -318,7 +320,7 @@ describe('BlockXUsersService', () => {
       blockEvents: [
         {
           modorixUserId: '2',
-          blockedAt: '2024-06-19T18:41:45Z',
+          blockedAt: new Date('2024-06-19T18:41:45Z'),
           blockReasons: [
             { id: '0', label: 'Harassment' },
             { id: '2', label: 'Spreading fake news' },
@@ -339,7 +341,7 @@ describe('BlockXUsersService', () => {
         blockEvents: [
           {
             modorixUserId: '1',
-            blockedAt: '2024-05-27T18:01:45Z',
+            blockedAt: new Date('2024-05-27T18:01:45Z'),
             blockReasons: [{ id: '1', label: 'Racism / Xenophobia' }],
             blockedInGroups: [{ id: 'US', name: 'United States' }],
           },
@@ -369,7 +371,7 @@ describe('BlockXUsersService', () => {
         blockEvents: [
           {
             modorixUserId: '2',
-            blockedAt: '2024-06-19T18:41:45Z',
+            blockedAt: new Date('2024-06-19T18:41:45Z'),
             blockReasons: [
               { id: '0', label: 'Harassment' },
               { id: '2', label: 'Spreading fake news' },

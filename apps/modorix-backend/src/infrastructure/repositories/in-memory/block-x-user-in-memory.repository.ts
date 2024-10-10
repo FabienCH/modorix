@@ -16,11 +16,9 @@ export class BlockXUsersInMemoryRepository implements BlockXUsersRepository {
     return;
   }
 
-  async addBlockEvent(id: string, blockEvent: BlockEvent): Promise<void> {
-    const xUser = await this.blockedXUsersByXId(id);
-    console.log('🚀 ~ BlockXUsersInMemoryRepository ~ addBlockEvent ~ xUser:', xUser);
+  async addBlockEvent(xId: string, blockEvent: BlockEvent): Promise<void> {
+    const xUser = await this.blockedXUserByXId(xId);
     if (xUser) {
-      console.log('🚀 ~ BlockXUsersInMemoryRepository ~ addBlockEvent ~ xUser:', xUser);
       this.updateXUser(xUser, blockEvent);
     }
   }
@@ -52,7 +50,7 @@ export class BlockXUsersInMemoryRepository implements BlockXUsersRepository {
     return this.blockedXUsers.filter((blockedUser) => ids.includes(blockedUser.xId));
   }
 
-  async blockedXUsersByXId(id: string): Promise<XUser | undefined> {
+  async blockedXUserByXId(id: string): Promise<XUser | undefined> {
     return this.blockedXUsers.find((blockedUser) => blockedUser.xId === id);
   }
 }

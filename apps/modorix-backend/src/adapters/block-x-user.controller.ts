@@ -29,7 +29,7 @@ export class BlockXUsersController {
       throw new UnauthorizedException();
     }
     try {
-      return await this.blockXUsersService.blockXUser({ ...xUser, blockingModorixUserId: user.sub });
+      return await this.blockXUsersService.blockXUser({ ...xUser, blockedAt: new Date(xUser.blockedAt), blockingModorixUserId: user.sub });
     } catch (error) {
       if (error instanceof BlockReasonError) {
         throw new BadRequestException(error.message);
