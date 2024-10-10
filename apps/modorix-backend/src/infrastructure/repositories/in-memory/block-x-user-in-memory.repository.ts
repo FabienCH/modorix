@@ -20,16 +20,18 @@ export class BlockXUsersInMemoryRepository implements BlockXUsersRepository {
     const xUser = await this.blockedXUsersByXId(id);
     console.log('🚀 ~ BlockXUsersInMemoryRepository ~ addBlockEvent ~ xUser:', xUser);
     if (xUser) {
-      xUser.blockEvents.push(blockEvent);
       console.log('🚀 ~ BlockXUsersInMemoryRepository ~ addBlockEvent ~ xUser:', xUser);
-      this.updateXUser(xUser);
+      this.updateXUser(xUser, blockEvent);
     }
   }
 
-  async updateXUser(xUser: XUser): Promise<void> {
+  async updateXUser(xUser: Omit<XUser, 'blockEvents'>, blockEvent?: BlockEvent): Promise<void> {
     this.blockedXUsers = this.blockedXUsers.map((currentXUser) => {
       if (currentXUser.xId === xUser.xId) {
-        currentXUser = xUser;
+        currentXUser = { ...currentXUser, ...xUser };
+        if (blockEvent) {
+          currentXUser.blockEvents.push(blockEvent);
+        }
       }
       return currentXUser;
     });

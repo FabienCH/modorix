@@ -24,7 +24,7 @@ export class ModorixUserInMemoryRepository implements ModorixUserRepository {
     if (!confirmSignUpUserRequest.tokenHash) {
       throw new AuthApiError('Link has expired', 400, 'otp_expired');
     }
-    return { accessToken: 'valid-access-token', refreshToken: 'refresh-token', email: 'john.doe@test.com' };
+    return { accessToken: 'valid-access-token', refreshToken: 'refresh-token', email: 'john.doe@test.com', userId: 'user-id' };
   }
 
   async resendAccountConfirmation(_: string): Promise<void> {
@@ -38,13 +38,13 @@ export class ModorixUserInMemoryRepository implements ModorixUserRepository {
     if (!loginUserRequest.email) {
       throw new AuthApiError('Email address not confirmed', 400, 'email-not-confirmed');
     }
-    return { accessToken: 'valid-access-token', refreshToken: 'refresh-token', email: 'john.doe@test.com' };
+    return { accessToken: 'valid-access-token', refreshToken: 'refresh-token', email: 'john.doe@test.com', userId: 'user-id' };
   }
 
   async refreshToken(refreshToken: string): Promise<UserSession> {
     if (!refreshToken) {
       throw new AuthSessionMissingError();
     }
-    return { accessToken: 'valid-access-token', refreshToken: 'refresh-token', email: 'john.doe@test.com' };
+    return { accessToken: 'valid-access-token', refreshToken: 'refresh-token', email: 'john.doe@test.com', userId: 'user-id' };
   }
 }
