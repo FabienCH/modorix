@@ -7,6 +7,7 @@ import { useUserSessionInfos } from '@modorix-commons/infrastructure/user-sessio
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@modorix-ui/components/tabs';
 import { useCallback, useEffect, useState } from 'react';
 import { addToBlockQueue, getBlockQueueCandidates } from '../adapters/gateways/block-x-user-gateway';
+import { mapToGroupItem } from '../adapters/to-group-item';
 import { AddToQueueButton } from '../components/shared/add-to-queue-button';
 import { AutoResizeBadgesWithTooltip } from '../components/shared/auto-resize-badges-with-tooltip';
 import { addXUserToQueue } from '../domain/block-x-user/add-user-to-queue-usecase';
@@ -25,10 +26,7 @@ export default function BlocksPage() {
     index: 2,
     columnLabel: 'Blocked In',
     getCellElem: (xUser: XUser) => (
-      <AutoResizeBadgesWithTooltip
-        items={(xUser.blockEvents[0].blockedInGroups ?? []).map((group) => ({ id: group.id, label: group.name }))}
-        badgeVariant="outline"
-      ></AutoResizeBadgesWithTooltip>
+      <AutoResizeBadgesWithTooltip items={mapToGroupItem(xUser.blockEvents)} badgeVariant="outline"></AutoResizeBadgesWithTooltip>
     ),
   };
   const addToBlockQueueColConfig = {
