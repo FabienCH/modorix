@@ -1,5 +1,4 @@
-import { UserSessionStorage } from '@modorix-commons/domain/login/storage/user-session-storage';
-import { UserSession } from '@modorix/commons';
+import { StorageKey, UserSessionStorage } from '@modorix-commons/domain/login/storage/user-session-storage';
 import { MockInstance } from 'vitest';
 import { BlocksQueueUpdateMessageData } from '../../shared/messages/event-message';
 import * as BlockXUserGateway from '../infrastructure/gateways/block-user-gateway';
@@ -47,14 +46,9 @@ describe('Running blocks queue', () => {
     presenterNotifierCallNth++;
   };
   const userSessionStorage: UserSessionStorage = {
-    getAccessToken: () => null,
-    getRefreshToken: () => null,
-    saveUserSession: (_: UserSession | null) => null,
-    getUserInfos: () => ({
-      hasValidAccessToken: false,
-      userEmail: '',
-      userId: '',
-    }),
+    getItem: async () => null,
+    setItem: async (_: StorageKey, __: string) => {},
+    removeItem: async (_: StorageKey) => {},
   };
 
   beforeEach(async () => {

@@ -1,5 +1,5 @@
-import { BlockEvent } from 'src/domain/models/block-event';
 import { UserSessionStorage } from '../domain/login/storage/user-session-storage';
+import { BlockEvent } from '../domain/models/block-event';
 import { XUser } from '../domain/models/x-user';
 import { getGatewayBaseUrl } from './base-url-config';
 import { AuthError, fetchWithAuth, mapResponseWithAuth } from './fetch-with-auth';

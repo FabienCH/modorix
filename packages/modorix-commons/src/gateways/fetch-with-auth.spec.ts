@@ -1,6 +1,6 @@
 import { MockInstance } from 'vitest';
 import { UserSession } from '../domain/login/models/user-session';
-import { UserSessionStorage } from '../domain/login/storage/user-session-storage';
+import { StorageKey, UserSessionStorage } from '../domain/login/storage/user-session-storage';
 import { fetchWithAuth } from './fetch-with-auth';
 import * as HttpUserGateway from './http-user-gateway';
 
@@ -10,18 +10,31 @@ describe('Fetch with auth', () => {
   let savedUserSession: Partial<UserSession> | undefined;
   let refreshAccessTokenSpy: MockInstance;
   let realFetch: typeof global.fetch;
+  async function getItem(key: string) {
+    if (key === 'access-token') {
+      return savedUserSession?.accessToken ?? null;
+    }
+    if (key === 'refresh-token') {
+      return savedUserSession?.refreshToken ?? null;
+    }
+    if (key === 'user-email') {
+      return 'john.doe@test.com';
+    }
+    if (key === 'user-id') {
+      return 'user-id';
+    }
+    return null;
+  }
 
   const validUserSession = { accessToken: 'access-token', refreshToken: 'refresh-token', email: 'john.doe@test.com' };
   const userSessionStorage: UserSessionStorage = {
-    getAccessToken: () => savedUserSession?.accessToken ?? '',
-    getRefreshToken: () => savedUserSession?.refreshToken ?? '',
-    saveUserSession: (userSession: UserSession) => {
-      savedUserSession = userSession;
+    getItem,
+    setItem: async (key: StorageKey, value: string) => {
+      if (key === 'access-token') {
+        savedUserSession ? (savedUserSession.accessToken = value) : (savedUserSession = { accessToken: value });
+      }
     },
-    getUserInfos: () => ({
-      hasValidAccessToken: !savedUserSession?.accessToken,
-      userEmail: savedUserSession?.email ?? null,
-    }),
+    removeItem: async (_: StorageKey) => {},
   };
 
   beforeAll(() => {

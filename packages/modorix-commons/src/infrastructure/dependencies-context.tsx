@@ -1,20 +1,16 @@
 import { createContext, useContext } from 'react';
-import { UserSession } from '../domain/login/models/user-session';
-import { UserSessionStorage } from '../domain/login/storage/user-session-storage';
+import { StorageKey, UserSessionStorage } from '../domain/login/storage/user-session-storage';
 
 const defaultDependencies = {
   userSessionStorage: {
-    getAccessToken: () => {
-      throw new Error('Missing dependencies UserSessionStorage.getAccessToken');
+    getItem: (_: StorageKey) => {
+      throw new Error('Missing dependencies UserSessionStorage.getItem');
     },
-    getRefreshToken: () => {
-      throw new Error('Missing dependencies UserSessionStorage.getRefreshToken');
+    setItem: (_: StorageKey, __: string) => {
+      throw new Error('Missing dependencies UserSessionStorage.setItem');
     },
-    saveUserSession: (_: UserSession | null) => {
-      throw new Error('Missing dependencies UserSessionStorage.saveUserSession');
-    },
-    getUserInfos: () => {
-      throw new Error('Missing dependencies UserSessionStorage.getUserInfos');
+    removeItem: (_: StorageKey) => {
+      throw new Error('Missing dependencies UserSessionStorage.removeItem');
     },
   },
 };

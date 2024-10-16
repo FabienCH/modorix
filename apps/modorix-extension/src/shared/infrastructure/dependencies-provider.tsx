@@ -1,20 +1,10 @@
 import { DependenciesContext } from '@modorix-commons/infrastructure/dependencies-context';
 import { UserSessionStorage } from '@modorix/commons';
 import { useState } from 'react';
-import {
-  getAccessTokenFromBrowserStorage,
-  getRefreshTokenFromBrowserStorage,
-  getUserInfosFromBrowserStorage,
-  saveUserSessionInBrowserStorage,
-} from '../../content/infrastructure/storage/browser-user-session-storage';
+import { dependencies } from '../../dependencies';
 
 const defaultDependencies = {
-  userSessionStorage: {
-    getAccessToken: getAccessTokenFromBrowserStorage,
-    getRefreshToken: getRefreshTokenFromBrowserStorage,
-    saveUserSession: saveUserSessionInBrowserStorage,
-    getUserInfos: getUserInfosFromBrowserStorage,
-  },
+  userSessionStorage: dependencies.userSessionStorage,
 };
 
 const DependenciesProvider = ({ children }: { children: React.ReactNode }) => {

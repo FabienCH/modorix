@@ -1,7 +1,10 @@
 import {
-  GetAccessTokenStorage,
-  GetRefreshTokenStorage,
-  SaveUserSessionStorage,
+  getAccessTokenFromStorage,
+  getRefreshTokenFromStorage,
+  GetStorageItem,
+  removeUserSessionStorage,
+  saveUserSessionInStorage,
+  SetStorageItem,
   UserSessionStorage,
 } from '../domain/login/storage/user-session-storage';
 import { refreshAccessToken } from './http-user-gateway';
@@ -13,15 +16,15 @@ export interface AuthError {
 export async function fetchWithAuth(
   input: string | URL | globalThis.Request,
   init: RequestInit,
-  { getAccessToken, getRefreshToken, saveUserSession }: UserSessionStorage,
+  { removeItem, setItem, getItem }: UserSessionStorage,
 ): Promise<Response> {
-  const response = await runFetchWithAuth(input, getAccessToken, init);
+  const response = await runFetchWithAuth(input, getItem, init);
   if (response.status === 401) {
-    const { success } = await tryRefreshAccessToken(getRefreshToken, saveUserSession);
+    const { success } = await tryRefreshAccessToken(getItem, setItem);
     if (success) {
-      return await runFetchWithAuth(input, getAccessToken, init);
+      return await runFetchWithAuth(input, getItem, init);
     }
-    saveUserSession(null);
+    removeUserSessionStorage(removeItem);
     return response;
   }
 
@@ -43,34 +46,22 @@ export async function mapResponseWithAuth(response: Response): Promise<any | Aut
   }
 }
 
-async function runFetchWithAuth(
-  input: string | URL | globalThis.Request,
-  getAccessToken: GetAccessTokenStorage,
-  init: RequestInit,
-): Promise<Response> {
-  const accessToken = await getTokenFromStorage(getAccessToken);
+async function runFetchWithAuth(input: string | URL | globalThis.Request, getItem: GetStorageItem, init: RequestInit): Promise<Response> {
+  const accessToken = await getAccessTokenFromStorage(getItem);
   if (!accessToken) {
     return Response.json({ statusCode: 401 }, { status: 401 });
   }
   return await fetch(input, { ...init, headers: { ...init?.headers, Authorization: `Bearer ${accessToken}` } });
 }
 
-async function tryRefreshAccessToken(
-  getRefreshToken: GetRefreshTokenStorage,
-  saveUserSession: SaveUserSessionStorage,
-): Promise<{ success: boolean }> {
-  const refreshToken = await getTokenFromStorage(getRefreshToken);
+async function tryRefreshAccessToken(getItem: GetStorageItem, setItem: SetStorageItem): Promise<{ success: boolean }> {
+  const refreshToken = await getRefreshTokenFromStorage(getItem);
   if (!refreshToken) {
     return { success: false };
   }
   const userSession = await refreshAccessToken(refreshToken);
   if (userSession) {
-    saveUserSession(userSession);
+    saveUserSessionInStorage(userSession, setItem);
   }
   return { success: !!userSession };
-}
-
-async function getTokenFromStorage(getToken: GetAccessTokenStorage | GetRefreshTokenStorage): Promise<string | null> {
-  const tokenFromStorage = getToken();
-  return typeof tokenFromStorage === 'string' ? tokenFromStorage : await tokenFromStorage;
 }
