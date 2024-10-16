@@ -1,12 +1,13 @@
 import { showErrorToast } from '@modorix-commons/components/show-error-toast';
 import { XUsersTable } from '@modorix-commons/components/x-users-table';
+import { XUser } from '@modorix-commons/domain/models/x-user';
 import { getBlockedUsers, getBlockQueue } from '@modorix-commons/gateways/block-user-gateway';
 import { useDependenciesContext } from '@modorix-commons/infrastructure/dependencies-context';
 import { useUserSessionInfos } from '@modorix-commons/infrastructure/user-session-context';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@modorix-ui/components/tabs';
 import { useCallback, useEffect, useState } from 'react';
-import { XUser } from '../../../../packages/modorix-commons/src/domain/models/x-user';
 import { addToBlockQueue, getBlockQueueCandidates } from '../adapters/gateways/block-x-user-gateway';
+import { mapToGroupItem } from '../adapters/to-group-item';
 import { AddToQueueButton } from '../components/shared/add-to-queue-button';
 import { AutoResizeBadgesWithTooltip } from '../components/shared/auto-resize-badges-with-tooltip';
 import { addXUserToQueue } from '../domain/block-x-user/add-user-to-queue-usecase';
@@ -25,10 +26,7 @@ export default function BlocksPage() {
     index: 2,
     columnLabel: 'Blocked In',
     getCellElem: (xUser: XUser) => (
-      <AutoResizeBadgesWithTooltip
-        items={(xUser.blockedInGroups ?? []).map((group) => ({ id: group.id, label: group.name }))}
-        badgeVariant="outline"
-      ></AutoResizeBadgesWithTooltip>
+      <AutoResizeBadgesWithTooltip items={mapToGroupItem(xUser.blockEvents)} badgeVariant="outline"></AutoResizeBadgesWithTooltip>
     ),
   };
   const addToBlockQueueColConfig = {

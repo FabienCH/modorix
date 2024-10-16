@@ -21,14 +21,14 @@ export default function GroupsPage() {
   const handleClick = useCallback(
     async (group: Group) => {
       await toggleMembership(group, showErrorToast, { ...dependencies.userSessionStorage, setUserSessionInfos });
-      await retrieveGroupsList(handleClick, userSessionInfos.hasValidAccessToken);
+      await retrieveGroupsList(handleClick, !!userSessionInfos?.hasValidAccessToken);
     },
     [dependencies, setUserSessionInfos, userSessionInfos],
   );
 
   useEffect(() => {
-    retrieveGroupsList(handleClick, userSessionInfos.hasValidAccessToken);
-    if (userSessionInfos.hasValidAccessToken && columns.length === 3) {
+    retrieveGroupsList(handleClick, !!userSessionInfos?.hasValidAccessToken);
+    if (userSessionInfos?.hasValidAccessToken && columns.length === 3) {
       columns.push('Membership');
     }
   }, [handleClick, userSessionInfos, columns]);

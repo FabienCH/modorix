@@ -1,15 +1,11 @@
-import { UserSession, UserSessionStorage } from '@modorix/commons';
+import { StorageKey, UserSessionStorage } from '@modorix/commons';
 import { retrieveBlockReasonsList } from './retrieve-block-reasons-usecase';
 
 describe('Retrieve block reasons', () => {
   const userSessionStorage: UserSessionStorage = {
-    getAccessToken: () => null,
-    getRefreshToken: () => null,
-    saveUserSession: (_: UserSession | null) => null,
-    getUserInfos: () => ({
-      hasValidAccessToken: false,
-      userEmail: null,
-    }),
+    getItem: async () => null,
+    setItem: async (_: StorageKey, __: string) => {},
+    removeItem: async (_: StorageKey) => {},
   };
 
   it('should give a list of block reasons', async () => {

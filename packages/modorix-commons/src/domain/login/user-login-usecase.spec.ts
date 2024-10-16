@@ -29,6 +29,7 @@ describe('login a user', () => {
         accessToken: 'access-token',
         refreshToken: 'refresh-token',
         email: 'john.doe@test.com',
+        userId: 'user-id',
       }),
       onLoggedIn,
     );

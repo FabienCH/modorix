@@ -1,66 +1,112 @@
+import { BlockEvent } from '@modorix-commons/domain/models/block-event';
 import { BlockReason } from '@modorix-commons/domain/models/block-reason';
 import { XUser } from '@modorix-commons/domain/models/x-user';
 import { Inject, Injectable } from '@nestjs/common';
-import { arrayContains, eq, inArray } from 'drizzle-orm';
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { eq, inArray, sql } from 'drizzle-orm';
 import { BlockXUsersRepository } from '../../../domain/repositories/block-x-user.repository';
+import { pgBlockEvent } from '../../../infrastructure/database/schema/block-event';
 import { PG_DATABASE } from '../../database/drizzle.module';
+import { blockEventToBlockReasons } from '../../database/schema/block-event-block-reason-relation';
+import { blockEventToGroups } from '../../database/schema/block-event-group-relation';
 import { pgBlockReasons } from '../../database/schema/block-reason';
 import { pgGroups } from '../../database/schema/group';
-import { pgXUsers } from '../../database/schema/xUser';
-import { xUsersToBlockReasons } from '../../database/schema/xUser-block-reason-relation';
-import { xUsersToGroups } from '../../database/schema/xUser-group-relation';
+import { TypedNodePgDatabase } from '../../database/schema/schema';
+import { pgXUsers } from '../../database/schema/x-user';
+
+interface DbXUserBlockEvent {
+  id: string;
+  modorixUserId: string;
+  blockedAt: Date;
+}
 
 @Injectable()
 export class BlockXUsersDrizzleRepository implements BlockXUsersRepository {
-  constructor(@Inject(PG_DATABASE) private pgDatabase: NodePgDatabase) {}
+  constructor(@Inject(PG_DATABASE) private pgDatabase: TypedNodePgDatabase) {}
 
   async blockXUser(xUser: XUser): Promise<void> {
-    const { blockedInGroups, blockReasons } = xUser;
-    const id = crypto.randomUUID();
-    await this.insertXUser(id, xUser);
-    await this.insertBlockedInGroups(blockedInGroups, id);
-    await this.insertBlockReasons(blockReasons, id);
+    const blockEvent = xUser.blockEvents[0];
+    const xUserId = crypto.randomUUID();
+    await this.insertXUser(xUserId, xUser);
+    await this.addBlockEvent(xUser.xId, blockEvent);
   }
 
-  async updateXUser(xUser: XUser): Promise<void> {
-    const { xId, xUsername, blockedAt, blockingModorixUserIds, blockQueueModorixUserIds } = xUser;
+  async addBlockEvent(xId: string, blockEvent: BlockEvent): Promise<void> {
+    const eventId = crypto.randomUUID();
+    const xUserIds = await this.pgDatabase.select({ id: pgXUsers.id }).from(pgXUsers).where(eq(pgXUsers.xId, xId));
+    await this.insertBlockEvent(xUserIds[0].id, { ...blockEvent, id: eventId });
+    await this.insertBlockedInGroups(blockEvent.blockedInGroups, eventId);
+    await this.insertBlockReasons(blockEvent.blockReasons, eventId);
+  }
+
+  async updateXUser(xUser: Omit<XUser, 'blockEvents'>, blockEvent?: BlockEvent): Promise<void> {
     await this.pgDatabase
       .update(pgXUsers)
-      .set({ xId, xUsername, blockedAt, blockingModorixUserIds, blockQueueModorixUserIds })
+      .set({ ...xUser })
       .where(eq(pgXUsers.xId, xUser.xId));
+
+    if (blockEvent) {
+      this.addBlockEvent(xUser.xId, blockEvent);
+    }
   }
 
   async blockedXUsersList(modorixUserId: string): Promise<XUser[]> {
-    const xUsers = await this.pgDatabase
-      .select()
-      .from(pgXUsers)
-      .where(arrayContains(pgXUsers.blockingModorixUserIds, [modorixUserId]));
+    const xUsers = await this.selectXUserWithEvents().where(eq(pgBlockEvent.modorixUserId, modorixUserId)).groupBy(pgXUsers.id);
+
     return Promise.all(xUsers.map(async (xUser) => await this.mapPgUserToXUser(xUser)));
   }
 
   async getAllBlockedXUsers(): Promise<XUser[]> {
-    const xUsers = await this.pgDatabase.select().from(pgXUsers);
+    const xUsers = await this.selectXUserWithEvents().groupBy(pgXUsers.id);
     return Promise.all(xUsers.map(async (xUser) => await this.mapPgUserToXUser(xUser)));
   }
 
   async blockedXUsersByIds(ids: string[]): Promise<XUser[]> {
-    const xUsers = await this.pgDatabase.select().from(pgXUsers).where(inArray(pgXUsers.id, ids));
+    const xUsers = await this.selectXUserWithEvents().where(inArray(pgXUsers.id, ids)).groupBy(pgXUsers.id);
+
     return Promise.all(xUsers.map(async (xUser) => await this.mapPgUserToXUser(xUser)));
   }
 
-  async blockedXUsersByXId(xId: string): Promise<XUser | undefined> {
-    const xUsers = await this.pgDatabase.select().from(pgXUsers).where(eq(pgXUsers.xId, xId));
+  async blockedXUserByXId(xId: string): Promise<XUser | undefined> {
+    const xUsers = await this.selectXUserWithEvents().where(eq(pgXUsers.xId, xId)).groupBy(pgXUsers.id);
+
+    if (!xUsers.length) {
+      return undefined;
+    }
+
     return this.mapPgUserToXUser(xUsers[0]);
   }
 
-  private async insertXUser(id: string, xUser: XUser) {
-    const { xId, xUsername, blockedAt, blockingModorixUserIds, blockQueueModorixUserIds } = xUser;
-    await this.pgDatabase.insert(pgXUsers).values({ id, xId, xUsername, blockedAt, blockingModorixUserIds, blockQueueModorixUserIds });
-    return id;
+  private selectXUserWithEvents() {
+    return this.pgDatabase
+      .select({
+        xId: pgXUsers.xId,
+        xUsername: pgXUsers.xUsername,
+        blockQueueModorixUserIds: pgXUsers.blockQueueModorixUserIds,
+        blockEvents: sql<
+          DbXUserBlockEvent[]
+        >`json_agg(json_build_object('id', ${pgBlockEvent.id},  'modorixUserId', ${pgBlockEvent.modorixUserId}, 'blockedAt', ${pgBlockEvent.blockedAt}))`.as(
+          'blockEvents',
+        ),
+      })
+      .from(pgXUsers)
+      .innerJoin(pgBlockEvent, eq(pgBlockEvent.xUserId, pgXUsers.id));
   }
 
-  private async insertBlockedInGroups(blockedInGroups: { id: string; name: string }[] | undefined, id: string) {
+  private async insertXUser(id: string, xUser: XUser) {
+    const { xId, xUsername, blockQueueModorixUserIds } = xUser;
+    await this.pgDatabase.insert(pgXUsers).values({ id, xId, xUsername, blockQueueModorixUserIds });
+  }
+
+  private async insertBlockEvent(xUserId: string, blockEvent: BlockEvent & { id: string }) {
+    await this.pgDatabase.insert(pgBlockEvent).values({
+      id: blockEvent.id,
+      xUserId,
+      modorixUserId: blockEvent.modorixUserId,
+      blockedAt: blockEvent.blockedAt,
+    });
+  }
+
+  private async insertBlockedInGroups(blockedInGroups: { id: string; name: string }[] | undefined, eventId: string) {
     const groups = await this.pgDatabase
       .select({ id: pgGroups.id })
       .from(pgGroups)
@@ -70,37 +116,41 @@ export class BlockXUsersDrizzleRepository implements BlockXUsersRepository {
           (blockedInGroups ?? []).map(({ id }) => id),
         ),
       );
-    const xUsersToGroupsValues = groups.map((group) => ({
-      userId: id,
-      groupId: group.id,
-    }));
-    await this.pgDatabase.insert(xUsersToGroups).values(xUsersToGroupsValues);
+    await this.pgDatabase.insert(blockEventToGroups).values(groups.map((group) => ({ eventId, groupId: group.id })));
   }
 
-  private async insertBlockReasons(blockReasons: BlockReason[], id: string) {
+  private async insertBlockReasons(blockReasons: BlockReason[], eventId: string) {
     await this.pgDatabase
-      .insert(xUsersToBlockReasons)
-      .values(blockReasons.map((blockReason) => ({ blockReasonId: blockReason.id, userId: id })));
+      .insert(blockEventToBlockReasons)
+      .values(blockReasons.map((blockReason) => ({ blockReasonId: blockReason.id, eventId })));
   }
 
   private async mapPgUserToXUser(xUser: {
-    id: string;
     xId: string;
     xUsername: string;
-    blockedAt: string;
-    blockingModorixUserIds: string[];
     blockQueueModorixUserIds: string[];
-  }) {
+    blockEvents: DbXUserBlockEvent[];
+  }): Promise<XUser> {
+    const blockEventIds = xUser.blockEvents.map((event) => event.id);
+
     const blockReasons = await this.pgDatabase
       .select({ id: pgBlockReasons.id, label: pgBlockReasons.label })
       .from(pgBlockReasons)
-      .innerJoin(xUsersToBlockReasons, eq(pgBlockReasons.id, xUsersToBlockReasons.blockReasonId))
-      .where(eq(xUsersToBlockReasons.userId, xUser.id));
+      .innerJoin(blockEventToBlockReasons, eq(pgBlockReasons.id, blockEventToBlockReasons.blockReasonId))
+      .where(inArray(blockEventToBlockReasons.eventId, blockEventIds));
     const groups = await this.pgDatabase
       .select({ id: pgGroups.id, name: pgGroups.name })
       .from(pgGroups)
-      .innerJoin(xUsersToGroups, eq(pgGroups.id, xUsersToGroups.groupId))
-      .where(eq(xUsersToGroups.userId, xUser.id));
-    return { ...xUser, blockReasons, blockedInGroups: groups };
+      .innerJoin(blockEventToGroups, eq(pgGroups.id, blockEventToGroups.groupId))
+      .where(inArray(blockEventToGroups.eventId, blockEventIds));
+
+    const blockEvents = xUser.blockEvents.map((dbBlockEvent) => ({
+      modorixUserId: dbBlockEvent.modorixUserId,
+      blockedAt: dbBlockEvent.blockedAt,
+      blockReasons,
+      blockedInGroups: groups,
+    }));
+
+    return { xId: xUser.xId, xUsername: xUser.xUsername, blockEvents, blockQueueModorixUserIds: xUser.blockQueueModorixUserIds };
   }
 }

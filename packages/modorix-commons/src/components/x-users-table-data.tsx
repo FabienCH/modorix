@@ -1,3 +1,4 @@
+import { mapToXUserData } from '../adapters/to-x-user-data';
 import { XUser } from '../domain/models/x-user';
 
 export interface XUserRowConfig {
@@ -20,15 +21,16 @@ export type XUsersData = XUserRow[];
 
 export const mapToXUsersData = ({ BadgesComponent, blockedUsers, additionalRows }: XUsersRowProps): XUsersData => {
   return blockedUsers.map((user) => {
-    const xUsersData: XUserRow = [
-      user.xUsername,
-      new Date(user.blockedAt).toLocaleDateString(),
-      <BadgesComponent items={user.blockReasons} badgeVariant="secondary"></BadgesComponent>,
+    const xUserData = mapToXUserData(user);
+    const xUserRow: XUserRow = [
+      xUserData.xUsername,
+      xUserData.firstBlockedAt,
+      <BadgesComponent items={xUserData.blockReasons} badgeVariant="secondary"></BadgesComponent>,
     ];
     additionalRows?.forEach((row) => {
-      xUsersData.splice(row.index, 0, row.getCellElem(user));
+      xUserRow.splice(row.index, 0, row.getCellElem(user));
     });
 
-    return xUsersData;
+    return xUserRow;
   });
 };

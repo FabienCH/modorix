@@ -1,9 +1,9 @@
+import { useDependenciesContext } from '@modorix-commons/infrastructure/dependencies-context';
 import { useUserSessionInfos } from '@modorix-commons/infrastructure/user-session-context';
-import { UserSession } from '@modorix/commons';
+import { getUserInfosFromStorage, saveUserSessionInStorage, UserSession } from '@modorix/commons';
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { confirmSignUp } from '../adapters/gateways/modorix-user-gateway';
-import { getUserInfosFromCookies, saveUserSessionInCookies } from '../adapters/storage/cookies-user-session-storage';
 import ConfirmSignUpError from '../components/sign-up/confirm-sign-up-error';
 import { confirmUserSignUp } from '../domain/modorix-user/confirm-user-sign-up-usecase';
 import { ROUTES } from '../routes';
@@ -14,11 +14,12 @@ export default function ConfirmSignUpPage() {
   const [confirmError, setConfirmError] = useState<'expired' | 'other' | undefined>();
   const navigate = useNavigate();
   const { setUserSessionInfos } = useUserSessionInfos();
+  const { dependencies } = useDependenciesContext();
 
   useEffect(() => {
-    function onConfirmed(userSession: UserSession) {
-      saveUserSessionInCookies(userSession);
-      setUserSessionInfos(getUserInfosFromCookies());
+    async function onConfirmed(userSession: UserSession) {
+      saveUserSessionInStorage(userSession, dependencies.userSessionStorage.setItem);
+      setUserSessionInfos(await getUserInfosFromStorage(dependencies.userSessionStorage.getItem));
       setIsSignUpConfirmed(true);
       setTimeout(() => {
         navigate(ROUTES.Home);
@@ -29,7 +30,7 @@ export default function ConfirmSignUpPage() {
     }
 
     confirmUserSignUp(runConfirmSignUp, onConfirmed, setConfirmError);
-  }, [searchParams, navigate, setUserSessionInfos]);
+  }, [dependencies, searchParams, navigate, setUserSessionInfos]);
 
   return (
     <section className="w-full mx-auto max-w-screen-lg">

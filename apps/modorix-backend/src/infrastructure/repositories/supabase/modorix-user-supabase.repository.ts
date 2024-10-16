@@ -4,11 +4,11 @@ import { Inject, Injectable } from '@nestjs/common';
 import { AuthResponse } from '@supabase/supabase-js';
 import { SupabaseAuthClient } from '@supabase/supabase-js/dist/module/lib/SupabaseAuthClient';
 import { eq } from 'drizzle-orm';
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { ModorixUserRepository } from '../../../domain/repositories/modorix-user.repository';
 import { SupabaseAuth } from '../../auth/supabase-auth';
 import { PG_DATABASE } from '../../database/drizzle.module';
-import { pgUsedUserEmail } from '../../database/schema/usedUserEmail';
+import { TypedNodePgDatabase } from '../../database/schema/schema';
+import { pgUsedUserEmail } from '../../database/schema/used-user-email';
 import { SupabaseConfirmSignUpUser } from './supabase-user-sign-up';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class ModorixUserSupabaseRepository implements ModorixUserRepository {
   private readonly supabaseAuthClient: SupabaseAuthClient;
 
   constructor(
-    @Inject(PG_DATABASE) private pgDatabase: NodePgDatabase,
+    @Inject(PG_DATABASE) private pgDatabase: TypedNodePgDatabase,
     private readonly supabaseAuth: SupabaseAuth,
   ) {
     this.supabaseAuthClient = this.supabaseAuth.getClient().auth;
@@ -71,6 +71,6 @@ export class ModorixUserSupabaseRepository implements ModorixUserRepository {
       throw new Error('User session could not be retrieved.');
     }
 
-    return { email: user.email, accessToken: session.access_token, refreshToken: session.refresh_token };
+    return { email: user.email, accessToken: session.access_token, refreshToken: session.refresh_token, userId: user.id };
   }
 }

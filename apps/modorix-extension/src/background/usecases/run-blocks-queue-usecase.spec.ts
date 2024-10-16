@@ -1,5 +1,4 @@
-import { UserSessionStorage } from '@modorix-commons/domain/login/storage/user-session-storage';
-import { UserSession } from '@modorix/commons';
+import { StorageKey, UserSessionStorage } from '@modorix-commons/domain/login/storage/user-session-storage';
 import { MockInstance } from 'vitest';
 import { BlocksQueueUpdateMessageData } from '../../shared/messages/event-message';
 import * as BlockXUserGateway from '../infrastructure/gateways/block-user-gateway';
@@ -18,19 +17,27 @@ describe('Running blocks queue', () => {
     {
       xId: '1',
       xUsername: '1',
-      blockedAt: '2024-06-19T18:41:45Z',
-      blockReasons: [],
-      blockedInGroups: [{ id: 'UK', name: 'United Kingdom' }],
-      blockingModorixUserIds: [],
+      blockEvents: [
+        {
+          blockedAt: new Date('2024-06-19T18:41:45Z'),
+          blockReasons: [],
+          blockedInGroups: [{ id: 'UK', name: 'United Kingdom' }],
+          modorixUserId: 'initial-modorix-user-id',
+        },
+      ],
       blockQueueModorixUserIds: [],
     },
     {
       xId: '2',
       xUsername: '2',
-      blockedAt: '2024-06-20T18:41:45Z',
-      blockReasons: [],
-      blockedInGroups: [{ id: 'FR', name: 'France' }],
-      blockingModorixUserIds: [],
+      blockEvents: [
+        {
+          blockedAt: new Date('2024-06-20T18:41:45Z'),
+          blockReasons: [],
+          blockedInGroups: [{ id: 'FR', name: 'France' }],
+          modorixUserId: 'initial-modorix-user-id',
+        },
+      ],
       blockQueueModorixUserIds: [],
     },
   ];
@@ -39,13 +46,9 @@ describe('Running blocks queue', () => {
     presenterNotifierCallNth++;
   };
   const userSessionStorage: UserSessionStorage = {
-    getAccessToken: () => null,
-    getRefreshToken: () => null,
-    saveUserSession: (_: UserSession | null) => null,
-    getUserInfos: () => ({
-      hasValidAccessToken: false,
-      userEmail: null,
-    }),
+    getItem: async () => null,
+    setItem: async (_: StorageKey, __: string) => {},
+    removeItem: async (_: StorageKey) => {},
   };
 
   beforeEach(async () => {

@@ -1,21 +1,25 @@
 import ProfileIcon from '@modorix-commons/components/profile-icon';
+import { useDependenciesContext } from '@modorix-commons/infrastructure/dependencies-context';
 import { useUserSessionInfos } from '@modorix-commons/infrastructure/user-session-context';
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList, navigationMenuTriggerStyle } from '@modorix-ui/components/navigation-menu';
+import { getUserInfosFromStorage } from '@modorix/commons';
 import { useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import BanLogo from '../../public/icon/ban-solid.svg?react';
 import GroupLogo from '../../public/icon/people-group-solid.svg?react';
-import { getUserInfosFromCookies } from '../adapters/storage/cookies-user-session-storage';
 import { ROUTES } from '../routes';
 import { LoginDialog } from './login/login-dialog';
 import { SignUpDialog } from './sign-up/sign-up-dialog';
 
 export default function Header() {
   const { userSessionInfos, setUserSessionInfos } = useUserSessionInfos();
+  const { dependencies } = useDependenciesContext();
 
   useEffect(() => {
-    setUserSessionInfos(getUserInfosFromCookies());
-  }, [setUserSessionInfos]);
+    (async () => {
+      setUserSessionInfos(await getUserInfosFromStorage(dependencies.userSessionStorage.getItem));
+    })();
+  }, [dependencies, setUserSessionInfos]);
 
   function getNavLinkClassName(isActive: boolean): string {
     return navigationMenuTriggerStyle(isActive ? { className: 'text-modorix-700 font-medium' } : undefined);
@@ -46,7 +50,7 @@ export default function Header() {
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
-        {userSessionInfos.hasValidAccessToken ? (
+        {userSessionInfos?.hasValidAccessToken ? (
           <ProfileIcon email={userSessionInfos.userEmail} />
         ) : (
           <div>

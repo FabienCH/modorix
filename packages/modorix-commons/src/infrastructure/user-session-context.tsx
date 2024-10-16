@@ -1,20 +1,24 @@
 import { createContext, Dispatch, SetStateAction, useContext, useState } from 'react';
 import { UserSessionInfos } from '../domain/login/models/user-session';
 
-const defaultUserSessionInfos = {
-  hasValidAccessToken: false,
-  userEmail: null,
-};
-
 const UserSessionContext = createContext<{
-  userSessionInfos: UserSessionInfos;
-  setUserSessionInfos: Dispatch<SetStateAction<UserSessionInfos>>;
-}>({ userSessionInfos: defaultUserSessionInfos, setUserSessionInfos: () => {} });
+  userSessionInfos: UserSessionInfos | null;
+  setUserSessionInfos: Dispatch<SetStateAction<UserSessionInfos | null>>;
+  removeUserSessionInfos: Dispatch<SetStateAction<void>>;
+}>({ userSessionInfos: null, setUserSessionInfos: () => {}, removeUserSessionInfos: () => {} });
 
 const UserSessionProvider = ({ children }: { children: React.ReactNode }) => {
-  const [userSessionInfos, setUserSessionInfos] = useState<UserSessionInfos>(defaultUserSessionInfos);
+  const [userSessionInfos, setUserSessionInfos] = useState<UserSessionInfos | null>(null);
 
-  return <UserSessionContext.Provider value={{ userSessionInfos, setUserSessionInfos }}>{children}</UserSessionContext.Provider>;
+  function removeUserSessionInfos() {
+    setUserSessionInfos(null);
+  }
+
+  return (
+    <UserSessionContext.Provider value={{ userSessionInfos, setUserSessionInfos, removeUserSessionInfos }}>
+      {children}
+    </UserSessionContext.Provider>
+  );
 };
 
 const useUserSessionInfos = () => {

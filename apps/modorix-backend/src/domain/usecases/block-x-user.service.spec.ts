@@ -1,5 +1,6 @@
+import { BlockEvent } from '@modorix-commons/domain/models/block-event';
 import { BlockReason } from '@modorix-commons/domain/models/block-reason';
-import { BlockXUserRequest, XUser } from '@modorix-commons/domain/models/x-user';
+import { BlockXUser, XUser } from '@modorix-commons/domain/models/x-user';
 import { Test, TestingModule } from '@nestjs/testing';
 import { BlockReasonsInMemoryRepository } from '../../infrastructure/repositories/in-memory/block-reason-in-memory.repository';
 import { BlockXUsersInMemoryRepository } from '../../infrastructure/repositories/in-memory/block-x-user-in-memory.repository';
@@ -13,26 +14,29 @@ import { GroupsRepositoryToken } from '../repositories/groups.repository';
 import { BlockXUsersService } from './block-x-user.service';
 
 describe('BlockXUsersService', () => {
-  function getBlockXUserRequest(blockReasonIds: string[], blockedInGroupsIds = []): BlockXUserRequest {
+  function getBlockXUserRequest(blockReasonIds: string[], blockedInGroupsIds = []): BlockXUser {
     return {
       xId: '1',
       xUsername: '@username',
-      blockedAt: '2024-05-27T18:01:45Z',
+      blockedAt: new Date('2024-05-27T18:01:45Z'),
       blockReasonIds,
       blockedInGroupsIds,
       blockingModorixUserId: '1',
     };
   }
+
   function checkExpectedXUser(blockedXUser: XUser | undefined, blockReasons: BlockReason[]) {
-    expect(blockedXUser).toEqual({
+    const blockEvents: BlockEvent[] = [
+      { modorixUserId: '1', blockedAt: new Date('2024-05-27T18:01:45Z'), blockedInGroups: [], blockReasons },
+    ];
+
+    const xUser: XUser = {
       xId: '1',
       xUsername: '@username',
-      blockedAt: '2024-05-27T18:01:45Z',
-      blockReasons,
-      blockingModorixUserIds: ['1'],
-      blockedInGroups: [],
+      blockEvents,
       blockQueueModorixUserIds: [],
-    });
+    };
+    expect(blockedXUser).toEqual(xUser);
   }
 
   let blockXUsersService: BlockXUsersService;
@@ -56,16 +60,20 @@ describe('BlockXUsersService', () => {
     await blockXUsersRepository.blockXUser({
       xId: '862285194',
       xUsername: '@UltraEurope',
-      blockedAt: '2024-06-19T18:41:45Z',
-      blockReasons: [
-        { id: '0', label: 'Harassment' },
-        { id: '2', label: 'Spreading fake news' },
+      blockEvents: [
+        {
+          modorixUserId: '2',
+          blockedAt: new Date('2024-06-19T18:41:45Z'),
+          blockReasons: [
+            { id: '0', label: 'Harassment' },
+            { id: '2', label: 'Spreading fake news' },
+          ],
+          blockedInGroups: [
+            { id: 'GE', name: 'Germany' },
+            { id: 'scientists', name: 'Scientists' },
+          ],
+        },
       ],
-      blockedInGroups: [
-        { id: 'GE', name: 'Germany' },
-        { id: 'scientists', name: 'Scientists' },
-      ],
-      blockingModorixUserIds: ['2'],
       blockQueueModorixUserIds: [],
     });
   });
@@ -76,12 +84,7 @@ describe('BlockXUsersService', () => {
 
       const blockedXUser = (await blockXUsersRepository.blockedXUsersList('1')).find((xUser) => xUser.xUsername === '@username');
 
-      checkExpectedXUser(blockedXUser, [
-        {
-          id: '1',
-          label: 'Racism / Xenophobia',
-        },
-      ]);
+      checkExpectedXUser(blockedXUser, [{ id: '1', label: 'Racism / Xenophobia' }]);
     });
 
     it('should add the blocked X user too all groups', async () => {
@@ -99,17 +102,53 @@ describe('BlockXUsersService', () => {
       const blockedXUser = (await blockXUsersRepository.blockedXUsersList('1')).find((user) => user.xUsername === '@username');
 
       checkExpectedXUser(blockedXUser, [
+        { id: '1', label: 'Racism / Xenophobia' },
+        { id: '3', label: 'Homophobia / Transphobia' },
+        { id: '6', label: 'Scamming' },
+      ]);
+    });
+
+    it('should only add a block event to X user if he has already blocked by someone else', async () => {
+      await blockXUsersService.blockXUser({
+        xId: '862285194',
+        xUsername: '@UltraEurope',
+        blockedAt: new Date('2024-08-27T18:11:45Z'),
+        blockReasonIds: ['2', '4'],
+        blockedInGroupsIds: ['FR'],
+        blockingModorixUserId: '1',
+      });
+
+      const blockedXUsers = (await blockXUsersRepository.getAllBlockedXUsers()).filter((xUser) => xUser.xId === '862285194');
+
+      expect(blockedXUsers.length).toEqual(1);
+      expect(blockedXUsers).toEqual([
         {
-          id: '1',
-          label: 'Racism / Xenophobia',
-        },
-        {
-          id: '3',
-          label: 'Homophobia / Transphobia',
-        },
-        {
-          id: '6',
-          label: 'Scamming',
+          xId: '862285194',
+          xUsername: '@UltraEurope',
+          blockEvents: [
+            {
+              modorixUserId: '2',
+              blockedAt: new Date('2024-06-19T18:41:45Z'),
+              blockReasons: [
+                { id: '0', label: 'Harassment' },
+                { id: '2', label: 'Spreading fake news' },
+              ],
+              blockedInGroups: [
+                { id: 'GE', name: 'Germany' },
+                { id: 'scientists', name: 'Scientists' },
+              ],
+            },
+            {
+              modorixUserId: '1',
+              blockedAt: new Date('2024-08-27T18:11:45Z'),
+              blockReasons: [
+                { id: '2', label: 'Spreading fake news' },
+                { id: '4', label: 'Incitement to hatred, violence or discrimination' },
+              ],
+              blockedInGroups: [{ id: 'FR', name: 'France' }],
+            },
+          ],
+          blockQueueModorixUserIds: [],
         },
       ]);
     });
@@ -129,12 +168,46 @@ describe('BlockXUsersService', () => {
 
   describe('Block a X user from the queue', () => {
     it('should add X user to the block list', async () => {
+      const ts_20241309_173413_GMT = 1726248853000;
+      const date = new Date(ts_20241309_173413_GMT);
+      vi.setSystemTime(date);
       await blockXUsersService.addToBlockQueue('862285194', '1');
 
       await blockXUsersService.blockXUserFromQueue('862285194', '1');
 
-      const blockedXUser = await blockXUsersRepository.blockedXUsersByXId('862285194');
-      expect(blockedXUser).toEqual(expect.objectContaining({ blockingModorixUserIds: ['2', '1'], blockQueueModorixUserIds: [] }));
+      const blockedXUser = await blockXUsersRepository.blockedXUserByXId('862285194');
+      expect(blockedXUser).toEqual(
+        expect.objectContaining({
+          blockEvents: [
+            {
+              modorixUserId: '2',
+              blockedAt: new Date('2024-06-19T18:41:45Z'),
+              blockReasons: [
+                { id: '0', label: 'Harassment' },
+                { id: '2', label: 'Spreading fake news' },
+              ],
+              blockedInGroups: [
+                { id: 'GE', name: 'Germany' },
+                { id: 'scientists', name: 'Scientists' },
+              ],
+            },
+            {
+              modorixUserId: '1',
+              blockedAt: new Date('2024-09-13T17:34:13.000Z'),
+              blockReasons: [
+                { id: '0', label: 'Harassment' },
+                { id: '2', label: 'Spreading fake news' },
+              ],
+              blockedInGroups: [
+                { id: 'GE', name: 'Germany' },
+                { id: 'scientists', name: 'Scientists' },
+              ],
+            },
+          ],
+        }),
+      );
+
+      vi.useRealTimers();
     });
 
     it('should not block a X user if he does not exist', async () => {
@@ -147,16 +220,20 @@ describe('BlockXUsersService', () => {
       await blockXUsersRepository.blockXUser({
         xId: '2',
         xUsername: '@userNotInModorixUserQueue',
-        blockedAt: '2024-06-19T18:41:45Z',
-        blockReasons: [
-          { id: '0', label: 'Harassment' },
-          { id: '2', label: 'Spreading fake news' },
+        blockEvents: [
+          {
+            modorixUserId: '2',
+            blockedAt: new Date('2024-06-19T18:41:45Z'),
+            blockReasons: [
+              { id: '0', label: 'Harassment' },
+              { id: '2', label: 'Spreading fake news' },
+            ],
+            blockedInGroups: [
+              { id: 'GE', name: 'Germany' },
+              { id: 'scientists', name: 'Scientists' },
+            ],
+          },
         ],
-        blockedInGroups: [
-          { id: 'GE', name: 'Germany' },
-          { id: 'scientists', name: 'Scientists' },
-        ],
-        blockingModorixUserIds: ['2'],
         blockQueueModorixUserIds: [],
       });
 
@@ -171,10 +248,14 @@ describe('BlockXUsersService', () => {
       await blockXUsersRepository.blockXUser({
         xId: '1',
         xUsername: '@username',
-        blockedAt: '2024-05-27T18:01:45Z',
-        blockReasons: [{ id: '1', label: 'Racism / Xenophobia' }],
-        blockedInGroups: [{ id: 'US', name: 'United States' }],
-        blockingModorixUserIds: ['1'],
+        blockEvents: [
+          {
+            modorixUserId: '1',
+            blockedAt: new Date('2024-05-27T18:01:45Z'),
+            blockReasons: [{ id: '1', label: 'Racism / Xenophobia' }],
+            blockedInGroups: [{ id: 'US', name: 'United States' }],
+          },
+        ],
         blockQueueModorixUserIds: [],
       });
     });
@@ -186,35 +267,43 @@ describe('BlockXUsersService', () => {
         {
           xId: '862285194',
           xUsername: '@UltraEurope',
-          blockedAt: '2024-06-19T18:41:45Z',
-          blockReasons: [
-            { id: '0', label: 'Harassment' },
-            { id: '2', label: 'Spreading fake news' },
+          blockEvents: [
+            {
+              modorixUserId: '2',
+              blockedAt: new Date('2024-06-19T18:41:45Z'),
+              blockReasons: [
+                { id: '0', label: 'Harassment' },
+                { id: '2', label: 'Spreading fake news' },
+              ],
+              blockedInGroups: [
+                { id: 'GE', name: 'Germany' },
+                { id: 'scientists', name: 'Scientists' },
+              ],
+            },
           ],
-          blockedInGroups: [
-            { id: 'GE', name: 'Germany' },
-            { id: 'scientists', name: 'Scientists' },
-          ],
-          blockingModorixUserIds: ['2'],
           blockQueueModorixUserIds: [],
         },
       ]);
     });
 
     it('should not list X users in current Modorix user block queue', async () => {
-      const userInBlockQueue = {
+      const userInBlockQueue: XUser = {
         xId: '862285194',
         xUsername: '@UltraEurope',
-        blockedAt: '2024-06-19T18:41:45Z',
-        blockReasons: [
-          { id: '0', label: 'Harassment' },
-          { id: '2', label: 'Spreading fake news' },
+        blockEvents: [
+          {
+            modorixUserId: '2',
+            blockedAt: new Date('2024-06-19T18:41:45Z'),
+            blockReasons: [
+              { id: '0', label: 'Harassment' },
+              { id: '2', label: 'Spreading fake news' },
+            ],
+            blockedInGroups: [
+              { id: 'GE', name: 'Germany' },
+              { id: 'scientists', name: 'Scientists' },
+            ],
+          },
         ],
-        blockedInGroups: [
-          { id: 'GE', name: 'Germany' },
-          { id: 'scientists', name: 'Scientists' },
-        ],
-        blockingModorixUserIds: ['2'],
         blockQueueModorixUserIds: ['1'],
       };
       await blockXUsersRepository.updateXUser(userInBlockQueue);
@@ -225,19 +314,23 @@ describe('BlockXUsersService', () => {
   });
 
   describe('Retrieve X users block queue', () => {
-    const userInBlockQueue = {
+    const userInBlockQueue: XUser = {
       xId: '862285194',
       xUsername: '@UltraEurope',
-      blockedAt: '2024-06-19T18:41:45Z',
-      blockReasons: [
-        { id: '0', label: 'Harassment' },
-        { id: '2', label: 'Spreading fake news' },
+      blockEvents: [
+        {
+          modorixUserId: '2',
+          blockedAt: new Date('2024-06-19T18:41:45Z'),
+          blockReasons: [
+            { id: '0', label: 'Harassment' },
+            { id: '2', label: 'Spreading fake news' },
+          ],
+          blockedInGroups: [
+            { id: 'GE', name: 'Germany' },
+            { id: 'scientists', name: 'Scientists' },
+          ],
+        },
       ],
-      blockedInGroups: [
-        { id: 'GE', name: 'Germany' },
-        { id: 'scientists', name: 'Scientists' },
-      ],
-      blockingModorixUserIds: ['2'],
       blockQueueModorixUserIds: ['1'],
     };
 
@@ -245,10 +338,14 @@ describe('BlockXUsersService', () => {
       await blockXUsersRepository.blockXUser({
         xId: '1',
         xUsername: '@username',
-        blockedAt: '2024-05-27T18:01:45Z',
-        blockReasons: [{ id: '1', label: 'Racism / Xenophobia' }],
-        blockedInGroups: [{ id: 'US', name: 'United States' }],
-        blockingModorixUserIds: ['1'],
+        blockEvents: [
+          {
+            modorixUserId: '1',
+            blockedAt: new Date('2024-05-27T18:01:45Z'),
+            blockReasons: [{ id: '1', label: 'Racism / Xenophobia' }],
+            blockedInGroups: [{ id: 'US', name: 'United States' }],
+          },
+        ],
         blockQueueModorixUserIds: [],
       });
 
@@ -271,16 +368,20 @@ describe('BlockXUsersService', () => {
       expect(blockedXUser).toEqual({
         xId: '862285194',
         xUsername: '@UltraEurope',
-        blockedAt: '2024-06-19T18:41:45Z',
-        blockReasons: [
-          { id: '0', label: 'Harassment' },
-          { id: '2', label: 'Spreading fake news' },
+        blockEvents: [
+          {
+            modorixUserId: '2',
+            blockedAt: new Date('2024-06-19T18:41:45Z'),
+            blockReasons: [
+              { id: '0', label: 'Harassment' },
+              { id: '2', label: 'Spreading fake news' },
+            ],
+            blockedInGroups: [
+              { id: 'GE', name: 'Germany' },
+              { id: 'scientists', name: 'Scientists' },
+            ],
+          },
         ],
-        blockedInGroups: [
-          { id: 'GE', name: 'Germany' },
-          { id: 'scientists', name: 'Scientists' },
-        ],
-        blockingModorixUserIds: ['2'],
         blockQueueModorixUserIds: ['modorix-user-id'],
       });
     });

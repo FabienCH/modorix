@@ -9,7 +9,7 @@ export async function retrieveBlockQueue(
   {
     setUserSessionInfos,
     ...userSessionStorage
-  }: UserSessionStorage & { setUserSessionInfos: (userSessionInfos: UserSessionInfos) => void },
+  }: UserSessionStorage & { setUserSessionInfos: (userSessionInfos: UserSessionInfos | null) => void },
 ): Promise<void> {
   const blockQueueRes = await getBlockQueue(userSessionStorage);
   if ('error' in blockQueueRes) {

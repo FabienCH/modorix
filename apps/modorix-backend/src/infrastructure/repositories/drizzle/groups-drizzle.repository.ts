@@ -1,15 +1,16 @@
 import { Group } from '@modorix-commons/domain/models/group';
 import { Inject, Injectable } from '@nestjs/common';
 import { eq, inArray } from 'drizzle-orm';
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { GroupsRepository } from '../../../domain/repositories/groups.repository';
+import { pgBlockEvent } from '../../../infrastructure/database/schema/block-event';
 import { PG_DATABASE } from '../../database/drizzle.module';
+import { blockEventToGroups } from '../../database/schema/block-event-group-relation';
 import { pgGroups } from '../../database/schema/group';
-import { xUsersToGroups } from '../../database/schema/xUser-group-relation';
+import { TypedNodePgDatabase } from '../../database/schema/schema';
 
 @Injectable()
 export class GroupsDrizzleRepository implements GroupsRepository {
-  constructor(@Inject(PG_DATABASE) private pgDatabase: NodePgDatabase) {}
+  constructor(@Inject(PG_DATABASE) private pgDatabase: TypedNodePgDatabase) {}
 
   async groupsList(): Promise<Group[]> {
     const groups = await this.pgDatabase.select().from(pgGroups);
@@ -33,10 +34,20 @@ export class GroupsDrizzleRepository implements GroupsRepository {
   }
 
   private async mapPgGroupToGroup(group: { id: string; name: string; description: string; isJoined: boolean }): Promise<Group> {
+    const blockEventIdOnGroup = await this.pgDatabase
+      .select({ eventId: blockEventToGroups.eventId })
+      .from(blockEventToGroups)
+      .where(eq(blockEventToGroups.groupId, group.id));
     const blockedXUsers = await this.pgDatabase
-      .select({ userId: xUsersToGroups.userId })
-      .from(xUsersToGroups)
-      .where(eq(xUsersToGroups.groupId, group.id));
-    return { ...group, blockedXUserIds: blockedXUsers.map(({ userId }) => userId) };
+      .select({ xUserId: pgBlockEvent.xUserId })
+      .from(pgBlockEvent)
+      .where(
+        inArray(
+          pgBlockEvent.id,
+          blockEventIdOnGroup.map(({ eventId }) => eventId),
+        ),
+      );
+
+    return { ...group, blockedXUserIds: blockedXUsers.map(({ xUserId }) => xUserId) };
   }
 }

@@ -4,8 +4,6 @@ import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify
 import { getEnvValue } from 'src/get-env-value';
 import { AppModule } from './app.module';
 
-console.log('test trigger render deploy');
-
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter());
   app.useGlobalPipes(new ValidationPipe());

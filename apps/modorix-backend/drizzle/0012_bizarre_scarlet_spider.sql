@@ -1,0 +1,1 @@
+ALTER TABLE "block-event" ALTER COLUMN "x_user_id" SET DATA TYPE text;

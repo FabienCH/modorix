@@ -5,10 +5,10 @@ import { AuthError } from '../gateways/fetch-with-auth';
 export function showErrorToast(
   title: string,
   error: AuthError['error'],
-  setUserSessionInfos: (userSessionInfos: UserSessionInfos) => void,
+  setUserSessionInfos: (userSessionInfos: UserSessionInfos | null) => void,
 ): void {
   if (error === 'auth') {
-    setUserSessionInfos({ hasValidAccessToken: false, userEmail: null });
+    setUserSessionInfos(null);
   }
 
   const description =

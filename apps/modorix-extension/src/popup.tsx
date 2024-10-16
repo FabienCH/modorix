@@ -1,8 +1,8 @@
 import { setGatewayBaseUrl } from '@modorix-commons/gateways/base-url-config';
+import { UserSessionProvider } from '@modorix-commons/infrastructure/user-session-context';
 import '@modorix-ui/globals.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { UserSessionProvider } from '../../../packages/modorix-commons/src/infrastructure/user-session-context';
 import Popup from './popup/components/Popup';
 import { DependenciesProvider } from './shared/infrastructure/dependencies-provider';
 
