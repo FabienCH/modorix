@@ -4,21 +4,12 @@ import { UserSessionInfos } from '../domain/login/models/user-session';
 const UserSessionContext = createContext<{
   userSessionInfos: UserSessionInfos | null;
   setUserSessionInfos: Dispatch<SetStateAction<UserSessionInfos | null>>;
-  removeUserSessionInfos: Dispatch<SetStateAction<void>>;
-}>({ userSessionInfos: null, setUserSessionInfos: () => {}, removeUserSessionInfos: () => {} });
+}>({ userSessionInfos: null, setUserSessionInfos: () => {} });
 
 const UserSessionProvider = ({ children }: { children: React.ReactNode }) => {
   const [userSessionInfos, setUserSessionInfos] = useState<UserSessionInfos | null>(null);
 
-  function removeUserSessionInfos() {
-    setUserSessionInfos(null);
-  }
-
-  return (
-    <UserSessionContext.Provider value={{ userSessionInfos, setUserSessionInfos, removeUserSessionInfos }}>
-      {children}
-    </UserSessionContext.Provider>
-  );
+  return <UserSessionContext.Provider value={{ userSessionInfos, setUserSessionInfos }}>{children}</UserSessionContext.Provider>;
 };
 
 const useUserSessionInfos = () => {
