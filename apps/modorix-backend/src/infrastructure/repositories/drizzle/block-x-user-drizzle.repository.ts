@@ -3,8 +3,8 @@ import { BlockReason } from '@modorix-commons/domain/models/block-reason';
 import { XUser } from '@modorix-commons/domain/models/x-user';
 import { Inject, Injectable } from '@nestjs/common';
 import { eq, inArray, sql } from 'drizzle-orm';
-import { pgBlockEvent } from 'src/infrastructure/database/schema/block-event';
 import { BlockXUsersRepository } from '../../../domain/repositories/block-x-user.repository';
+import { pgBlockEvent } from '../../../infrastructure/database/schema/block-event';
 import { PG_DATABASE } from '../../database/drizzle.module';
 import { blockEventToBlockReasons } from '../../database/schema/block-event-block-reason-relation';
 import { blockEventToGroups } from '../../database/schema/block-event-group-relation';
@@ -13,6 +13,12 @@ import { pgGroups } from '../../database/schema/group';
 import { TypedNodePgDatabase } from '../../database/schema/schema';
 import { pgXUsers } from '../../database/schema/x-user';
 
+interface DbXUserBlockEvent {
+  id: string;
+  modorixUserId: string;
+  blockedAt: Date;
+}
+
 @Injectable()
 export class BlockXUsersDrizzleRepository implements BlockXUsersRepository {
   constructor(@Inject(PG_DATABASE) private pgDatabase: TypedNodePgDatabase) {}
@@ -20,11 +26,8 @@ export class BlockXUsersDrizzleRepository implements BlockXUsersRepository {
   async blockXUser(xUser: XUser): Promise<void> {
     const blockEvent = xUser.blockEvents[0];
     const xUserId = crypto.randomUUID();
-    const eventId = crypto.randomUUID();
     await this.insertXUser(xUserId, xUser);
-    await this.insertBlockEvent(xUserId, { ...blockEvent, id: eventId });
-    await this.insertBlockedInGroups(blockEvent.blockedInGroups, eventId);
-    await this.insertBlockReasons(blockEvent.blockReasons, eventId);
+    await this.addBlockEvent(xUser.xId, blockEvent);
   }
 
   async addBlockEvent(xId: string, blockEvent: BlockEvent): Promise<void> {
@@ -47,25 +50,7 @@ export class BlockXUsersDrizzleRepository implements BlockXUsersRepository {
   }
 
   async blockedXUsersList(modorixUserId: string): Promise<XUser[]> {
-    const xUsers = await this.pgDatabase
-      .select({
-        xId: pgXUsers.xId,
-        xUsername: pgXUsers.xUsername,
-        blockQueueModorixUserIds: pgXUsers.blockQueueModorixUserIds,
-        blockEvents: sql<
-          {
-            id: string;
-            modorixUserId: string;
-            blockedAt: Date;
-          }[]
-        >`json_agg(json_build_object('id', ${pgBlockEvent.id},  'modorixUserId', ${pgBlockEvent.modorixUserId}, 'blockedAt', ${pgBlockEvent.blockedAt}))`.as(
-          'blockEvents',
-        ),
-      })
-      .from(pgXUsers)
-      .innerJoin(pgBlockEvent, eq(pgBlockEvent.xUserId, pgXUsers.id))
-      .where(eq(pgBlockEvent.modorixUserId, modorixUserId))
-      .groupBy(pgXUsers.id);
+    const xUsers = await this.selectXUserWithEvents().where(eq(pgBlockEvent.modorixUserId, modorixUserId)).groupBy(pgXUsers.id);
 
     return Promise.all(xUsers.map(async (xUser) => await this.mapPgUserToXUser(xUser)));
   }
@@ -98,11 +83,7 @@ export class BlockXUsersDrizzleRepository implements BlockXUsersRepository {
         xUsername: pgXUsers.xUsername,
         blockQueueModorixUserIds: pgXUsers.blockQueueModorixUserIds,
         blockEvents: sql<
-          {
-            id: string;
-            modorixUserId: string;
-            blockedAt: Date;
-          }[]
+          DbXUserBlockEvent[]
         >`json_agg(json_build_object('id', ${pgBlockEvent.id},  'modorixUserId', ${pgBlockEvent.modorixUserId}, 'blockedAt', ${pgBlockEvent.blockedAt}))`.as(
           'blockEvents',
         ),
@@ -148,11 +129,7 @@ export class BlockXUsersDrizzleRepository implements BlockXUsersRepository {
     xId: string;
     xUsername: string;
     blockQueueModorixUserIds: string[];
-    blockEvents: {
-      id: string;
-      modorixUserId: string;
-      blockedAt: Date;
-    }[];
+    blockEvents: DbXUserBlockEvent[];
   }): Promise<XUser> {
     const blockEventIds = xUser.blockEvents.map((event) => event.id);
 

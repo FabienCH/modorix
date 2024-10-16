@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ModorixUserInMemoryRepository } from 'src/infrastructure/repositories/in-memory/modorix-user-in-memory.repository';
+import { ModorixUserInMemoryRepository } from '../../infrastructure/repositories/in-memory/modorix-user-in-memory.repository';
 import { UserSignUpEmailValidationError } from '../errors/user-sign-up-email-validation-error';
 import { UserSignUpPasswordValidationError } from '../errors/user-sign-up-password-validation-error';
 import { ModorixUserRepositoryToken } from '../repositories/modorix-user.repository';

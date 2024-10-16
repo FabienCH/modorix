@@ -1,8 +1,8 @@
 import { Group } from '@modorix-commons/domain/models/group';
 import { Inject, Injectable } from '@nestjs/common';
 import { eq, inArray } from 'drizzle-orm';
-import { pgBlockEvent } from 'src/infrastructure/database/schema/block-event';
 import { GroupsRepository } from '../../../domain/repositories/groups.repository';
+import { pgBlockEvent } from '../../../infrastructure/database/schema/block-event';
 import { PG_DATABASE } from '../../database/drizzle.module';
 import { blockEventToGroups } from '../../database/schema/block-event-group-relation';
 import { pgGroups } from '../../database/schema/group';
