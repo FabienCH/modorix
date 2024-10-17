@@ -27,7 +27,6 @@ export class PublicGroupsController {
   }
 
   private getGroupError(error: unknown): HttpException {
-    console.log('🚀 ~ GroupsController ~ getGroupError ~ error:', error);
     if (error instanceof GroupNotFoundError) {
       return new NotFoundException(error.message);
     }

@@ -13,7 +13,6 @@ export class GroupsDrizzleRepository implements GroupsRepository {
   constructor(@Inject(PG_DATABASE) private pgDatabase: TypedNodePgDatabase) {}
 
   async groupsList(modorixUserId: string | undefined): Promise<Group[]> {
-    console.log('🚀 ~ GroupsDrizzleRepository ~ groupsList modorixUserId:', modorixUserId);
     const groups = await this.pgDatabase.select().from(pgGroups);
     return Promise.all(groups.map(async (group) => this.mapPgGroupToGroup(group, modorixUserId)));
   }
@@ -26,7 +25,6 @@ export class GroupsDrizzleRepository implements GroupsRepository {
   }
 
   async findGroupById(groupId: string, modorixUserId: string | undefined): Promise<Group | null> {
-    console.log('🚀 ~ GroupsDrizzleRepository ~ findGroupById modorixUserId:', modorixUserId);
     const groups = await this.pgDatabase.select().from(pgGroups).where(eq(pgGroups.id, groupId));
     return this.mapPgGroupToGroup(groups[0], modorixUserId);
   }
@@ -72,8 +70,6 @@ export class GroupsDrizzleRepository implements GroupsRepository {
           blockEventIdOnGroup.map(({ eventId }) => eventId),
         ),
       );
-
-    console.log('🚀 ~ GroupsDrizzleRepository ~ group.isJoinedBy:', group.isJoinedBy);
 
     return {
       id: group.id,

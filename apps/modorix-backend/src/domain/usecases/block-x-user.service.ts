@@ -120,11 +120,18 @@ export class BlockXUsersService {
   }
 
   async blockQueueCandidates(modorixUserId: string): Promise<XUser[]> {
-    return (await this.blockXUsersRepository.getAllBlockedXUsers()).filter(
-      (blockedXUser) =>
-        !blockedXUser.blockEvents.find((blockEvent) => blockEvent.modorixUserId === modorixUserId) &&
-        !blockedXUser.blockQueueModorixUserIds.includes(modorixUserId),
-    );
+    const userJoinedGroupIds = await (await this.groupsRepository.groupsList(modorixUserId))
+      .filter((group) => group.isJoined)
+      .map((group) => group.id);
+
+    return (await this.blockXUsersRepository.getAllBlockedXUsers()).filter((blockedXUser) => {
+      const notBlockByModorixUser = !blockedXUser.blockEvents.find((blockEvent) => blockEvent.modorixUserId === modorixUserId);
+      const notInyModorixUserBlockQueue = !blockedXUser.blockQueueModorixUserIds.includes(modorixUserId);
+      const xUserBlockedInModorixUserGroup = blockedXUser.blockEvents.find((blockEvent) => {
+        return blockEvent.blockedInGroups.find(({ id }) => userJoinedGroupIds.includes(id));
+      });
+      return notBlockByModorixUser && notInyModorixUserBlockQueue && xUserBlockedInModorixUserGroup;
+    });
   }
 
   async blockQueue(modorixUserId: string): Promise<XUser[]> {

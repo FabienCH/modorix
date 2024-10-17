@@ -32,10 +32,7 @@ export class BlockXUsersController {
     try {
       return await this.blockXUsersService.blockXUser({ ...xUser, blockedAt: new Date(xUser.blockedAt), blockingModorixUserId: user.sub });
     } catch (error) {
-      console.log('🚀 ~ BlockXUsersController ~ blockXUser ~ error:', error);
-      console.log('🚀 ~ BlockXUsersController ~ blockXUser ~  error instanceof GroupNotJoinedError:', error instanceof GroupNotJoinedError);
       if (error instanceof BlockReasonError || error instanceof GroupNotJoinedError) {
-        console.log('🚀 ~ BlockXUsersController ~ blockXUser ~ BadRequestException error.message:', error.message);
         throw new BadRequestException(error.message);
       }
       throw new HttpException('An unexpected error occurred', HttpStatus.INTERNAL_SERVER_ERROR);
@@ -80,7 +77,6 @@ export class BlockXUsersController {
   @Get('block-x-users')
   @HttpCode(200)
   async blockedXUsersList(@AuthUser() user: JwtPayload): Promise<XUserDto[]> {
-    console.log('🚀 ~ BlockXUsersController ~ blockedXUsersList ~ user:', user);
     if (!user.sub) {
       throw new UnauthorizedException();
     }

@@ -253,6 +253,9 @@ describe('BlockXUsersService', () => {
 
   describe('Retrieve X users block queue candidates', () => {
     beforeEach(async () => {
+      await groupsRepository.joinGroup('US', '1');
+      await groupsRepository.joinGroup('GE', '1');
+
       await blockXUsersRepository.blockXUser({
         xId: '1',
         xUsername: '@username',
@@ -269,6 +272,45 @@ describe('BlockXUsersService', () => {
     });
 
     it('should give a list of X users not blocked by the current Modorix user', async () => {
+      const blockQueueCandidates = await blockXUsersService.blockQueueCandidates('1');
+
+      expect(blockQueueCandidates).toEqual([
+        {
+          xId: '862285194',
+          xUsername: '@UltraEurope',
+          blockEvents: [
+            {
+              modorixUserId: '2',
+              blockedAt: new Date('2024-06-19T18:41:45Z'),
+              blockReasons: [
+                { id: '0', label: 'Harassment' },
+                { id: '2', label: 'Spreading fake news' },
+              ],
+              blockedInGroups: [
+                { id: 'GE', name: 'Germany' },
+                { id: 'scientists', name: 'Scientists' },
+              ],
+            },
+          ],
+          blockQueueModorixUserIds: [],
+        },
+      ]);
+    });
+
+    it('should only list X users blocked in group joined by the current Modorix user', async () => {
+      await blockXUsersRepository.blockXUser({
+        xId: '3',
+        xUsername: '@username-3',
+        blockEvents: [
+          {
+            modorixUserId: '3',
+            blockedAt: new Date('2024-07-02T18:01:45Z'),
+            blockReasons: [{ id: '1', label: 'Racism / Xenophobia' }],
+            blockedInGroups: [{ id: 'FR', name: 'France' }],
+          },
+        ],
+        blockQueueModorixUserIds: [],
+      });
       const blockQueueCandidates = await blockXUsersService.blockQueueCandidates('1');
 
       expect(blockQueueCandidates).toEqual([

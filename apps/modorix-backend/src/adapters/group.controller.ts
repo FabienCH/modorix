@@ -22,7 +22,6 @@ export class GroupsController {
   @Get('groups')
   @HttpCode(200)
   groupsList(@AuthUser() user: JwtPayload): Promise<Group[]> {
-    console.log('🚀 ~ GroupsController ~ groupsList ~ user.sub:', user.sub);
     if (!user.sub) {
       throw new UnauthorizedException();
     }
@@ -69,7 +68,6 @@ export class GroupsController {
   }
 
   private getGroupError(error: unknown): HttpException {
-    console.log('🚀 ~ GroupsController ~ getGroupError ~ error:', error);
     if (error instanceof GroupNotFoundError) {
       return new NotFoundException(error.message);
     }

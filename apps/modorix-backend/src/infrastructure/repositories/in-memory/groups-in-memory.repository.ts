@@ -105,9 +105,7 @@ export class GroupsInMemoryRepository implements GroupsRepository {
     this.groups.forEach((group) => {
       if (group.id === groupId) {
         this.groupNotFound = false;
-        console.log('🚀 ~ GroupsInMemoryRepository ~ this.groups.forEach ~ group.isJoinedBy BEOFRE:', group.isJoinedBy);
         group.isJoinedBy = group.isJoinedBy.filter((id) => id !== modorixUserId);
-        console.log('🚀 ~ GroupsInMemoryRepository ~ this.groups.forEach ~ group.isJoinedBy AFTER:', group.isJoinedBy);
       }
     });
 

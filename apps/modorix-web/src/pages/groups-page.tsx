@@ -29,7 +29,6 @@ export default function GroupsPage() {
 
   useEffect(() => {
     retrieveGroupsList(handleClick, !!userSessionInfos?.hasValidAccessToken, dependencies.userSessionStorage);
-    console.log('🚀 ~ useEffect ~ userSessionInfos:', userSessionInfos);
     if (userSessionInfos?.hasValidAccessToken && columns.length === 3) {
       columns.push('Membership');
     }
@@ -40,7 +39,6 @@ export default function GroupsPage() {
     hasValidAccessToken: boolean,
     userSessionStorage: UserSessionStorage,
   ) {
-    console.log('🚀 ~ useEffect ~ retrieveGroupsList hasValidAccessToken:', hasValidAccessToken);
     const groups = await getGroups(userSessionStorage.getAccessToken);
     const groupsData = groups.map((group) => {
       const rowData = [
