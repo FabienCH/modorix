@@ -1,10 +1,8 @@
 import { UserSessionStorage } from '../domain/login/storage/user-session-storage';
-import { BlockEvent } from '../domain/models/block-event';
 import { XUser } from '../domain/models/x-user';
 import { getGatewayBaseUrl } from './base-url-config';
 import { AuthError, fetchWithAuth, mapResponseWithAuth } from './fetch-with-auth';
-
-type GatewayBlockEvent = Omit<BlockEvent, 'blockedAt'> & { blockedAt: string };
+import { GatewayXUser } from './gateway-x-user';
 
 const blockedXUsersBaseUrl = () => `${getGatewayBaseUrl()}/block-x-users`;
 
@@ -20,7 +18,7 @@ export async function getBlockQueue(userSessionStorage: UserSessionStorage): Pro
   return (await mapResponseWithAuth(response)).map(mapToXUser);
 }
 
-export function mapToXUser(xUser: Omit<XUser, 'blockEvents'> & { blockEvents: GatewayBlockEvent[] }): XUser {
+export function mapToXUser(xUser: GatewayXUser): XUser {
   return {
     ...xUser,
     blockEvents: xUser.blockEvents.map((blockEvent) => ({ ...blockEvent, blockedAt: new Date(blockEvent.blockedAt) })),

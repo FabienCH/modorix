@@ -131,25 +131,27 @@ export class BlockXUsersDrizzleRepository implements BlockXUsersRepository {
     blockQueueModorixUserIds: string[];
     blockEvents: DbXUserBlockEvent[];
   }): Promise<XUser> {
-    const blockEventIds = xUser.blockEvents.map((event) => event.id);
+    const blockEvents = await Promise.all(
+      xUser.blockEvents.map(async (event) => {
+        const blockReasons = await this.pgDatabase
+          .select({ id: pgBlockReasons.id, label: pgBlockReasons.label })
+          .from(pgBlockReasons)
+          .innerJoin(blockEventToBlockReasons, eq(pgBlockReasons.id, blockEventToBlockReasons.blockReasonId))
+          .where(eq(blockEventToBlockReasons.eventId, event.id));
+        const groups = await this.pgDatabase
+          .select({ id: pgGroups.id, name: pgGroups.name })
+          .from(pgGroups)
+          .innerJoin(blockEventToGroups, eq(pgGroups.id, blockEventToGroups.groupId))
+          .where(eq(blockEventToGroups.eventId, event.id));
 
-    const blockReasons = await this.pgDatabase
-      .select({ id: pgBlockReasons.id, label: pgBlockReasons.label })
-      .from(pgBlockReasons)
-      .innerJoin(blockEventToBlockReasons, eq(pgBlockReasons.id, blockEventToBlockReasons.blockReasonId))
-      .where(inArray(blockEventToBlockReasons.eventId, blockEventIds));
-    const groups = await this.pgDatabase
-      .select({ id: pgGroups.id, name: pgGroups.name })
-      .from(pgGroups)
-      .innerJoin(blockEventToGroups, eq(pgGroups.id, blockEventToGroups.groupId))
-      .where(inArray(blockEventToGroups.eventId, blockEventIds));
-
-    const blockEvents = xUser.blockEvents.map((dbBlockEvent) => ({
-      modorixUserId: dbBlockEvent.modorixUserId,
-      blockedAt: dbBlockEvent.blockedAt,
-      blockReasons,
-      blockedInGroups: groups,
-    }));
+        return {
+          modorixUserId: event.modorixUserId,
+          blockedAt: event.blockedAt,
+          blockReasons,
+          blockedInGroups: groups,
+        };
+      }),
+    );
 
     return { xId: xUser.xId, xUsername: xUser.xUsername, blockEvents, blockQueueModorixUserIds: xUser.blockQueueModorixUserIds };
   }

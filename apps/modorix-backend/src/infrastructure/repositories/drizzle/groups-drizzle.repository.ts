@@ -69,7 +69,8 @@ export class GroupsDrizzleRepository implements GroupsRepository {
           pgBlockEvent.id,
           blockEventIdOnGroup.map(({ eventId }) => eventId),
         ),
-      );
+      )
+      .groupBy(pgBlockEvent.xUserId);
 
     return {
       id: group.id,

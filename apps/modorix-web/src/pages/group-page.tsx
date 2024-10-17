@@ -30,7 +30,7 @@ export default function GroupPage() {
       await addXUserToQueue(
         xUser,
         addToBlockQueue,
-        async () => setGroup(await getGroup(group.id, dependencies.userSessionStorage.getAccessToken)),
+        async () => setGroup(await getGroup(group.id, dependencies.userSessionStorage.getItem)),
         showErrorToast,
         {
           userSessionStorage,
@@ -61,7 +61,7 @@ export default function GroupPage() {
 
   async function handleMembershipClick(group: GroupDetails) {
     await toggleMembership(group, showErrorToast, { ...dependencies.userSessionStorage, setUserSessionInfos });
-    setGroup(await getGroup(group.id, dependencies.userSessionStorage.getAccessToken));
+    setGroup(await getGroup(group.id, dependencies.userSessionStorage.getItem));
   }
 
   return (

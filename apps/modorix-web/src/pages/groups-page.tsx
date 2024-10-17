@@ -39,7 +39,7 @@ export default function GroupsPage() {
     hasValidAccessToken: boolean,
     userSessionStorage: UserSessionStorage,
   ) {
-    const groups = await getGroups(userSessionStorage.getAccessToken);
+    const groups = await getGroups(userSessionStorage.getItem);
     const groupsData = groups.map((group) => {
       const rowData = [
         <NavLink to={`${ROUTES.Groups}/${group.id}`}>{group.name}</NavLink>,
