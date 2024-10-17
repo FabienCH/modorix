@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { JwtPayload } from 'jsonwebtoken';
 import { BlockReasonError } from '../domain/errors/block-reason-error';
+import { GroupNotJoinedError } from '../domain/errors/group-not-joined-error';
 import { XUserNotFoundError } from '../domain/errors/x-user-not-found-error';
 import { XUserNotInQueueError } from '../domain/errors/x-user-not-in-queue';
 import { BlockXUsersService } from '../domain/usecases/block-x-user.service';
@@ -31,7 +32,10 @@ export class BlockXUsersController {
     try {
       return await this.blockXUsersService.blockXUser({ ...xUser, blockedAt: new Date(xUser.blockedAt), blockingModorixUserId: user.sub });
     } catch (error) {
-      if (error instanceof BlockReasonError) {
+      console.log('🚀 ~ BlockXUsersController ~ blockXUser ~ error:', error);
+      console.log('🚀 ~ BlockXUsersController ~ blockXUser ~  error instanceof GroupNotJoinedError:', error instanceof GroupNotJoinedError);
+      if (error instanceof BlockReasonError || error instanceof GroupNotJoinedError) {
+        console.log('🚀 ~ BlockXUsersController ~ blockXUser ~ BadRequestException error.message:', error.message);
         throw new BadRequestException(error.message);
       }
       throw new HttpException('An unexpected error occurred', HttpStatus.INTERNAL_SERVER_ERROR);

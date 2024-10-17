@@ -8,7 +8,7 @@ interface BaseXUser {
 export interface BlockXUserRequest extends BaseXUser {
   blockedAt: string;
   blockReasonIds: string[];
-  blockedInGroupsIds?: string[];
+  blockedInGroupsIds: string[];
 }
 
 export interface BlockXUser extends Omit<BlockXUserRequest, 'blockedAt'> {

@@ -6,6 +6,7 @@ import { BlockReasonsInMemoryRepository } from '../../infrastructure/repositorie
 import { BlockXUsersInMemoryRepository } from '../../infrastructure/repositories/in-memory/block-x-user-in-memory.repository';
 import { GroupsInMemoryRepository } from '../../infrastructure/repositories/in-memory/groups-in-memory.repository';
 import { BlockReasonError } from '../errors/block-reason-error';
+import { GroupNotJoinedError } from '../errors/group-not-joined-error';
 import { XUserNotFoundError } from '../errors/x-user-not-found-error';
 import { XUserNotInQueueError } from '../errors/x-user-not-in-queue';
 import { BlockReasonsRepositoryToken } from '../repositories/block-reason.repository';
@@ -14,7 +15,7 @@ import { GroupsRepositoryToken } from '../repositories/groups.repository';
 import { BlockXUsersService } from './block-x-user.service';
 
 describe('BlockXUsersService', () => {
-  function getBlockXUserRequest(blockReasonIds: string[], blockedInGroupsIds = []): BlockXUser {
+  function getBlockXUserRequest(blockReasonIds: string[], blockedInGroupsIds: string[] = []): BlockXUser {
     return {
       xId: '1',
       xUsername: '@username',
@@ -90,7 +91,7 @@ describe('BlockXUsersService', () => {
     it('should add the blocked X user too all groups', async () => {
       await blockXUsersService.blockXUser(getBlockXUserRequest(['1']));
 
-      const groupsBlockedXUserIds = (await groupsRepository.groupsList()).flatMap((group) => group.blockedXUserIds);
+      const groupsBlockedXUserIds = (await groupsRepository.groupsList(undefined)).flatMap((group) => group.blockedXUserIds);
       const expectedIds = groupsBlockedXUserIds.map(() => '@username');
 
       expect(groupsBlockedXUserIds).toEqual(expectedIds);
@@ -109,6 +110,7 @@ describe('BlockXUsersService', () => {
     });
 
     it('should only add a block event to X user if he has already blocked by someone else', async () => {
+      await groupsRepository.joinGroup('FR', '1');
       await blockXUsersService.blockXUser({
         xId: '862285194',
         xUsername: '@UltraEurope',
@@ -163,6 +165,12 @@ describe('BlockXUsersService', () => {
       await expect(async () => {
         await blockXUsersService.blockXUser(getBlockXUserRequest(['1', 'non existing reason']));
       }).rejects.toThrow(new BlockReasonError('@username', 'notFound'));
+    });
+
+    it('should not block a X user if group one of the groups is not joined', async () => {
+      await expect(async () => {
+        await blockXUsersService.blockXUser(getBlockXUserRequest(['1'], ['GE']));
+      }).rejects.toThrow(new GroupNotJoinedError('@username', ['GE']));
     });
   });
 

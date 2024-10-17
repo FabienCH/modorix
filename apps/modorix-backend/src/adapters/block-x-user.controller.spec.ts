@@ -14,12 +14,13 @@ import { BlockXUsersController } from './block-x-user.controller';
 import { BlockXUserRequestDto } from './x-user-dto';
 
 describe('BlockUserController', () => {
-  function getXUser(blockReasonIds: string[]): BlockXUserRequestDto {
+  function getXUser(blockReasonIds: string[], blockedInGroupsIds: string[] = []): BlockXUserRequestDto {
     return {
       xId: '1',
       xUsername: '@1-username',
       blockedAt: '2024-05-27T18:01:45Z',
       blockReasonIds,
+      blockedInGroupsIds,
     };
   }
 
@@ -56,6 +57,7 @@ describe('BlockUserController', () => {
         blockedAt: new Date('2024-05-27T18:01:45Z'),
         blockReasonIds: ['1'],
         blockingModorixUserId: '1',
+        blockedInGroupsIds: [],
       });
     });
 
@@ -69,6 +71,14 @@ describe('BlockUserController', () => {
       await expect(async () => {
         await blockXUserController.blockXUser({ sub: '1' }, getXUser(['12']));
       }).rejects.toThrow(new BadRequestException('could not block user "@1-username" because at least one reason does not exist'));
+    });
+
+    it('should not block a X user if one of the groups is not joined', async () => {
+      await expect(async () => {
+        await blockXUserController.blockXUser({ sub: '1' }, getXUser(['1'], ['GE']));
+      }).rejects.toThrow(
+        new BadRequestException('could not block user "@1-username" because user has not joined the following groups: GE'),
+      );
     });
   });
 
