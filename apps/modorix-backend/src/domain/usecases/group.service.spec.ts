@@ -27,7 +27,7 @@ describe('GroupsService', () => {
 
   describe('Get all groups', () => {
     it('should give the list of groups', async () => {
-      const groups = await groupsService.groupsList();
+      const groups = await groupsService.groupsList('1');
       expect(groups).toEqual([
         { id: 'US', name: 'United States', description: 'For people living in US', isJoined: false, blockedXUserIds: [] },
         { id: 'UK', name: 'United Kingdom', description: 'For people living in Uk', isJoined: false, blockedXUserIds: [] },
@@ -94,7 +94,7 @@ describe('GroupsService', () => {
     });
 
     it('give the expected group', async () => {
-      const ukGroup = await groupsService.findGroupById('UK');
+      const ukGroup = await groupsService.findGroupById('UK', '1');
 
       expect(ukGroup).toEqual({
         id: 'UK',
@@ -121,39 +121,56 @@ describe('GroupsService', () => {
 
     it('should not give a non existing group', async () => {
       await expect(async () => {
-        await groupsService.findGroupById('non existing id');
+        await groupsService.findGroupById('non existing id', '1');
       }).rejects.toThrow(new GroupNotFoundError('non existing id'));
     });
   });
 
   describe('Join a group', () => {
-    it('should change joined group status to joined', async () => {
-      await groupsService.joinGroup('UK');
+    it('should change joined group status to joined for the current user', async () => {
+      await groupsService.joinGroup('UK', '1');
 
-      const ukGroup = (await groupsRepository.groupsList()).find((group) => group.id === 'UK');
+      const ukGroup = await groupsRepository.findGroupById('UK', '1');
       expect(ukGroup?.isJoined).toBe(true);
+    });
+
+    it('should not change joined group status for an other user', async () => {
+      await groupsService.joinGroup('UK', '1');
+
+      const ukGroup = await groupsRepository.findGroupById('UK', '2');
+      expect(ukGroup?.isJoined).toBe(false);
     });
 
     it('should not change joined group status of a non existing group', async () => {
       await expect(async () => {
-        await groupsService.joinGroup('non existing id');
+        await groupsService.joinGroup('non existing id', '1');
       }).rejects.toThrow(new GroupNotFoundError('non existing id'));
     });
   });
 
   describe('Leave a group', () => {
-    it('should change joined group status to left', async () => {
-      await groupsRepository.updateIsJoined('ES', true);
+    it('should change joined group status to left for the current user', async () => {
+      await groupsRepository.joinGroup('ES', '1');
 
-      await groupsService.leaveGroup('ES');
+      await groupsService.leaveGroup('ES', '1');
 
-      const esGroup = (await groupsRepository.groupsList()).find((group) => group.id === 'ES');
+      const esGroup = await groupsRepository.findGroupById('ES', '1');
       expect(esGroup?.isJoined).toBe(false);
+    });
+
+    it('should not change joined group status for an other user', async () => {
+      await groupsRepository.joinGroup('FR', '1');
+      await groupsRepository.joinGroup('FR', '2');
+
+      await groupsService.leaveGroup('FR', '1');
+
+      const frGroup = await groupsRepository.findGroupById('FR', '2');
+      expect(frGroup?.isJoined).toBe(true);
     });
 
     it('should not change joined group status of a non existing group', async () => {
       await expect(async () => {
-        await groupsService.joinGroup('non existing id');
+        await groupsService.joinGroup('non existing id', '1');
       }).rejects.toThrow(new GroupNotFoundError('non existing id'));
     });
   });

@@ -76,6 +76,7 @@ export class BlockXUsersController {
   @Get('block-x-users')
   @HttpCode(200)
   async blockedXUsersList(@AuthUser() user: JwtPayload): Promise<XUserDto[]> {
+    console.log('🚀 ~ BlockXUsersController ~ blockedXUsersList ~ user:', user);
     if (!user.sub) {
       throw new UnauthorizedException();
     }

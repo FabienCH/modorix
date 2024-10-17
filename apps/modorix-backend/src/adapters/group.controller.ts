@@ -1,26 +1,42 @@
 import { Group, GroupDetails } from '@modorix-commons/domain/models/group';
-import { Controller, Get, HttpCode, HttpException, HttpStatus, NotFoundException, Param, Post } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpCode,
+  HttpException,
+  HttpStatus,
+  NotFoundException,
+  Param,
+  Post,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { JwtPayload } from 'jsonwebtoken';
 import { GroupNotFoundError } from '../domain/errors/group-not-found-error';
 import { GroupsService } from '../domain/usecases/group.service';
-import { Public } from '../infrastructure/auth/public.decorator';
+import { AuthUser } from './auth-user.decorator';
 
 @Controller()
 export class GroupsController {
   constructor(private readonly groupsService: GroupsService) {}
 
-  @Public()
   @Get('groups')
   @HttpCode(200)
-  groupsList(): Promise<Group[]> {
-    return this.groupsService.groupsList();
+  groupsList(@AuthUser() user: JwtPayload): Promise<Group[]> {
+    console.log('🚀 ~ GroupsController ~ groupsList ~ user.sub:', user.sub);
+    if (!user.sub) {
+      throw new UnauthorizedException();
+    }
+    return this.groupsService.groupsList(user.sub);
   }
 
-  @Public()
   @Get('groups/:groupId')
   @HttpCode(200)
-  async groupById(@Param() { groupId }: { groupId: string }): Promise<GroupDetails> {
+  async groupById(@AuthUser() user: JwtPayload, @Param() { groupId }: { groupId: string }): Promise<GroupDetails> {
+    if (!user.sub) {
+      throw new UnauthorizedException();
+    }
     try {
-      return await this.groupsService.findGroupById(groupId);
+      return await this.groupsService.findGroupById(groupId, user.sub);
     } catch (error) {
       throw this.getGroupError(error);
     }
@@ -28,9 +44,12 @@ export class GroupsController {
 
   @Post('groups/join/:groupId')
   @HttpCode(201)
-  async joinGroup(@Param() { groupId }: { groupId: string }): Promise<void> {
+  async joinGroup(@AuthUser() user: JwtPayload, @Param() { groupId }: { groupId: string }): Promise<void> {
+    if (!user.sub) {
+      throw new UnauthorizedException();
+    }
     try {
-      return await this.groupsService.joinGroup(groupId);
+      return await this.groupsService.joinGroup(groupId, user.sub);
     } catch (error) {
       throw this.getGroupError(error);
     }
@@ -38,15 +57,19 @@ export class GroupsController {
 
   @Post('groups/leave/:groupId')
   @HttpCode(201)
-  async leaveGroup(@Param() { groupId }: { groupId: string }): Promise<void> {
+  async leaveGroup(@AuthUser() user: JwtPayload, @Param() { groupId }: { groupId: string }): Promise<void> {
+    if (!user.sub) {
+      throw new UnauthorizedException();
+    }
     try {
-      return await this.groupsService.leaveGroup(groupId);
+      return await this.groupsService.leaveGroup(groupId, user.sub);
     } catch (error) {
       throw this.getGroupError(error);
     }
   }
 
   private getGroupError(error: unknown): HttpException {
+    console.log('🚀 ~ GroupsController ~ getGroupError ~ error:', error);
     if (error instanceof GroupNotFoundError) {
       return new NotFoundException(error.message);
     }

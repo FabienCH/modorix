@@ -2,77 +2,112 @@ import { Group } from '@modorix-commons/domain/models/group';
 import { Injectable } from '@nestjs/common';
 import { GroupsRepository } from '../../../domain/repositories/groups.repository';
 
+type InMemoryGroup = Omit<Group, 'isJoined'> & { isJoinedBy: string[] };
+
 @Injectable()
 export class GroupsInMemoryRepository implements GroupsRepository {
   private groupNotFound = true;
-  private readonly groups: Group[] = [
-    { id: 'US', name: 'United States', description: 'For people living in US', isJoined: false, blockedXUserIds: [] },
-    { id: 'UK', name: 'United Kingdom', description: 'For people living in Uk', isJoined: false, blockedXUserIds: [] },
+  private readonly groups: InMemoryGroup[] = [
+    { id: 'US', name: 'United States', description: 'For people living in US', blockedXUserIds: [], isJoinedBy: [] },
+    { id: 'UK', name: 'United Kingdom', description: 'For people living in Uk', blockedXUserIds: [], isJoinedBy: [] },
     {
       id: 'GE',
       name: 'Germany',
       description: 'For people living in Germany',
-      isJoined: false,
+
       blockedXUserIds: [],
+      isJoinedBy: [],
     },
-    { id: 'FR', name: 'France', description: 'For people living in France', isJoined: false, blockedXUserIds: [] },
-    { id: 'ES', name: 'Spain', description: 'For people living in Spain', isJoined: false, blockedXUserIds: [] },
+    { id: 'FR', name: 'France', description: 'For people living in France', blockedXUserIds: [], isJoinedBy: [] },
+    { id: 'ES', name: 'Spain', description: 'For people living in Spain', blockedXUserIds: [], isJoinedBy: [] },
     {
       id: 'scientists',
       name: 'Scientists',
       description: 'For scientists or people working around science',
-      isJoined: false,
+
       blockedXUserIds: [],
+      isJoinedBy: [],
     },
     {
       id: 'streamers',
       name: 'Streamers',
       description: 'For streamers or people working around streaming',
-      isJoined: false,
+
       blockedXUserIds: [],
+      isJoinedBy: [],
     },
     {
       id: 'influencers',
       name: 'Influencers',
       description: 'For influencers or people working around influencers',
-      isJoined: false,
+
       blockedXUserIds: [],
+      isJoinedBy: [],
     },
     {
       id: 'journalists',
       name: 'Journalists',
       description: 'For journalists or people working around journalism',
-      isJoined: false,
+
       blockedXUserIds: [],
+      isJoinedBy: [],
     },
-    { id: 'artists', name: 'Artists', description: 'For artists or people working around arts', isJoined: false, blockedXUserIds: [] },
+    {
+      id: 'artists',
+      name: 'Artists',
+      description: 'For artists or people working around arts',
+
+      blockedXUserIds: [],
+      isJoinedBy: [],
+    },
     {
       id: 'sports(wo)men',
       name: 'Sports(wo)men',
       description: 'For sports(wo)men or people working around sports',
-      isJoined: false,
+
       blockedXUserIds: [],
+      isJoinedBy: [],
     },
   ];
 
-  async groupsList(): Promise<Group[]> {
-    return this.groups;
+  async groupsList(modorixUserId: string | undefined): Promise<Group[]> {
+    return this.groups.map((group) => this.toGroup(group, modorixUserId));
   }
 
-  async groupsByIds(ids: string[]): Promise<Group[]> {
-    return this.groups.filter((group) => ids.includes(group.id));
+  async groupsByIds(ids: string[], modorixUserId: string): Promise<Group[]> {
+    return this.groups.filter((group) => ids.includes(group.id)).map((group) => this.toGroup(group, modorixUserId));
   }
 
-  async findGroupById(groupId: string): Promise<Group | null> {
-    return this.groups.find((group) => group.id === groupId) ?? null;
+  async findGroupById(groupId: string, modorixUserId: string | undefined): Promise<Group | null> {
+    const group = this.groups.find((group) => group.id === groupId);
+    if (group) {
+      return this.toGroup(group, modorixUserId);
+    }
+    return null;
   }
 
-  async updateIsJoined(groupId: string, isJoined: boolean): Promise<void | null> {
+  async joinGroup(groupId: string, modorixUserId: string): Promise<void | null> {
     this.groupNotFound = true;
     this.groups.forEach((group) => {
       if (group.id === groupId) {
         this.groupNotFound = false;
-        group.isJoined = isJoined;
+        group.isJoinedBy.push(modorixUserId);
+      }
+    });
+
+    if (this.groupNotFound) {
+      return null;
+    }
+  }
+
+  async leaveGroup(groupId: string, modorixUserId: string): Promise<void | null> {
+    this.groupNotFound = true;
+    this.groups.forEach((group) => {
+      if (group.id === groupId) {
+        this.groupNotFound = false;
+        console.log('🚀 ~ GroupsInMemoryRepository ~ this.groups.forEach ~ group.isJoinedBy BEOFRE:', group.isJoinedBy);
+        group.isJoinedBy = group.isJoinedBy.filter((id) => id !== modorixUserId);
+        console.log('🚀 ~ GroupsInMemoryRepository ~ this.groups.forEach ~ group.isJoinedBy AFTER:', group.isJoinedBy);
       }
     });
 
@@ -87,5 +122,15 @@ export class GroupsInMemoryRepository implements GroupsRepository {
         group.blockedXUserIds.push(blockedUserId);
       }
     });
+  }
+
+  private toGroup(inMemoryGroup: InMemoryGroup, modorixUserId: string | undefined): Group {
+    return {
+      id: inMemoryGroup.id,
+      name: inMemoryGroup.name,
+      description: inMemoryGroup.description,
+      isJoined: !!inMemoryGroup.isJoinedBy.find((id) => id === modorixUserId),
+      blockedXUserIds: inMemoryGroup.blockedXUserIds,
+    };
   }
 }

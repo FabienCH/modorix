@@ -27,7 +27,7 @@ export class BlockXUsersService {
     if (blockReasons.length !== blockReasonIds.length) {
       throw new BlockReasonError(xUsername, 'notFound');
     }
-    const blockedInGroups = (await this.groupsRepository.groupsByIds(blockedInGroupsIds ?? [])).map((group) => ({
+    const blockedInGroups = (await this.groupsRepository.groupsByIds(blockedInGroupsIds ?? [], blockingModorixUserId)).map((group) => ({
       id: group.id,
       name: group.name,
     }));
