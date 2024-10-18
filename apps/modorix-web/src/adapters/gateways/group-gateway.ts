@@ -34,7 +34,6 @@ export async function leaveGroup(groupId: string, userSessionStorage: UserSessio
 }
 
 async function getHeadersWithToken(getItem: GetStorageItem): Promise<{ Authorization: string } | undefined> {
-  const tokenFromStorage = getAccessTokenFromStorage(getItem);
-  const accessToken = typeof tokenFromStorage === 'string' ? tokenFromStorage : await tokenFromStorage;
+  const accessToken = await getAccessTokenFromStorage(getItem);
   return accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined;
 }

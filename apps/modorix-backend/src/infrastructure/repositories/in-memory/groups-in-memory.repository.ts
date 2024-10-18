@@ -14,7 +14,6 @@ export class GroupsInMemoryRepository implements GroupsRepository {
       id: 'GE',
       name: 'Germany',
       description: 'For people living in Germany',
-
       blockedXUserIds: [],
       isJoinedBy: [],
     },
@@ -24,7 +23,6 @@ export class GroupsInMemoryRepository implements GroupsRepository {
       id: 'scientists',
       name: 'Scientists',
       description: 'For scientists or people working around science',
-
       blockedXUserIds: [],
       isJoinedBy: [],
     },
@@ -32,7 +30,6 @@ export class GroupsInMemoryRepository implements GroupsRepository {
       id: 'streamers',
       name: 'Streamers',
       description: 'For streamers or people working around streaming',
-
       blockedXUserIds: [],
       isJoinedBy: [],
     },
@@ -40,7 +37,6 @@ export class GroupsInMemoryRepository implements GroupsRepository {
       id: 'influencers',
       name: 'Influencers',
       description: 'For influencers or people working around influencers',
-
       blockedXUserIds: [],
       isJoinedBy: [],
     },
@@ -48,7 +44,6 @@ export class GroupsInMemoryRepository implements GroupsRepository {
       id: 'journalists',
       name: 'Journalists',
       description: 'For journalists or people working around journalism',
-
       blockedXUserIds: [],
       isJoinedBy: [],
     },
@@ -56,7 +51,6 @@ export class GroupsInMemoryRepository implements GroupsRepository {
       id: 'artists',
       name: 'Artists',
       description: 'For artists or people working around arts',
-
       blockedXUserIds: [],
       isJoinedBy: [],
     },
@@ -64,7 +58,6 @@ export class GroupsInMemoryRepository implements GroupsRepository {
       id: 'sports(wo)men',
       name: 'Sports(wo)men',
       description: 'For sports(wo)men or people working around sports',
-
       blockedXUserIds: [],
       isJoinedBy: [],
     },
