@@ -6,6 +6,7 @@ import { BlockReasonsInMemoryRepository } from '../../infrastructure/repositorie
 import { BlockXUsersInMemoryRepository } from '../../infrastructure/repositories/in-memory/block-x-user-in-memory.repository';
 import { GroupsInMemoryRepository } from '../../infrastructure/repositories/in-memory/groups-in-memory.repository';
 import { BlockReasonError } from '../errors/block-reason-error';
+import { GroupNotJoinedError } from '../errors/group-not-joined-error';
 import { XUserNotFoundError } from '../errors/x-user-not-found-error';
 import { XUserNotInQueueError } from '../errors/x-user-not-in-queue';
 import { BlockReasonsRepositoryToken } from '../repositories/block-reason.repository';
@@ -14,7 +15,7 @@ import { GroupsRepositoryToken } from '../repositories/groups.repository';
 import { BlockXUsersService } from './block-x-user.service';
 
 describe('BlockXUsersService', () => {
-  function getBlockXUserRequest(blockReasonIds: string[], blockedInGroupsIds = []): BlockXUser {
+  function getBlockXUserRequest(blockReasonIds: string[], blockedInGroupsIds: string[] = []): BlockXUser {
     return {
       xId: '1',
       xUsername: '@username',
@@ -90,7 +91,7 @@ describe('BlockXUsersService', () => {
     it('should add the blocked X user too all groups', async () => {
       await blockXUsersService.blockXUser(getBlockXUserRequest(['1']));
 
-      const groupsBlockedXUserIds = (await groupsRepository.groupsList()).flatMap((group) => group.blockedXUserIds);
+      const groupsBlockedXUserIds = (await groupsRepository.groupsList(undefined)).flatMap((group) => group.blockedXUserIds);
       const expectedIds = groupsBlockedXUserIds.map(() => '@username');
 
       expect(groupsBlockedXUserIds).toEqual(expectedIds);
@@ -109,6 +110,7 @@ describe('BlockXUsersService', () => {
     });
 
     it('should only add a block event to X user if he has already blocked by someone else', async () => {
+      await groupsRepository.joinGroup('FR', '1');
       await blockXUsersService.blockXUser({
         xId: '862285194',
         xUsername: '@UltraEurope',
@@ -163,6 +165,12 @@ describe('BlockXUsersService', () => {
       await expect(async () => {
         await blockXUsersService.blockXUser(getBlockXUserRequest(['1', 'non existing reason']));
       }).rejects.toThrow(new BlockReasonError('@username', 'notFound'));
+    });
+
+    it('should not block a X user if group one of the groups is not joined', async () => {
+      await expect(async () => {
+        await blockXUsersService.blockXUser(getBlockXUserRequest(['1'], ['GE']));
+      }).rejects.toThrow(new GroupNotJoinedError('@username', ['GE']));
     });
   });
 
@@ -245,6 +253,9 @@ describe('BlockXUsersService', () => {
 
   describe('Retrieve X users block queue candidates', () => {
     beforeEach(async () => {
+      await groupsRepository.joinGroup('US', '1');
+      await groupsRepository.joinGroup('GE', '1');
+
       await blockXUsersRepository.blockXUser({
         xId: '1',
         xUsername: '@username',
@@ -261,6 +272,45 @@ describe('BlockXUsersService', () => {
     });
 
     it('should give a list of X users not blocked by the current Modorix user', async () => {
+      const blockQueueCandidates = await blockXUsersService.blockQueueCandidates('1');
+
+      expect(blockQueueCandidates).toEqual([
+        {
+          xId: '862285194',
+          xUsername: '@UltraEurope',
+          blockEvents: [
+            {
+              modorixUserId: '2',
+              blockedAt: new Date('2024-06-19T18:41:45Z'),
+              blockReasons: [
+                { id: '0', label: 'Harassment' },
+                { id: '2', label: 'Spreading fake news' },
+              ],
+              blockedInGroups: [
+                { id: 'GE', name: 'Germany' },
+                { id: 'scientists', name: 'Scientists' },
+              ],
+            },
+          ],
+          blockQueueModorixUserIds: [],
+        },
+      ]);
+    });
+
+    it('should only list X users blocked in group joined by the current Modorix user', async () => {
+      await blockXUsersRepository.blockXUser({
+        xId: '3',
+        xUsername: '@username-3',
+        blockEvents: [
+          {
+            modorixUserId: '3',
+            blockedAt: new Date('2024-07-02T18:01:45Z'),
+            blockReasons: [{ id: '1', label: 'Racism / Xenophobia' }],
+            blockedInGroups: [{ id: 'FR', name: 'France' }],
+          },
+        ],
+        blockQueueModorixUserIds: [],
+      });
       const blockQueueCandidates = await blockXUsersService.blockQueueCandidates('1');
 
       expect(blockQueueCandidates).toEqual([

@@ -15,6 +15,7 @@ export async function saveBlockUser(
     xUsername,
     blockedAt: new Date().toISOString(),
     blockReasonIds,
+    blockedInGroupsIds: [],
   };
   return fetchWithAuth(
     blockedXUsersBaseUrl,

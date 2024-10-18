@@ -3,6 +3,7 @@ import { showErrorToast } from '@modorix-commons/components/show-error-toast';
 import { useDependenciesContext } from '@modorix-commons/infrastructure/dependencies-context';
 import { useUserSessionInfos } from '@modorix-commons/infrastructure/user-session-context';
 import { ModorixTable } from '@modorix-ui/components/modorix-table';
+import { UserSessionStorage } from '@modorix/commons';
 import { useCallback, useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { getGroups } from '../adapters/gateways/group-gateway';
@@ -21,20 +22,24 @@ export default function GroupsPage() {
   const handleClick = useCallback(
     async (group: Group) => {
       await toggleMembership(group, showErrorToast, { ...dependencies.userSessionStorage, setUserSessionInfos });
-      await retrieveGroupsList(handleClick, !!userSessionInfos?.hasValidAccessToken);
+      await retrieveGroupsList(handleClick, !!userSessionInfos?.hasValidAccessToken, dependencies.userSessionStorage);
     },
     [dependencies, setUserSessionInfos, userSessionInfos],
   );
 
   useEffect(() => {
-    retrieveGroupsList(handleClick, !!userSessionInfos?.hasValidAccessToken);
+    retrieveGroupsList(handleClick, !!userSessionInfos?.hasValidAccessToken, dependencies.userSessionStorage);
     if (userSessionInfos?.hasValidAccessToken && columns.length === 3) {
       columns.push('Membership');
     }
-  }, [handleClick, userSessionInfos, columns]);
+  }, [dependencies, handleClick, userSessionInfos, columns]);
 
-  async function retrieveGroupsList(handleClickFn: (group: Group) => Promise<void>, hasValidAccessToken: boolean) {
-    const groups = await getGroups();
+  async function retrieveGroupsList(
+    handleClickFn: (group: Group) => Promise<void>,
+    hasValidAccessToken: boolean,
+    userSessionStorage: UserSessionStorage,
+  ) {
+    const groups = await getGroups(userSessionStorage.getItem);
     const groupsData = groups.map((group) => {
       const rowData = [
         <NavLink to={`${ROUTES.Groups}/${group.id}`}>{group.name}</NavLink>,

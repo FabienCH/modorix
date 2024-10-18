@@ -36,46 +36,46 @@ describe('GroupsController', () => {
 
   describe('Get groups list', () => {
     it('should get a list of group', async () => {
-      await groupsController.groupsList();
-      expect(groupsListSpy).toHaveBeenCalledWith();
+      await groupsController.groupsList({ sub: '1' });
+      expect(groupsListSpy).toHaveBeenCalledWith('1');
     });
   });
 
   describe('Find group by id', () => {
     it('should find the given group', async () => {
-      await groupsController.groupById({ groupId: 'scientists' });
-      expect(findGroupSpy).toHaveBeenCalledWith('scientists');
+      await groupsController.groupById({ sub: '1' }, { groupId: 'scientists' });
+      expect(findGroupSpy).toHaveBeenCalledWith('scientists', '1');
     });
 
     it('should not find a non existing group', async () => {
       await expect(async () => {
-        await groupsController.joinGroup({ groupId: 'non existing id' });
+        await groupsController.joinGroup({ sub: '1' }, { groupId: 'non existing id' });
       }).rejects.toThrow(new NotFoundException('group with id "non existing id" was not found'));
     });
   });
 
   describe('Join a group', () => {
     it('should join the given group', async () => {
-      await groupsController.joinGroup({ groupId: 'UK' });
-      expect(joinGroupSpy).toHaveBeenCalledWith('UK');
+      await groupsController.joinGroup({ sub: '1' }, { groupId: 'UK' });
+      expect(joinGroupSpy).toHaveBeenCalledWith('UK', '1');
     });
 
     it('should not join a non existing group', async () => {
       await expect(async () => {
-        await groupsController.joinGroup({ groupId: 'non existing id' });
+        await groupsController.joinGroup({ sub: '1' }, { groupId: 'non existing id' });
       }).rejects.toThrow(new NotFoundException('group with id "non existing id" was not found'));
     });
   });
 
   describe('Join a group', () => {
     it('should join the given group', async () => {
-      await groupsController.leaveGroup({ groupId: 'UK' });
-      expect(leaveGroupSpy).toHaveBeenCalledWith('UK');
+      await groupsController.leaveGroup({ sub: '1' }, { groupId: 'UK' });
+      expect(leaveGroupSpy).toHaveBeenCalledWith('UK', '1');
     });
 
     it('should not join a non existing group', async () => {
       await expect(async () => {
-        await groupsController.leaveGroup({ groupId: 'non existing id' });
+        await groupsController.leaveGroup({ sub: '1' }, { groupId: 'non existing id' });
       }).rejects.toThrow(new NotFoundException('group with id "non existing id" was not found'));
     });
   });

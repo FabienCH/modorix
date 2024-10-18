@@ -1,0 +1,293 @@
+{
+  "id": "b8c2d68e-275c-4bbe-888c-49fc2fbe5a8f",
+  "prevId": "8ec754ba-023b-4627-8a3a-c8638b30538f",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.block_event_to_block_reasons": {
+      "name": "block_event_to_block_reasons",
+      "schema": "",
+      "columns": {
+        "block_event_id": {
+          "name": "block_event_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "blockReason_id": {
+          "name": "blockReason_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "block_event_to_block_reasons_block_event_id_block-event_id_fk": {
+          "name": "block_event_to_block_reasons_block_event_id_block-event_id_fk",
+          "tableFrom": "block_event_to_block_reasons",
+          "tableTo": "block-event",
+          "columnsFrom": [
+            "block_event_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "block_event_to_block_reasons_blockReason_id_block-reason_id_fk": {
+          "name": "block_event_to_block_reasons_blockReason_id_block-reason_id_fk",
+          "tableFrom": "block_event_to_block_reasons",
+          "tableTo": "block-reason",
+          "columnsFrom": [
+            "blockReason_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "block_event_to_block_reasons_block_event_id_blockReason_id_pk": {
+          "name": "block_event_to_block_reasons_block_event_id_blockReason_id_pk",
+          "columns": [
+            "block_event_id",
+            "blockReason_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "public.block_event_to_groups": {
+      "name": "block_event_to_groups",
+      "schema": "",
+      "columns": {
+        "block_event_id": {
+          "name": "block_event_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "group_id": {
+          "name": "group_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "block_event_to_groups_block_event_id_block-event_id_fk": {
+          "name": "block_event_to_groups_block_event_id_block-event_id_fk",
+          "tableFrom": "block_event_to_groups",
+          "tableTo": "block-event",
+          "columnsFrom": [
+            "block_event_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "block_event_to_groups_group_id_group_id_fk": {
+          "name": "block_event_to_groups_group_id_group_id_fk",
+          "tableFrom": "block_event_to_groups",
+          "tableTo": "group",
+          "columnsFrom": [
+            "group_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "block_event_to_groups_block_event_id_group_id_pk": {
+          "name": "block_event_to_groups_block_event_id_group_id_pk",
+          "columns": [
+            "block_event_id",
+            "group_id"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "public.block-event": {
+      "name": "block-event",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "x_user_id": {
+          "name": "x_user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "modorix_user_id": {
+          "name": "modorix_user_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "blocked_at": {
+          "name": "blocked_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.block-reason": {
+      "name": "block-reason",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "label": {
+          "name": "label",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.group": {
+      "name": "group",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_joined_by": {
+          "name": "is_joined_by",
+          "type": "uuid[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.used-user-email": {
+      "name": "used-user-email",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "used-user-email_email_unique": {
+          "name": "used-user-email_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      }
+    },
+    "public.x-user": {
+      "name": "x-user",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "x_id": {
+          "name": "x_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "x_username": {
+          "name": "x_username",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "block_queue_modorix_user_ids": {
+          "name": "block_queue_modorix_user_ids",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "x-user_x_id_unique": {
+          "name": "x-user_x_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "x_id"
+          ]
+        }
+      }
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

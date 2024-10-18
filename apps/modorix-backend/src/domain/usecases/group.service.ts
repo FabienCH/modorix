@@ -11,12 +11,12 @@ export class GroupsService {
     @Inject(GroupsRepositoryToken) private readonly groupsRepository: GroupsRepository,
   ) {}
 
-  async groupsList(): Promise<Group[]> {
-    return await this.groupsRepository.groupsList();
+  async groupsList(modorixUserId?: string): Promise<Group[]> {
+    return await this.groupsRepository.groupsList(modorixUserId);
   }
 
-  async findGroupById(groupId: string): Promise<GroupDetails> {
-    const group = await this.groupsRepository.findGroupById(groupId);
+  async findGroupById(groupId: string, modorixUserId?: string): Promise<GroupDetails> {
+    const group = await this.groupsRepository.findGroupById(groupId, modorixUserId);
     if (group === null) {
       throw new GroupNotFoundError(groupId);
     }
@@ -31,15 +31,15 @@ export class GroupsService {
     };
   }
 
-  async joinGroup(groupId: string): Promise<void> {
-    const joinStatusUpdated = await this.groupsRepository.updateIsJoined(groupId, true);
+  async joinGroup(groupId: string, modorixUserId: string): Promise<void> {
+    const joinStatusUpdated = await this.groupsRepository.joinGroup(groupId, modorixUserId);
     if (joinStatusUpdated === null) {
       throw new GroupNotFoundError(groupId);
     }
   }
 
-  async leaveGroup(groupId: string): Promise<void> {
-    const joinStatusUpdated = await this.groupsRepository.updateIsJoined(groupId, false);
+  async leaveGroup(groupId: string, modorixUserId: string): Promise<void> {
+    const joinStatusUpdated = await this.groupsRepository.leaveGroup(groupId, modorixUserId);
     if (joinStatusUpdated === null) {
       throw new GroupNotFoundError(groupId);
     }

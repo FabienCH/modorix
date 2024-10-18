@@ -3,6 +3,7 @@ import { BlockReason } from '@modorix-commons/domain/models/block-reason';
 import { BlockXUser, XUser } from '@modorix-commons/domain/models/x-user';
 import { Inject, Injectable } from '@nestjs/common';
 import { BlockReasonError } from '../errors/block-reason-error';
+import { GroupNotJoinedError } from '../errors/group-not-joined-error';
 import { XUserNotFoundError } from '../errors/x-user-not-found-error';
 import { XUserNotInQueueError } from '../errors/x-user-not-in-queue';
 import { BlockReasonsRepository, BlockReasonsRepositoryToken } from '../repositories/block-reason.repository';
@@ -27,10 +28,18 @@ export class BlockXUsersService {
     if (blockReasons.length !== blockReasonIds.length) {
       throw new BlockReasonError(xUsername, 'notFound');
     }
-    const blockedInGroups = (await this.groupsRepository.groupsByIds(blockedInGroupsIds ?? [])).map((group) => ({
+
+    const groups = await this.groupsRepository.groupsByIds(blockedInGroupsIds, blockingModorixUserId);
+
+    if (groups.find((group) => !group.isJoined)) {
+      throw new GroupNotJoinedError(xUsername, blockedInGroupsIds);
+    }
+
+    const blockedInGroups = (await this.groupsRepository.groupsByIds(blockedInGroupsIds, blockingModorixUserId)).map((group) => ({
       id: group.id,
       name: group.name,
     }));
+
     const blockEvent: BlockEvent = {
       modorixUserId: blockingModorixUserId,
       blockedAt,
@@ -111,11 +120,18 @@ export class BlockXUsersService {
   }
 
   async blockQueueCandidates(modorixUserId: string): Promise<XUser[]> {
-    return (await this.blockXUsersRepository.getAllBlockedXUsers()).filter(
-      (blockedXUser) =>
-        !blockedXUser.blockEvents.find((blockEvent) => blockEvent.modorixUserId === modorixUserId) &&
-        !blockedXUser.blockQueueModorixUserIds.includes(modorixUserId),
-    );
+    const userJoinedGroupIds = await (await this.groupsRepository.groupsList(modorixUserId))
+      .filter((group) => group.isJoined)
+      .map((group) => group.id);
+
+    return (await this.blockXUsersRepository.getAllBlockedXUsers()).filter((blockedXUser) => {
+      const notBlockByModorixUser = !blockedXUser.blockEvents.find((blockEvent) => blockEvent.modorixUserId === modorixUserId);
+      const notInyModorixUserBlockQueue = !blockedXUser.blockQueueModorixUserIds.includes(modorixUserId);
+      const xUserBlockedInModorixUserGroup = blockedXUser.blockEvents.find((blockEvent) => {
+        return blockEvent.blockedInGroups.find(({ id }) => userJoinedGroupIds.includes(id));
+      });
+      return notBlockByModorixUser && notInyModorixUserBlockQueue && xUserBlockedInModorixUserGroup;
+    });
   }
 
   async blockQueue(modorixUserId: string): Promise<XUser[]> {

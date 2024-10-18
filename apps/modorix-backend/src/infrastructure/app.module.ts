@@ -5,6 +5,7 @@ import { BlockReasonsController } from '../adapters/block-reasons.controller';
 import { BlockXUsersController } from '../adapters/block-x-user.controller';
 import { GroupsController } from '../adapters/group.controller';
 import { ModorixUserController } from '../adapters/modorix-user.controller';
+import { PublicGroupsController } from '../adapters/public-group.controller';
 import { BlockReasonsRepositoryToken } from '../domain/repositories/block-reason.repository';
 import { BlockXUsersRepositoryToken } from '../domain/repositories/block-x-user.repository';
 import { GroupsRepositoryToken } from '../domain/repositories/groups.repository';
@@ -31,7 +32,7 @@ const ENV = process.env.NODE_ENV;
       envFilePath: !ENV ? '.env' : `${ENV}.env`,
     }),
   ],
-  controllers: [BlockXUsersController, GroupsController, BlockReasonsController, ModorixUserController],
+  controllers: [BlockXUsersController, GroupsController, PublicGroupsController, BlockReasonsController, ModorixUserController],
   providers: [
     {
       provide: APP_GUARD,

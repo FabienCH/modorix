@@ -27,10 +27,16 @@ export default function GroupPage() {
   const runAddXUserToQueue = useCallback(
     async (xUser: XUser): Promise<void> => {
       const { userSessionStorage } = dependencies;
-      await addXUserToQueue(xUser, addToBlockQueue, async () => setGroup(await getGroup(group.id)), showErrorToast, {
-        userSessionStorage,
-        setUserSessionInfos,
-      });
+      await addXUserToQueue(
+        xUser,
+        addToBlockQueue,
+        async () => setGroup(await getGroup(group.id, dependencies.userSessionStorage.getItem)),
+        showErrorToast,
+        {
+          userSessionStorage,
+          setUserSessionInfos,
+        },
+      );
     },
     [group, dependencies, setUserSessionInfos],
   );
@@ -55,7 +61,7 @@ export default function GroupPage() {
 
   async function handleMembershipClick(group: GroupDetails) {
     await toggleMembership(group, showErrorToast, { ...dependencies.userSessionStorage, setUserSessionInfos });
-    setGroup(await getGroup(group.id));
+    setGroup(await getGroup(group.id, dependencies.userSessionStorage.getItem));
   }
 
   return (

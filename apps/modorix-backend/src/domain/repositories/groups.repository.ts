@@ -3,8 +3,9 @@ import { Group } from '@modorix-commons/domain/models/group';
 export const GroupsRepositoryToken = Symbol('GroupsRepositoryToken');
 
 export interface GroupsRepository {
-  groupsList(): Promise<Group[]>;
-  groupsByIds(ids: string[]): Promise<Group[]>;
-  findGroupById(groupId: string): Promise<Group | null>;
-  updateIsJoined(groupId: string, isJoined: boolean): Promise<void | null>;
+  groupsList(modorixUserId: string | undefined): Promise<Group[]>;
+  groupsByIds(ids: string[], modorixUserId: string): Promise<Group[]>;
+  findGroupById(groupId: string, modorixUserId: string | undefined): Promise<Group | null>;
+  joinGroup(groupId: string, modorixUserId: string): Promise<void | null>;
+  leaveGroup(groupId: string, modorixUserId: string): Promise<void | null>;
 }
