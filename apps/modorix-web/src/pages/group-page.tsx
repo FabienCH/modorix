@@ -69,11 +69,14 @@ export default function GroupPage() {
       <NavLink className={cn(buttonVariants({ variant: 'outline' }), 'mr-2')} to={ROUTES.Groups}>
         <BackIcon className="w-[12px] mr-2" /> Back
       </NavLink>
-      <div className="flex justify-between items-center	my-3">
+      <header className="flex justify-between items-center	my-3">
         <h1 className="main-title pb-0">{group.name}</h1>
         {userSessionInfos?.hasValidAccessToken ? <MembershipButton group={group} onClick={() => handleMembershipClick(group)} /> : null}
+      </header>
+      <div className="flex justify-between mb-4">
+        <p>{group.description}</p>
+        <p>Members: {group.membersCount}</p>
       </div>
-      <p className="mb-4">{group.description}</p>
       <XUsersTable
         BadgesComponent={AutoResizeBadgesWithTooltip}
         blockedUsers={group.blockedXUsers}

@@ -101,6 +101,7 @@ describe('GroupsService', () => {
         name: 'United Kingdom',
         description: 'For people living in Uk',
         isJoined: false,
+        membersCount: 0,
         blockedXUsers: [
           {
             xId: '1',
@@ -119,6 +120,22 @@ describe('GroupsService', () => {
       });
     });
 
+    it('give the expected group with multiple members', async () => {
+      await groupsRepository.joinGroup('FR', '1');
+      await groupsRepository.joinGroup('FR', '2');
+      await groupsRepository.joinGroup('FR', '3');
+      const ukGroup = await groupsService.findGroupById('FR');
+
+      expect(ukGroup).toEqual({
+        id: 'FR',
+        name: 'France',
+        description: 'For people living in France',
+        isJoined: false,
+        membersCount: 3,
+        blockedXUsers: [],
+      });
+    });
+
     it('should not give a non existing group', async () => {
       await expect(async () => {
         await groupsService.findGroupById('non existing id', '1');
@@ -130,14 +147,14 @@ describe('GroupsService', () => {
     it('should change joined group status to joined for the current user', async () => {
       await groupsService.joinGroup('UK', '1');
 
-      const ukGroup = await groupsRepository.findGroupById('UK', '1');
+      const ukGroup = await groupsRepository.findGroupWithMembersById('UK', '1');
       expect(ukGroup?.isJoined).toBe(true);
     });
 
     it('should not change joined group status for an other user', async () => {
       await groupsService.joinGroup('UK', '1');
 
-      const ukGroup = await groupsRepository.findGroupById('UK', '2');
+      const ukGroup = await groupsRepository.findGroupWithMembersById('UK', '2');
       expect(ukGroup?.isJoined).toBe(false);
     });
 
@@ -154,7 +171,7 @@ describe('GroupsService', () => {
 
       await groupsService.leaveGroup('ES', '1');
 
-      const esGroup = await groupsRepository.findGroupById('ES', '1');
+      const esGroup = await groupsRepository.findGroupWithMembersById('ES', '1');
       expect(esGroup?.isJoined).toBe(false);
     });
 
@@ -164,7 +181,7 @@ describe('GroupsService', () => {
 
       await groupsService.leaveGroup('FR', '1');
 
-      const frGroup = await groupsRepository.findGroupById('FR', '2');
+      const frGroup = await groupsRepository.findGroupWithMembersById('FR', '2');
       expect(frGroup?.isJoined).toBe(true);
     });
 
