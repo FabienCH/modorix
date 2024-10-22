@@ -5,7 +5,7 @@ import { XUser } from '@modorix-commons/domain/models/x-user';
 import { useDependenciesContext } from '@modorix-commons/infrastructure/dependencies-context';
 import { useUserSessionInfos } from '@modorix-commons/infrastructure/user-session-context';
 import { buttonVariants } from '@modorix-ui/components/button';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@modorix-ui/components/tooltip';
+import { ModorixTooltip } from '@modorix-ui/components/modorix-tooltip';
 import { cn } from '@modorix-ui/utils/utils';
 import { useCallback, useEffect, useState } from 'react';
 import { NavLink, useLoaderData } from 'react-router-dom';
@@ -44,20 +44,20 @@ export default function GroupPage() {
 
   useEffect(() => {
     if (userSessionInfos?.hasValidAccessToken) {
+      const tooltipTrigger = (
+        <span>
+          Blocked by <sup>?</sup>
+        </span>
+      );
       const numberOfBlockColCOnfig = {
         index: 3,
         column: {
           cellElem: (
-            <TooltipProvider>
-              <Tooltip delayDuration={400}>
-                <TooltipTrigger>
-                  <span>
-                    Blocked by <sup>?</sup>
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent>Members that blocked this X user</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <ModorixTooltip
+              trigger={tooltipTrigger}
+              content="Members that blocked this X user"
+              contentClassName="font-normal"
+            ></ModorixTooltip>
           ),
           className: 'z-[1]',
         },
