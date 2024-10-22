@@ -24,14 +24,14 @@ export default function BlocksPage() {
 
   const blockedInGroupsColConfig = {
     index: 2,
-    columnLabel: 'Blocked In',
+    column: { cellElem: 'Blocked In' },
     getCellElem: (xUser: XUser) => (
       <AutoResizeBadgesWithTooltip items={mapToGroupItem(xUser.blockEvents)} badgeVariant="outline"></AutoResizeBadgesWithTooltip>
     ),
   };
   const addToBlockQueueColConfig = {
     index: 4,
-    columnLabel: 'Add To Queue',
+    column: { cellElem: 'Add To Queue' },
     getCellElem: (xUser: XUser) => <AddToQueueButton onClick={() => runAddXUserToQueue(xUser)}></AddToQueueButton>,
   };
 

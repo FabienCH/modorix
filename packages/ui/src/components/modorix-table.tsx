@@ -1,7 +1,8 @@
+import { cn } from '../utils/utils';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 
 interface ModorixTableProps {
-  columns: string[];
+  columns: Array<{ cellElem: JSX.Element | string; className?: string }>;
   data: (JSX.Element | string)[][];
   emptyDataMessage: string;
   rowClassName?: string;
@@ -16,9 +17,9 @@ export const ModorixTable = ({ columns, data, emptyDataMessage, rowClassName }: 
             {columns.map((col, idx) => (
               <TableHead
                 key={`col-${idx}`}
-                className={`bg-modorix-50 filter brightness-102 content-center first:rounded-tl-md last:rounded-tr-md`}
+                className={cn(`bg-modorix-50 filter brightness-102 content-center first:rounded-tl-md last:rounded-tr-md`, col.className)}
               >
-                {col}
+                {col.cellElem}
               </TableHead>
             ))}
           </TableRow>
