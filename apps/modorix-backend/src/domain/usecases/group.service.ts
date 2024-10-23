@@ -16,7 +16,7 @@ export class GroupsService {
   }
 
   async findGroupById(groupId: string, modorixUserId?: string): Promise<GroupDetails> {
-    const group = await this.groupsRepository.findGroupById(groupId, modorixUserId);
+    const group = await this.groupsRepository.findGroupWithMembersById(groupId, modorixUserId);
     if (group === null) {
       throw new GroupNotFoundError(groupId);
     }
@@ -28,6 +28,7 @@ export class GroupsService {
       description: group.description,
       isJoined: group.isJoined,
       blockedXUsers,
+      membersCount: group.membersCount,
     };
   }
 

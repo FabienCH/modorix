@@ -24,9 +24,10 @@ export class GroupsDrizzleRepository implements GroupsRepository {
     return Promise.all(groups.map(async (group) => this.mapPgGroupToGroup(group, modorixUserId)));
   }
 
-  async findGroupById(groupId: string, modorixUserId: string | undefined): Promise<Group | null> {
+  async findGroupWithMembersById(groupId: string, modorixUserId: string | undefined): Promise<(Group & { membersCount: number }) | null> {
     const groups = await this.pgDatabase.select().from(pgGroups).where(eq(pgGroups.id, groupId));
-    return this.mapPgGroupToGroup(groups[0], modorixUserId);
+    const group = await this.mapPgGroupToGroup(groups[0], modorixUserId);
+    return { ...group, membersCount: groups[0].isJoinedBy.length };
   }
 
   async joinGroup(groupId: string, modorixUserId: string): Promise<void | null> {

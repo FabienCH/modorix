@@ -11,7 +11,7 @@ import MembershipButton from '../components/groups/membership-button';
 import { toggleMembership } from '../domain/group/toggle-group-membership-usecase';
 import { ROUTES } from '../routes';
 
-const defaultColumns = ['Group', 'Description', 'Blocked Users'];
+const defaultColumns = [{ cellElem: 'Group' }, { cellElem: 'Description' }, { cellElem: 'Blocked Users' }];
 
 export default function GroupsPage() {
   const [groupsData, setGroupsData] = useState<(string | JSX.Element)[][]>([]);
@@ -30,7 +30,7 @@ export default function GroupsPage() {
   useEffect(() => {
     retrieveGroupsList(handleClick, !!userSessionInfos?.hasValidAccessToken, dependencies.userSessionStorage);
     if (userSessionInfos?.hasValidAccessToken && columns.length === 3) {
-      columns.push('Membership');
+      columns.push({ cellElem: 'Membership' });
     }
   }, [dependencies, handleClick, userSessionInfos, columns]);
 

@@ -71,10 +71,10 @@ export class GroupsInMemoryRepository implements GroupsRepository {
     return this.groups.filter((group) => ids.includes(group.id)).map((group) => this.toGroup(group, modorixUserId));
   }
 
-  async findGroupById(groupId: string, modorixUserId: string | undefined): Promise<Group | null> {
+  async findGroupWithMembersById(groupId: string, modorixUserId: string | undefined): Promise<(Group & { membersCount: number }) | null> {
     const group = this.groups.find((group) => group.id === groupId);
     if (group) {
-      return this.toGroup(group, modorixUserId);
+      return { ...this.toGroup(group, modorixUserId), membersCount: group.isJoinedBy.length };
     }
     return null;
   }

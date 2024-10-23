@@ -5,6 +5,7 @@ import { XUser } from '@modorix-commons/domain/models/x-user';
 import { useDependenciesContext } from '@modorix-commons/infrastructure/dependencies-context';
 import { useUserSessionInfos } from '@modorix-commons/infrastructure/user-session-context';
 import { buttonVariants } from '@modorix-ui/components/button';
+import { ModorixTooltip } from '@modorix-ui/components/modorix-tooltip';
 import { cn } from '@modorix-ui/utils/utils';
 import { useCallback, useEffect, useState } from 'react';
 import { NavLink, useLoaderData } from 'react-router-dom';
@@ -43,9 +44,32 @@ export default function GroupPage() {
 
   useEffect(() => {
     if (userSessionInfos?.hasValidAccessToken) {
+      const tooltipTrigger = (
+        <span>
+          Blocked by <sup>?</sup>
+        </span>
+      );
+      const numberOfBlockColCOnfig = {
+        index: 3,
+        column: {
+          cellElem: (
+            <ModorixTooltip
+              trigger={tooltipTrigger}
+              content="Members that blocked this X user"
+              contentClassName="font-normal"
+            ></ModorixTooltip>
+          ),
+          className: 'z-[1]',
+        },
+        getCellElem: (xUser: XUser) => (
+          <span className="flex justify-center w-full">
+            {xUser.blockEvents.length} / {group.membersCount}
+          </span>
+        ),
+      };
       const addToBlockQueueColConfig = {
         index: 4,
-        columnLabel: 'Add To Queue',
+        column: { cellElem: 'Add To Queue' },
         getCellElem: (xUser: XUser) => (
           <GroupAddToBlockQueueCell
             modorixUserId={userSessionInfos.userId}
@@ -55,7 +79,7 @@ export default function GroupPage() {
           ></GroupAddToBlockQueueCell>
         ),
       };
-      setOptionalColsConfig([addToBlockQueueColConfig]);
+      setOptionalColsConfig([numberOfBlockColCOnfig, addToBlockQueueColConfig]);
     }
   }, [group, runAddXUserToQueue, userSessionInfos]);
 
@@ -69,16 +93,19 @@ export default function GroupPage() {
       <NavLink className={cn(buttonVariants({ variant: 'outline' }), 'mr-2')} to={ROUTES.Groups}>
         <BackIcon className="w-[12px] mr-2" /> Back
       </NavLink>
-      <div className="flex justify-between items-center	my-3">
+      <header className="flex justify-between items-center	my-3">
         <h1 className="main-title pb-0">{group.name}</h1>
         {userSessionInfos?.hasValidAccessToken ? <MembershipButton group={group} onClick={() => handleMembershipClick(group)} /> : null}
+      </header>
+      <div className="flex justify-between mb-4">
+        <p>{group.description}</p>
+        <p className="text-muted-foreground font-medium">{group.membersCount} members</p>
       </div>
-      <p className="mb-4">{group.description}</p>
       <XUsersTable
         BadgesComponent={AutoResizeBadgesWithTooltip}
         blockedUsers={group.blockedXUsers}
         optionalColsConfig={optionalColsConfig}
-        rowGridCols="grid-cols-[1fr_1fr_2fr_auto]"
+        rowGridCols="grid-cols-[1fr_1fr_2fr_7.25rem_8.5rem]"
       />
     </section>
   );

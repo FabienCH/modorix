@@ -12,5 +12,6 @@ export interface Group extends BaseGroup {
 }
 
 export interface GroupDetails extends BaseGroup {
+  membersCount: number;
   blockedXUsers: XUser[];
 }

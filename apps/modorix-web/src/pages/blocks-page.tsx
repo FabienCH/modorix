@@ -24,14 +24,14 @@ export default function BlocksPage() {
 
   const blockedInGroupsColConfig = {
     index: 2,
-    columnLabel: 'Blocked In',
+    column: { cellElem: 'Blocked In' },
     getCellElem: (xUser: XUser) => (
       <AutoResizeBadgesWithTooltip items={mapToGroupItem(xUser.blockEvents)} badgeVariant="outline"></AutoResizeBadgesWithTooltip>
     ),
   };
   const addToBlockQueueColConfig = {
     index: 4,
-    columnLabel: 'Add To Queue',
+    column: { cellElem: 'Add To Queue' },
     getCellElem: (xUser: XUser) => <AddToQueueButton onClick={() => runAddXUserToQueue(xUser)}></AddToQueueButton>,
   };
 
@@ -83,7 +83,7 @@ export default function BlocksPage() {
             BadgesComponent={AutoResizeBadgesWithTooltip}
             blockedUsers={blockQueue}
             optionalColsConfig={[blockedInGroupsColConfig]}
-            rowGridCols="grid-cols-[1fr_1fr_2fr_2fr]"
+            rowGridCols="grid-cols-[1fr_7.5rem_2fr_2fr]"
           />
         </TabsContent>
         <TabsContent value="add-to-blocks-queue">
@@ -91,7 +91,7 @@ export default function BlocksPage() {
             BadgesComponent={AutoResizeBadgesWithTooltip}
             blockedUsers={blockQueueCandidates}
             optionalColsConfig={[blockedInGroupsColConfig, addToBlockQueueColConfig]}
-            rowGridCols="grid-cols-[1fr_1fr_2fr_2fr_auto]"
+            rowGridCols="grid-cols-[1fr_7.5rem_2fr_2fr_auto]"
           />
         </TabsContent>
         <TabsContent value="my-blocks-list">
@@ -99,7 +99,7 @@ export default function BlocksPage() {
             BadgesComponent={AutoResizeBadgesWithTooltip}
             blockedUsers={blockedUsers}
             optionalColsConfig={[blockedInGroupsColConfig]}
-            rowGridCols="grid-cols-[1fr_1fr_2fr_2fr]"
+            rowGridCols="grid-cols-[1fr_7.5rem_2fr_2fr]"
           />
         </TabsContent>
       </Tabs>
