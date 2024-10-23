@@ -61,15 +61,11 @@ export default function GroupPage() {
           ),
           className: 'z-[1]',
         },
-        getCellElem: (xUser: XUser) => {
-          console.log('🚀 ~ useEffect ~ xUser:', xUser);
-
-          return (
-            <span className="flex justify-center w-full">
-              {xUser.blockEvents.length} / {group.membersCount}
-            </span>
-          );
-        },
+        getCellElem: (xUser: XUser) => (
+          <span className="flex justify-center w-full">
+            {xUser.blockEvents.length} / {group.membersCount}
+          </span>
+        ),
       };
       const addToBlockQueueColConfig = {
         index: 4,
@@ -109,7 +105,7 @@ export default function GroupPage() {
         BadgesComponent={AutoResizeBadgesWithTooltip}
         blockedUsers={group.blockedXUsers}
         optionalColsConfig={optionalColsConfig}
-        rowGridCols="grid-cols-[1fr_1fr_2fr_115px_135px]"
+        rowGridCols="grid-cols-[1fr_1fr_2fr_7.25rem_8.5rem]"
       />
     </section>
   );
