@@ -67,6 +67,10 @@ export class GroupsInMemoryRepository implements GroupsRepository {
     return this.groups.map((group) => this.toGroup(group, modorixUserId));
   }
 
+  async joinedGroups(modorixUserId: string): Promise<Group[]> {
+    return (await this.groupsList(modorixUserId)).filter((group) => group.isJoined);
+  }
+
   async groupsByIds(ids: string[], modorixUserId: string): Promise<Group[]> {
     return this.groups.filter((group) => ids.includes(group.id)).map((group) => this.toGroup(group, modorixUserId));
   }
