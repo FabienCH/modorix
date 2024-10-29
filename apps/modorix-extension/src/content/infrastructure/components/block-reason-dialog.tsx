@@ -3,7 +3,6 @@ import { Button } from '@modorix-ui/components/button';
 import {
   Dialog,
   DialogClose,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogOverlay,
@@ -17,8 +16,11 @@ import { useState } from 'react';
 import { retrieveBlockReasonsList } from '../../domain/usecases/retrieve-block-reasons-usecase';
 import { validateSelectedReasons } from '../../domain/validate-block-reasons';
 import { FormBlockReason } from '../../models/form-block-reason';
+import { FormGroup } from '../../models/form-group';
 import { getBlockReasons } from '../gateways/block-reasons-gateway';
+import { getJoinedGroups } from '../gateways/groups-gateway';
 import { BlockReasonForm } from './block-reason-form';
+import { GroupsToBlockForm } from './groups-to-block-form';
 
 interface BlockReasonDialogProps {
   container: HTMLElement;
@@ -32,6 +34,7 @@ export function BlockReasonDialog({ container, username, onSubmit }: BlockReason
   const [noReasonSelected, setNoReasonSelected] = useState(false);
   const [loadReasonsError, setLoadReasonsError] = useState<string | null>(null);
   const [blockReasonsData, setBlockReasonsData] = useState<FormBlockReason[]>([]);
+  const [groups, setGroups] = useState<FormGroup[]>([]);
   const { dependencies } = useDependenciesContext();
 
   async function runRetrieveBlockReasonsList() {
@@ -40,8 +43,17 @@ export function BlockReasonDialog({ container, username, onSubmit }: BlockReason
     setBlockReasonsData(blockReasons.map((blockReason) => ({ ...blockReason, checked: false })));
   }
 
+  async function runRetrieveJoinedGroups() {
+    const groups = await getJoinedGroups(dependencies.userSessionStorage);
+
+    if ('error' in groups === false) {
+      setGroups(groups.map((group) => ({ ...group, checked: false })));
+    }
+  }
+
   function handleOpenChange(open: boolean): void {
     runRetrieveBlockReasonsList();
+    runRetrieveJoinedGroups();
     setOpen(open);
   }
 
@@ -64,7 +76,7 @@ export function BlockReasonDialog({ container, username, onSubmit }: BlockReason
     return (updatedBlockReasons ?? blockReasonsData).filter((blockReason) => blockReason.checked).map((blockReason) => blockReason.id);
   }
 
-  function handleCheckedChange(blockReason: FormBlockReason): void {
+  function handleBlockReasonsCheckedChange(blockReason: FormBlockReason): void {
     const updatedBlockReasons = blockReasonsData.map((blockReasonItem) => {
       if (blockReasonItem.id !== blockReason.id) {
         return blockReasonItem;
@@ -80,6 +92,17 @@ export function BlockReasonDialog({ container, username, onSubmit }: BlockReason
     }
   }
 
+  function handleGroupsCheckedChange(group: FormGroup): void {
+    const updatedGroup = groups.map((groupItem) => {
+      if (groupItem.id !== group.id) {
+        return groupItem;
+      }
+
+      return { ...groupItem, checked: !groupItem.checked };
+    });
+    setGroups(updatedGroup);
+  }
+
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
@@ -92,16 +115,24 @@ export function BlockReasonDialog({ container, username, onSubmit }: BlockReason
         <DialogPrimitive.Content className={contentClassName}>
           <DialogHeader>
             <DialogTitle>Block {username}</DialogTitle>
-            <DialogDescription>Please choose at least one reason to block {username}</DialogDescription>
           </DialogHeader>
           {loadReasonsError ? (
             <p className="text-error py-2">{loadReasonsError}</p>
           ) : (
-            <BlockReasonForm
-              formBlockReasons={blockReasonsData}
-              displayNoSelectionError={noReasonSelected}
-              onCheckedChange={handleCheckedChange}
-            ></BlockReasonForm>
+            <>
+              <p className="text-sm text-muted-foreground">Please choose at least one reason to block {username}</p>
+              <BlockReasonForm
+                formBlockReasons={blockReasonsData}
+                displayNoSelectionError={noReasonSelected}
+                onCheckedChange={handleBlockReasonsCheckedChange}
+              ></BlockReasonForm>
+              <p className="text-sm text-muted-foreground">Please select in which of your groups you want to block {username}</p>
+              {groups.length ? (
+                <GroupsToBlockForm formGroups={groups} onCheckedChange={handleGroupsCheckedChange}></GroupsToBlockForm>
+              ) : (
+                <p className="pr-2.5 text-sm text-warning">You haven't joined any group yet</p>
+              )}
+            </>
           )}
           <DialogFooter>
             <DialogClose asChild>
