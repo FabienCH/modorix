@@ -6,7 +6,7 @@ import { BlockReasonDialog } from './block-reason-dialog';
 export function renderBlockButton(
   buttonsContainer: HTMLElement,
   linkElement: HTMLAnchorElement,
-  confirmBlock: (blockReasonIds: string[]) => void,
+  confirmBlock: (blockReasonIds: string[], groupIds: string[]) => void,
 ) {
   const blockButtonContainer = document.createElement('div');
   blockButtonContainer!.id = 'modorix-root';

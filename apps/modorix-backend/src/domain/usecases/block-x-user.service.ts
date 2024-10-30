@@ -31,7 +31,7 @@ export class BlockXUsersService {
 
     const groups = await this.groupsRepository.groupsByIds(blockedInGroupsIds, blockingModorixUserId);
 
-    if (groups.find((group) => !group.isJoined)) {
+    if (groups.length && groups.find((group) => !group.isJoined)) {
       throw new GroupNotJoinedError(xUsername, blockedInGroupsIds);
     }
 

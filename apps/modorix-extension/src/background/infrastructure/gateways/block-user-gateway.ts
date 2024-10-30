@@ -8,6 +8,7 @@ export async function saveBlockUser(
   xId: string,
   xUsername: string,
   blockReasonIds: string[],
+  blockedInGroupsIds: string[],
   userSessionStorage: UserSessionStorage,
 ): Promise<Response> {
   const bodyData: BlockXUserRequest = {
@@ -15,7 +16,7 @@ export async function saveBlockUser(
     xUsername,
     blockedAt: new Date().toISOString(),
     blockReasonIds,
-    blockedInGroupsIds: [],
+    blockedInGroupsIds,
   };
   return fetchWithAuth(
     blockedXUsersBaseUrl,

@@ -8,7 +8,7 @@ export const BlockUserReasons = ({ items }: { items: BlockReason[] }) => {
     <BadgesTooltip
       buttonOptions={{ label, className }}
       items={items}
-      badgeVariant="secondary"
+      badgeVariant="outline-secondary"
       contentClassName="max-w-[calc(100vw-1rem)]"
     ></BadgesTooltip>
   );

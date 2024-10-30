@@ -25,7 +25,7 @@ import { GroupsToBlockForm } from './groups-to-block-form';
 interface BlockReasonDialogProps {
   container: HTMLElement;
   username: string;
-  onSubmit: (blockReasonIds: string[]) => void;
+  onSubmit: (blockReasonIds: string[], groupIds: string[]) => void;
 }
 
 export function BlockReasonDialog({ container, username, onSubmit }: BlockReasonDialogProps) {
@@ -44,10 +44,10 @@ export function BlockReasonDialog({ container, username, onSubmit }: BlockReason
   }
 
   async function runRetrieveJoinedGroups() {
-    const groups = await getJoinedGroups(dependencies.userSessionStorage);
+    const joinedGroups = await getJoinedGroups(dependencies.userSessionStorage);
 
-    if ('error' in groups === false) {
-      setGroups(groups.map((group) => ({ ...group, checked: false })));
+    if ('error' in joinedGroups === false) {
+      setGroups(joinedGroups.map((group) => ({ ...group, checked: false })));
     }
   }
 
@@ -68,12 +68,16 @@ export function BlockReasonDialog({ container, username, onSubmit }: BlockReason
       return;
     }
 
-    onSubmit(getSelectedReasons());
+    onSubmit(getSelectedReasons(), getSelectedGroups());
     setOpen(false);
   }
 
-  function getSelectedReasons(updatedBlockReasons?: FormBlockReason[]): string[] {
-    return (updatedBlockReasons ?? blockReasonsData).filter((blockReason) => blockReason.checked).map((blockReason) => blockReason.id);
+  function getSelectedReasons(): string[] {
+    return blockReasonsData.filter((blockReason) => blockReason.checked).map((blockReason) => blockReason.id);
+  }
+
+  function getSelectedGroups(): string[] {
+    return groups.filter((group) => group.checked).map((group) => group.id);
   }
 
   function handleBlockReasonsCheckedChange(blockReason: FormBlockReason): void {
@@ -103,6 +107,13 @@ export function BlockReasonDialog({ container, username, onSubmit }: BlockReason
     setGroups(updatedGroup);
   }
 
+  function handleAllGroupsCheckedChange(isChecked: boolean): void {
+    console.log('🚀 ~ handleAllGroupsCheckedChange ~ isChecked:', isChecked);
+    const updatedGroup = groups.map((groupItem) => ({ ...groupItem, checked: isChecked }));
+    console.log('🚀 ~ handleAllGroupsCheckedChange ~ updatedGroup:', updatedGroup);
+    setGroups(updatedGroup);
+  }
+
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
@@ -128,7 +139,11 @@ export function BlockReasonDialog({ container, username, onSubmit }: BlockReason
               ></BlockReasonForm>
               <p className="text-sm text-muted-foreground">Please select in which of your groups you want to block {username}</p>
               {groups.length ? (
-                <GroupsToBlockForm formGroups={groups} onCheckedChange={handleGroupsCheckedChange}></GroupsToBlockForm>
+                <GroupsToBlockForm
+                  formGroups={groups}
+                  onCheckedChange={handleGroupsCheckedChange}
+                  onAllCheckedChange={handleAllGroupsCheckedChange}
+                ></GroupsToBlockForm>
               ) : (
                 <p className="pr-2.5 text-sm text-warning">You haven't joined any group yet</p>
               )}

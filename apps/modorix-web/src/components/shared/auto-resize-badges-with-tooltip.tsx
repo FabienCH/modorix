@@ -11,7 +11,7 @@ interface UpdatedBadgeDisplayConfig {
 
 interface AutoResizeBadgesWithTooltipProps {
   items: { id: string; label: string }[];
-  badgeVariant: 'outline' | 'secondary';
+  badgeVariant: 'outline' | 'outline-secondary';
 }
 
 export const AutoResizeBadgesWithTooltip = ({ items, badgeVariant }: AutoResizeBadgesWithTooltipProps) => {

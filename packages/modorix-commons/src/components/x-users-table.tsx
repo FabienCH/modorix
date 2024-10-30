@@ -17,7 +17,7 @@ export interface OptionalColConfig {
 }
 
 interface XUsersTableProps {
-  BadgesComponent: ({ items, badgeVariant }: { items: BlockReason[]; badgeVariant: 'outline' | 'secondary' }) => JSX.Element;
+  BadgesComponent: ({ items, badgeVariant }: { items: BlockReason[]; badgeVariant: 'outline' | 'outline-secondary' }) => JSX.Element;
   blockedUsers: XUser[];
   rowGridCols: `grid-cols-${string}`;
   optionalColsConfig?: OptionalColConfig[];

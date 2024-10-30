@@ -10,6 +10,7 @@ export interface BlockUserMessageData {
   url: string;
   active: boolean;
   blockReasonIds: string[];
+  groupIds: string[];
 }
 
 type BlockUserMessage = Message<BlockUserMessageData>;
@@ -17,6 +18,7 @@ type BlockUserMessage = Message<BlockUserMessageData>;
 export interface RequestBlockUserMessageData {
   xUsername: string;
   blockReasonIds: string[];
+  groupIds: string[];
 }
 
 type RequestBlockUserMessage = Message<RequestBlockUserMessageData>;
