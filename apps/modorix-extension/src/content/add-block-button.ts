@@ -30,8 +30,8 @@ function addBlockButton(cardElement: HTMLElement, linkElement: HTMLAnchorElement
     return;
   }
 
-  renderBlockButton(buttonsContainer, linkElement, (blockReasonIds) => {
-    sendBlockXUserMessage(linkElement.href, blockReasonIds);
+  renderBlockButton(buttonsContainer, linkElement, (blockReasonIds, groupIds) => {
+    sendBlockXUserMessage(linkElement.href, blockReasonIds, groupIds);
   });
 }
 

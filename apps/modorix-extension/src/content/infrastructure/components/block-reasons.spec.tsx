@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { act } from 'react';
 import { MockInstance } from 'vitest';
 import * as BlockReasonsGateway from '../gateways/block-reasons-gateway';
+import * as GroupsGateway from '../gateways/groups-gateway';
 import { BlockReasonDialog } from './block-reason-dialog';
 
 async function clickOnCheckbox(name: string) {
@@ -31,20 +32,40 @@ describe('Block user reasons', () => {
       label: 'Spreading fake news',
     },
   ];
+  const groups = [
+    {
+      id: 'FR',
+      name: 'France',
+      description: '',
+      isJoined: true,
+    },
+    {
+      id: 'scientists',
+      name: 'Scientists',
+      description: '',
+      isJoined: true,
+    },
+  ];
   let getBlockReasonsSpy: MockInstance;
+  let getGroupsSpy: MockInstance;
   let selectedBlockReasonIds: string[] | undefined;
+  let selectedGroupIds: string[] | undefined;
 
   beforeEach(async () => {
     getBlockReasonsSpy = vi.spyOn(BlockReasonsGateway, 'getBlockReasons');
+    getGroupsSpy = vi.spyOn(GroupsGateway, 'getJoinedGroups');
     getBlockReasonsSpy.mockReturnValue(await blockReasons);
+    getGroupsSpy.mockReturnValue(await groups);
     selectedBlockReasonIds = undefined;
+    selectedGroupIds = undefined;
 
     render(
       <BlockReasonDialog
         container={document.body}
         username="Xusername"
-        onSubmit={(blockReasonIds) => {
+        onSubmit={(blockReasonIds, groupIds) => {
           selectedBlockReasonIds = blockReasonIds;
+          selectedGroupIds = groupIds;
         }}
       />,
     );
@@ -64,13 +85,15 @@ describe('Block user reasons', () => {
       expect(selectedBlockReasonIds).toEqual(['0']);
     });
 
-    it('should block a user with multiple reasons', async () => {
+    it('should block a user with multiple reasons and groups', async () => {
       await clickOnCheckbox('Harassment');
       await clickOnCheckbox('Racism / Xenophobia');
+      await clickOnCheckbox('France');
 
       clickToSubmitForm();
 
       expect(selectedBlockReasonIds).toEqual(['0', '1']);
+      expect(selectedGroupIds).toEqual(['FR']);
     });
 
     it('should not block a user with no reason', async () => {

@@ -28,6 +28,15 @@ export class GroupsController {
     return this.groupsService.groupsList(user.sub);
   }
 
+  @Get('groups/joined')
+  @HttpCode(200)
+  joinedGroups(@AuthUser() user: JwtPayload): Promise<Group[]> {
+    if (!user.sub) {
+      throw new UnauthorizedException();
+    }
+    return this.groupsService.joinedGroups(user.sub);
+  }
+
   @Get('groups/:groupId')
   @HttpCode(200)
   async groupById(@AuthUser() user: JwtPayload, @Param() { groupId }: { groupId: string }): Promise<GroupDetails> {

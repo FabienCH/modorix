@@ -2,6 +2,7 @@ import { ModorixTable } from '@modorix-ui/components/modorix-table';
 import { useEffect, useState } from 'react';
 import { BlockReason } from '../domain/models/block-reason';
 import { XUser } from '../domain/models/x-user';
+import { BadeTooltipVariant } from './badges-tooltip';
 import { XUserRowConfig, XUsersData, mapToXUsersData } from './x-users-table-data';
 
 const defaultColumns: Array<{ cellElem: JSX.Element | string; className?: string }> = [
@@ -17,7 +18,7 @@ export interface OptionalColConfig {
 }
 
 interface XUsersTableProps {
-  BadgesComponent: ({ items, badgeVariant }: { items: BlockReason[]; badgeVariant: 'outline' | 'secondary' }) => JSX.Element;
+  BadgesComponent: ({ items, badgeVariant }: { items: BlockReason[]; badgeVariant: BadeTooltipVariant }) => JSX.Element;
   blockedUsers: XUser[];
   rowGridCols: `grid-cols-${string}`;
   optionalColsConfig?: OptionalColConfig[];

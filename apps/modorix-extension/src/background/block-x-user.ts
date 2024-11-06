@@ -16,7 +16,7 @@ export async function blockXUserInNewTab(data: BlockUserMessageData): Promise<ch
     url: data.url,
     active: data.active,
   });
-  chrome.storage.local.set({ blockReasonIds: JSON.stringify(data.blockReasonIds) });
+  chrome.storage.local.set({ blockReasonIds: JSON.stringify(data.blockReasonIds), groupIds: JSON.stringify(data.groupIds) });
   chrome.tabs.onUpdated.addListener(runBlockUser);
   return blockUserTab;
 }
@@ -28,7 +28,13 @@ export async function handleRequestBlockUser(data: RequestBlockUserMessageData) 
 export async function handleBlockedUser(data: UserBlockedMessageData): Promise<void> {
   if (isUserBlockedSuccessData(data) && requestBlockUserMessageData?.xUsername === data.xUsername) {
     try {
-      await saveBlockUser(data.xUserId, data.xUsername, requestBlockUserMessageData.blockReasonIds, dependencies.userSessionStorage);
+      await saveBlockUser(
+        data.xUserId,
+        data.xUsername,
+        requestBlockUserMessageData.blockReasonIds,
+        requestBlockUserMessageData.groupIds,
+        dependencies.userSessionStorage,
+      );
     } catch (error) {
       console.error(`Modorix: Could not saved blocked user ${data.xUsername}`);
     }

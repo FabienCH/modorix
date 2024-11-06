@@ -30,10 +30,11 @@ function injectBlockRequestListenerScript() {
   const confirmBlockBtn = await lookForHtmlElement("[data-testid='confirmationSheetConfirm']");
 
   if (confirmBlockBtn) {
-    const blockReasonIdsStr = await chrome.storage.local.get('blockReasonIds');
-    const blockReasonIds = JSON.parse(blockReasonIdsStr.blockReasonIds);
+    const blockData = await chrome.storage.local.get(['blockReasonIds', 'groupIds']);
+    const blockReasonIds = JSON.parse(blockData.blockReasonIds);
+    const groupIds = JSON.parse(blockData.groupIds);
     confirmBlockBtn.click();
-    await sendRequestBlockXUserMessage(xUsername, blockReasonIds);
+    await sendRequestBlockXUserMessage(xUsername, blockReasonIds, groupIds);
     document.addEventListener(
       MessageIds.USER_BLOCKED,
       async (event) => {

@@ -1,6 +1,6 @@
 import { Group } from '@modorix-commons/domain/models/group';
 import { Inject, Injectable } from '@nestjs/common';
-import { eq, inArray, sql } from 'drizzle-orm';
+import { arrayContains, eq, inArray, sql } from 'drizzle-orm';
 import { pgBlockEvent } from 'src/infrastructure/database/schema/block-event';
 import { GroupsRepository } from '../../../domain/repositories/groups.repository';
 import { PG_DATABASE } from '../../database/drizzle.module';
@@ -15,6 +15,14 @@ export class GroupsDrizzleRepository implements GroupsRepository {
   async groupsList(modorixUserId: string | undefined): Promise<Group[]> {
     const groups = await this.pgDatabase.select().from(pgGroups);
     return Promise.all(groups.map(async (group) => this.mapPgGroupToGroup(group, modorixUserId)));
+  }
+
+  async joinedGroups(modorixUserId: string): Promise<Group[]> {
+    const joinedGroups = await this.pgDatabase
+      .select()
+      .from(pgGroups)
+      .where(arrayContains(pgGroups.isJoinedBy, [modorixUserId]));
+    return Promise.all(joinedGroups.map(async (group) => this.mapPgGroupToGroup(group, modorixUserId)));
   }
 
   async groupsByIds(ids: string[], modorixUserId: string): Promise<Group[]> {
