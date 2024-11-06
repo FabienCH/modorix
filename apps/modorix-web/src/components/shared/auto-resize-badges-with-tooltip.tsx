@@ -1,4 +1,4 @@
-import { BadgesTooltip } from '@modorix-commons/components/badges-tooltip';
+import { BadeTooltipVariant, BadgesTooltip } from '@modorix-commons/components/badges-tooltip';
 import { BlockReason } from '@modorix-commons/domain/models/block-reason';
 import { Badge } from '@modorix-ui/components/badge';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -11,7 +11,7 @@ interface UpdatedBadgeDisplayConfig {
 
 interface AutoResizeBadgesWithTooltipProps {
   items: { id: string; label: string }[];
-  badgeVariant: 'outline' | 'outline-secondary';
+  badgeVariant: BadeTooltipVariant;
 }
 
 export const AutoResizeBadgesWithTooltip = ({ items, badgeVariant }: AutoResizeBadgesWithTooltipProps) => {

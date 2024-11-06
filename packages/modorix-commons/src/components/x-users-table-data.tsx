@@ -1,5 +1,6 @@
 import { mapToXUserData } from '../adapters/to-x-user-data';
 import { XUser } from '../domain/models/x-user';
+import { BadeTooltipVariant } from './badges-tooltip';
 
 export interface XUserRowConfig {
   index: number;
@@ -7,7 +8,7 @@ export interface XUserRowConfig {
 }
 
 interface XUsersRowProps {
-  BadgesComponent: (props: { items: { id: string; label: string }[]; badgeVariant: 'outline' | 'outline-secondary' }) => JSX.Element;
+  BadgesComponent: (props: { items: { id: string; label: string }[]; badgeVariant: BadeTooltipVariant }) => JSX.Element;
   blockedUsers: XUser[];
   additionalRows: Array<XUserRowConfig> | undefined;
 }

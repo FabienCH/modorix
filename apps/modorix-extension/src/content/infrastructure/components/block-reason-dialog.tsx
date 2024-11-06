@@ -108,9 +108,7 @@ export function BlockReasonDialog({ container, username, onSubmit }: BlockReason
   }
 
   function handleAllGroupsCheckedChange(isChecked: boolean): void {
-    console.log('🚀 ~ handleAllGroupsCheckedChange ~ isChecked:', isChecked);
     const updatedGroup = groups.map((groupItem) => ({ ...groupItem, checked: isChecked }));
-    console.log('🚀 ~ handleAllGroupsCheckedChange ~ updatedGroup:', updatedGroup);
     setGroups(updatedGroup);
   }
 

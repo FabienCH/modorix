@@ -2,10 +2,12 @@ import { Badge } from '@modorix-ui/components/badge';
 import { ModorixTooltip } from '@modorix-ui/components/modorix-tooltip';
 import { cn } from '@modorix-ui/utils/utils';
 
+export type BadeTooltipVariant = 'outline' | 'outline-secondary';
+
 interface BadgesTooltipProps {
   items: { id: string; label: string }[];
   buttonOptions: { label: string; className?: string; setLabelElem?: (el: HTMLDivElement) => void };
-  badgeVariant: 'outline' | 'outline-secondary';
+  badgeVariant: BadeTooltipVariant;
   contentClassName?: string;
 }
 
