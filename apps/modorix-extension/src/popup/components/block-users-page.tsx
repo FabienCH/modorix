@@ -6,7 +6,7 @@ import { useDependenciesContext } from '@modorix-commons/infrastructure/dependen
 import { useUserSessionInfos } from '@modorix-commons/infrastructure/user-session-context';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@modorix-ui/components/tabs';
 import { useEffect, useState } from 'react';
-import { BlocksQueueUpdateMessageData } from '../../shared/messages/event-message';
+import { BlocksQueueUpdateData } from '../../shared/messages/event-message';
 import { onRunBlocksQueueUpdate, requestRunBlocksQueue } from '../popup-handler';
 import { BlockUserReasons } from './block-user-reasons';
 import { BlocksQueue } from './blocks-queue';
@@ -18,7 +18,7 @@ enum TabsEnum {
 
 export default function BlockUsers() {
   const [blockedUsers, setBlockedUsers] = useState<XUser[]>([]);
-  const [blockQueueState, setBlockQueueState] = useState<BlocksQueueUpdateMessageData>({ blockQueue: [], runQueueStatus: 'ready' });
+  const [blockQueueState, setBlockQueueState] = useState<BlocksQueueUpdateData>({ blockQueue: [], runQueueStatus: 'ready' });
   const { dependencies } = useDependenciesContext();
   const { setUserSessionInfos } = useUserSessionInfos();
 

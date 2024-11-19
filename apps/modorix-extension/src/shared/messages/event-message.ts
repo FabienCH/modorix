@@ -1,4 +1,5 @@
 import { XUser } from '@modorix-commons/domain/models/x-user';
+import { GatewayXUser } from '@modorix-commons/gateways/gateway-x-user';
 import { MessageIds } from './message-ids.enum';
 
 interface Message<Data> {
@@ -38,6 +39,11 @@ type SetHeadersMessage = Message<SetHeadersMessageData>;
 export type RunQueueStatus = 'ready' | 'error' | 'waitingHeaders' | 'running';
 
 export interface BlocksQueueUpdateMessageData {
+  runQueueStatus: RunQueueStatus;
+  blockQueue: GatewayXUser[];
+}
+
+export interface BlocksQueueUpdateData {
   runQueueStatus: RunQueueStatus;
   blockQueue: XUser[];
 }
