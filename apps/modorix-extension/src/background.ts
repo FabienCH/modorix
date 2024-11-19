@@ -2,17 +2,20 @@ import { setGatewayBaseUrl } from '@modorix-commons/gateways/base-url-config';
 import { blockXUserInNewTab, handleBlockedUser, handleRequestBlockUser } from './background/block-x-user';
 import {
   onBlockUserMessage,
+  onGetRunBlocksQueueStatusMessage,
   onRequestBlockUserMessage,
   onRequestRunBlocksQueueMessage,
   onUserBlockedMessage,
 } from './background/infrastructure/messages-handlers/messages-listener';
 import {
+  sendBlockQueueStatusUpdateMessage,
   sendBlockQueueUpdateMessage,
   sendNewXTabToListenLoadedMessage,
 } from './background/infrastructure/messages-handlers/messages-sender';
+import { getBlocksQueueStatus } from './background/usecases/get-blocks-queue-status-usecase';
 import { runBlocksQueue } from './background/usecases/run-blocks-queue-usecase';
 import { dependencies } from './dependencies';
-import { BlocksQueueUpdateMessageData } from './shared/messages/event-message';
+import { BlocksQueueStatusUpdateMessageData, BlocksQueueUpdateMessageData } from './shared/messages/event-message';
 
 console.log('background loaded !');
 
@@ -38,5 +41,11 @@ onRequestRunBlocksQueueMessage(async (data) => {
     sendBlockQueueUpdateMessage(queueUpdateData);
   };
   await runBlocksQueue(data.blockQueue, notify, dependencies.userSessionStorage);
+});
+onGetRunBlocksQueueStatusMessage(async () => {
+  const notify = (queueUpdateStatusData: BlocksQueueStatusUpdateMessageData) => {
+    sendBlockQueueStatusUpdateMessage(queueUpdateStatusData);
+  };
+  await getBlocksQueueStatus(notify);
 });
 onUserBlockedMessage(async (data) => await handleBlockedUser(data));

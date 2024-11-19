@@ -6,4 +6,6 @@ export enum MessageIds {
   REQUEST_RUN_BLOCKS_QUEUE = 'requestRunBlocksQueue',
   SET_HEADERS = 'setHeaders',
   BLOCKS_QUEUE_UPDATE = 'blocksQueueUpdate',
+  GET_BLOCKS_QUEUE_STATUS = 'getBlocksQueueStatus',
+  BLOCKS_QUEUE_STATUS_UPDATE = 'blocksQueueStatusUpdate',
 }

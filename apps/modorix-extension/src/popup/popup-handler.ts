@@ -1,12 +1,25 @@
 import { XUser } from '@modorix-commons/domain/models/x-user';
-import { BlocksQueueUpdateData } from '../shared/messages/event-message';
-import { onRunBlocksQueueUpdateMessage } from './messages-handlers/messages-listener';
-import { sendRequestRunBlocksQueueMessage } from './messages-handlers/messages-sender';
+import { RunQueueStatus } from '../shared/messages/event-message';
+import { onBlocksQueueStatusUpdateMessage, onRunBlocksQueueUpdateMessage } from './messages-handlers/messages-listener';
+import { sendGetRunBlocksQueueStatusMessage, sendRequestRunBlocksQueueMessage } from './messages-handlers/messages-sender';
 
 export async function requestRunBlocksQueue(blockQueue: XUser[]) {
-  await sendRequestRunBlocksQueueMessage(blockQueue);
+  await sendRequestRunBlocksQueueMessage(
+    blockQueue.map((xUser) => ({
+      ...xUser,
+      blockEvents: xUser.blockEvents.map((event) => ({ ...event, blockedAt: event.blockedAt.toISOString() })),
+    })),
+  );
 }
 
-export function onRunBlocksQueueUpdate(presenterNotifier: (state: BlocksQueueUpdateData) => void): void {
+export async function requestBlocksQueueStatus() {
+  await sendGetRunBlocksQueueStatusMessage();
+}
+
+export function onRunBlocksQueueUpdate(presenterNotifier: (state: { runQueueStatus: RunQueueStatus; blockQueue: XUser[] }) => void): void {
   onRunBlocksQueueUpdateMessage(presenterNotifier);
+}
+
+export function onBlocksQueueStatusUpdate(presenterNotifier: (state: { runQueueStatus: RunQueueStatus }) => void): void {
+  onBlocksQueueStatusUpdateMessage(presenterNotifier);
 }
