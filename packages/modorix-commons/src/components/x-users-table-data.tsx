@@ -26,7 +26,7 @@ export const mapToXUsersData = ({ BadgesComponent, blockedUsers, additionalRows 
     const xUserRow: XUserRow = [
       xUserData.xUsername,
       xUserData.firstBlockedAt,
-      <BadgesComponent items={xUserData.blockReasons} badgeVariant="outline-secondary"></BadgesComponent>,
+      <BadgesComponent key={`${user.xId}-block-reasons`} items={xUserData.blockReasons} badgeVariant="outline-secondary"></BadgesComponent>,
     ];
     additionalRows?.forEach((row) => {
       xUserRow.splice(row.index, 0, row.getCellElem(user));

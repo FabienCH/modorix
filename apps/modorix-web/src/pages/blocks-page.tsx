@@ -26,7 +26,11 @@ export default function BlocksPage() {
     index: 2,
     column: { cellElem: 'Blocked In' },
     getCellElem: (xUser: XUser) => (
-      <AutoResizeBadgesWithTooltip items={mapToGroupItem(xUser.blockEvents)} badgeVariant="outline"></AutoResizeBadgesWithTooltip>
+      <AutoResizeBadgesWithTooltip
+        key={`${xUser.xId}-group`}
+        items={mapToGroupItem(xUser.blockEvents)}
+        badgeVariant="outline"
+      ></AutoResizeBadgesWithTooltip>
     ),
   };
   const addToBlockQueueColConfig = {
