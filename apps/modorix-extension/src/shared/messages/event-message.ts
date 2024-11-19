@@ -25,6 +25,7 @@ type RequestBlockUserMessage = Message<RequestBlockUserMessageData>;
 
 export interface RequestRunBlocksQueueMessageData {
   blockQueue: GatewayXUser[];
+  xTabId: number;
 }
 
 type RequestRunBlocksQueueMessage = Message<RequestRunBlocksQueueMessageData>;

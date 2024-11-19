@@ -1,7 +1,7 @@
 import { GatewayXUser } from '@modorix-commons/gateways/gateway-x-user';
 import { UserSessionStorage } from '@modorix/commons';
 import { BlocksQueueUpdateMessageData } from '../../shared/messages/event-message';
-import { getBLockQueue, removeBlockQueueItem, setBlockQueue } from '../domain/blocks-queue';
+import { getBlockQueue, removeBlockQueueItem, setBlockQueue } from '../domain/blocks-queue';
 import { updateBlockedUser } from '../infrastructure/gateways/block-user-gateway';
 import { blockUserOnX } from '../infrastructure/gateways/x-gateway';
 import { waitForXHeaders } from '../wait-for-x-headers';
@@ -28,7 +28,7 @@ export async function runBlocksQueue(
       return new Error(`${response.status}`);
     }
     removeBlockQueueItem(xUser);
-    const newBlockQueue = getBLockQueue();
+    const newBlockQueue = getBlockQueue();
     notifyView({ runQueueStatus: newBlockQueue.length ? 'running' : 'ready', blockQueue: newBlockQueue });
   }
 }

@@ -48,16 +48,6 @@ export default function BlockUsers() {
     })();
   }, [dependencies, setUserSessionInfos]);
 
-  useEffect(() => {
-    if (blockQueueState.runQueueStatus === 'error') {
-      chrome.action.setBadgeText({ text: '!' });
-      chrome.action.setBadgeBackgroundColor({ color: 'red' });
-    } else {
-      chrome.action.setBadgeText({ text: '' });
-      chrome.action.setBadgeBackgroundColor({ color: 'transparent' });
-    }
-  }, [blockQueueState]);
-
   async function runQueue(): Promise<void> {
     await requestRunBlocksQueue(blockQueueState.blockQueue);
   }

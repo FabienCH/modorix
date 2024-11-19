@@ -24,7 +24,7 @@ onRequestRunBlocksQueueMessage(() => {
     MessageIds.SET_HEADERS,
     async (event) => {
       const data: SetHeadersMessageData = event.detail;
-      await chrome.runtime.sendMessage('', {
+      await chrome.runtime.sendMessage(null, {
         id: MessageIds.SET_HEADERS,
         data,
       });

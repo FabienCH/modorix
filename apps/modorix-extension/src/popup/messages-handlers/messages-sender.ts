@@ -3,20 +3,22 @@ import { RequestRunBlocksQueueMessageData } from '../../shared/messages/event-me
 import { MessageIds } from '../../shared/messages/message-ids.enum';
 
 export async function sendRequestRunBlocksQueueMessage(blockQueue: GatewayXUser[]): Promise<void> {
-  const data: RequestRunBlocksQueueMessageData = { blockQueue };
-  const xTab = await chrome.tabs.query({ url: 'https://x.com/*' });
-  await chrome.tabs.sendMessage(xTab[0].id ?? 0, {
-    id: MessageIds.REQUEST_RUN_BLOCKS_QUEUE,
-    data,
-  });
-  await chrome.runtime.sendMessage('', {
-    id: MessageIds.REQUEST_RUN_BLOCKS_QUEUE,
-    data,
-  });
+  const existingXTabs = await chrome.tabs.query({ url: 'https://x.com/*' });
+  const xTab = existingXTabs?.length ? existingXTabs[0] : await chrome.tabs.create({ url: 'https://x.com' });
+  if (xTab.id) {
+    if (!xTab.active) {
+      chrome.tabs.update(xTab.id, { active: true });
+    }
+    const data: RequestRunBlocksQueueMessageData = { blockQueue, xTabId: xTab.id };
+    await chrome.runtime.sendMessage(null, {
+      id: MessageIds.REQUEST_RUN_BLOCKS_QUEUE,
+      data,
+    });
+  }
 }
 
 export async function sendGetRunBlocksQueueStatusMessage(): Promise<void> {
-  await chrome.runtime.sendMessage('', {
+  await chrome.runtime.sendMessage(null, {
     id: MessageIds.GET_BLOCKS_QUEUE_STATUS,
   });
 }

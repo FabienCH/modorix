@@ -6,7 +6,7 @@ export function setBlockQueue(value: GatewayXUser[]): void {
   blocksQueue = [...value];
 }
 
-export function getBLockQueue(): GatewayXUser[] {
+export function getBlockQueue(): GatewayXUser[] {
   return blocksQueue;
 }
 
