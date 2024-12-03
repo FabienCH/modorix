@@ -5,6 +5,7 @@ import {
   SetHeadersMessageData,
   UserBlockedMessageData,
   isBlockUserMessage,
+  isGetBlocksQueueStatusMessage,
   isRequestBlockUserMessage,
   isRequestRunBlocksQueueMessage,
   isSetHeadersMessage,
@@ -39,6 +40,14 @@ export function onRequestRunBlocksQueueMessage(callback: (data: RequestRunBlocks
   chrome.runtime.onMessage.addListener(async (message) => {
     if (isRequestRunBlocksQueueMessage(message)) {
       await callback(message.data);
+    }
+  });
+}
+
+export function onGetRunBlocksQueueStatusMessage(callback: () => Promise<void>) {
+  chrome.runtime.onMessage.addListener(async (message) => {
+    if (isGetBlocksQueueStatusMessage(message)) {
+      await callback();
     }
   });
 }

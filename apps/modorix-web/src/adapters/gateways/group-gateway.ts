@@ -1,8 +1,8 @@
 import { Group, GroupDetails } from '@modorix-commons/domain/models/group';
+import { mapToXUser } from '@modorix-commons/gateways/block-user-gateway';
 import { AuthError, fetchWithAuth, mapResponseWithAuth } from '@modorix-commons/gateways/fetch-with-auth';
 import { GatewayGroupDetails } from '@modorix-commons/gateways/gateway-group';
 import { getAccessTokenFromStorage, GetStorageItem, UserSessionStorage } from '@modorix/commons';
-import { mapToXUser } from '../../../../../packages/modorix-commons/src/gateways/block-user-gateway';
 
 const groupBaseUrl = `${import.meta.env.VITE_API_BASE_URL}/groups`;
 const publicGroupBaseUrl = `${import.meta.env.VITE_API_BASE_URL}/public/groups`;

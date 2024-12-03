@@ -1,4 +1,4 @@
-import { BlocksQueueUpdateMessageData } from '../../../shared/messages/event-message';
+import { BlocksQueueStatusUpdateMessageData, BlocksQueueUpdateMessageData } from '../../../shared/messages/event-message';
 import { MessageIds } from '../../../shared/messages/message-ids.enum';
 
 export function sendNewXTabToListenLoadedMessage(tabId: number): Promise<void> {
@@ -8,5 +8,9 @@ export function sendNewXTabToListenLoadedMessage(tabId: number): Promise<void> {
 }
 
 export function sendBlockQueueUpdateMessage(data: BlocksQueueUpdateMessageData): Promise<void> {
-  return chrome.runtime.sendMessage('', { id: MessageIds.BLOCKS_QUEUE_UPDATE, data });
+  return chrome.runtime.sendMessage(null, { id: MessageIds.BLOCKS_QUEUE_UPDATE, data });
+}
+
+export function sendBlockQueueStatusUpdateMessage(data: BlocksQueueStatusUpdateMessageData): Promise<void> {
+  return chrome.runtime.sendMessage(null, { id: MessageIds.BLOCKS_QUEUE_STATUS_UPDATE, data });
 }

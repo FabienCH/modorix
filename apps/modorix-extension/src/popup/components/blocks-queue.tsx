@@ -1,10 +1,13 @@
 import { XUsersTable } from '@modorix-commons/components/x-users-table';
 import { Button } from '@modorix-ui/components/button';
+import { XUser } from '@modorix/commons';
 import { useEffect, useState } from 'react';
-import { BlocksQueueUpdateMessageData, RunQueueStatus } from '../../shared/messages/event-message';
+import { RunQueueStatus } from '../../shared/messages/event-message';
 import { BlockUserReasons } from './block-user-reasons';
 
-interface BlocksQueueProps extends BlocksQueueUpdateMessageData {
+interface BlocksQueueProps {
+  runQueueStatus: RunQueueStatus;
+  blockQueue: XUser[];
   onRunQueueClick: () => Promise<void>;
 }
 

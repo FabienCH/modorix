@@ -6,8 +6,8 @@ import { useDependenciesContext } from '@modorix-commons/infrastructure/dependen
 import { useUserSessionInfos } from '@modorix-commons/infrastructure/user-session-context';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@modorix-ui/components/tabs';
 import { useEffect, useState } from 'react';
-import { BlocksQueueUpdateMessageData } from '../../shared/messages/event-message';
-import { onRunBlocksQueueUpdate, requestRunBlocksQueue } from '../popup-handler';
+import { RunQueueStatus } from '../../shared/messages/event-message';
+import { onBlocksQueueStatusUpdate, onRunBlocksQueueUpdate, requestBlocksQueueStatus, requestRunBlocksQueue } from '../popup-handler';
 import { BlockUserReasons } from './block-user-reasons';
 import { BlocksQueue } from './blocks-queue';
 
@@ -18,7 +18,10 @@ enum TabsEnum {
 
 export default function BlockUsers() {
   const [blockedUsers, setBlockedUsers] = useState<XUser[]>([]);
-  const [blockQueueState, setBlockQueueState] = useState<BlocksQueueUpdateMessageData>({ blockQueue: [], runQueueStatus: 'ready' });
+  const [blockQueueState, setBlockQueueState] = useState<{ runQueueStatus: RunQueueStatus; blockQueue: XUser[] }>({
+    blockQueue: [],
+    runQueueStatus: 'ready',
+  });
   const { dependencies } = useDependenciesContext();
   const { setUserSessionInfos } = useUserSessionInfos();
 
@@ -34,7 +37,10 @@ export default function BlockUsers() {
       }
       const blockQueue = await getBlockQueue(dependencies.userSessionStorage);
       if ('error' in blockQueue === false) {
-        setBlockQueueState({ blockQueue, runQueueStatus: 'ready' });
+        onBlocksQueueStatusUpdate(({ runQueueStatus }) => {
+          setBlockQueueState({ blockQueue, runQueueStatus });
+        });
+        await requestBlocksQueueStatus();
       } else {
         setBlockQueueState({ blockQueue: [], runQueueStatus: 'ready' });
         showErrorToast("Couldn't retrieve your block queue", blockQueue.error, setUserSessionInfos);
@@ -42,18 +48,8 @@ export default function BlockUsers() {
     })();
   }, [dependencies, setUserSessionInfos]);
 
-  useEffect(() => {
-    if (blockQueueState.runQueueStatus === 'error') {
-      chrome.action.setBadgeText({ text: '!' });
-      chrome.action.setBadgeBackgroundColor({ color: 'red' });
-    } else {
-      chrome.action.setBadgeText({ text: '' });
-      chrome.action.setBadgeBackgroundColor({ color: 'transparent' });
-    }
-  }, [blockQueueState]);
-
   async function runQueue(): Promise<void> {
-    requestRunBlocksQueue(blockQueueState.blockQueue);
+    await requestRunBlocksQueue(blockQueueState.blockQueue);
   }
 
   return (

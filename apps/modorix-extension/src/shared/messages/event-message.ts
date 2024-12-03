@@ -1,4 +1,4 @@
-import { XUser } from '@modorix-commons/domain/models/x-user';
+import { GatewayXUser } from '@modorix-commons/gateways/gateway-x-user';
 import { MessageIds } from './message-ids.enum';
 
 interface Message<Data> {
@@ -24,7 +24,8 @@ export interface RequestBlockUserMessageData {
 type RequestBlockUserMessage = Message<RequestBlockUserMessageData>;
 
 export interface RequestRunBlocksQueueMessageData {
-  blockQueue: XUser[];
+  blockQueue: GatewayXUser[];
+  xTabId: number;
 }
 
 type RequestRunBlocksQueueMessage = Message<RequestRunBlocksQueueMessageData>;
@@ -39,10 +40,16 @@ export type RunQueueStatus = 'ready' | 'error' | 'waitingHeaders' | 'running';
 
 export interface BlocksQueueUpdateMessageData {
   runQueueStatus: RunQueueStatus;
-  blockQueue: XUser[];
+  blockQueue: GatewayXUser[];
 }
 
 type BlocksQueueUpdateMessage = Message<BlocksQueueUpdateMessageData>;
+
+export interface BlocksQueueStatusUpdateMessageData {
+  runQueueStatus: RunQueueStatus;
+}
+
+type BlocksQueueStatusUpdateMessage = Message<BlocksQueueStatusUpdateMessageData>;
 
 export interface UserBlockedSuccessMessageData {
   status: 'SUCCESS';
@@ -81,6 +88,14 @@ export function isSetHeadersMessage(message: Message<unknown>): message is SetHe
 
 export function isBlocksQueueUpdateMessage(message: Message<unknown>): message is BlocksQueueUpdateMessage {
   return message.id === MessageIds.BLOCKS_QUEUE_UPDATE;
+}
+
+export function isBlocksQueueStatusUpdateMessage(message: Message<unknown>): message is BlocksQueueStatusUpdateMessage {
+  return message.id === MessageIds.BLOCKS_QUEUE_STATUS_UPDATE;
+}
+
+export function isGetBlocksQueueStatusMessage(message: Message<unknown>): message is Message<never> {
+  return message.id === MessageIds.GET_BLOCKS_QUEUE_STATUS;
 }
 
 export function isUserBlockedSuccessData(data: UserBlockedMessageData): data is UserBlockedSuccessMessageData {
