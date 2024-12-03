@@ -1,5 +1,5 @@
+import { XUser } from '@modorix-commons/domain/models/x-user';
 import { mapToXUser } from '@modorix-commons/gateways/block-user-gateway';
-import { XUser } from '../../../../../packages/modorix-commons/src/domain/models/x-user';
 import { isBlocksQueueStatusUpdateMessage, isBlocksQueueUpdateMessage, RunQueueStatus } from '../../shared/messages/event-message';
 
 export function onRunBlocksQueueUpdateMessage(callback: (data: { runQueueStatus: RunQueueStatus; blockQueue: XUser[] }) => void) {

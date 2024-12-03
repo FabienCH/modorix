@@ -5,12 +5,12 @@ import {
   SetHeadersMessageData,
   UserBlockedMessageData,
   isBlockUserMessage,
+  isGetBlocksQueueStatusMessage,
   isRequestBlockUserMessage,
   isRequestRunBlocksQueueMessage,
   isSetHeadersMessage,
   isUserBlockedMessage,
 } from '../../../shared/messages/event-message';
-import { MessageIds } from '../../../shared/messages/message-ids.enum';
 
 export function onBlockUserMessage(callback: (data: BlockUserMessageData) => Promise<void>) {
   chrome.runtime.onMessage.addListener(async (message) => {
@@ -46,7 +46,7 @@ export function onRequestRunBlocksQueueMessage(callback: (data: RequestRunBlocks
 
 export function onGetRunBlocksQueueStatusMessage(callback: () => Promise<void>) {
   chrome.runtime.onMessage.addListener(async (message) => {
-    if (message.id === MessageIds.GET_BLOCKS_QUEUE_STATUS) {
+    if (isGetBlocksQueueStatusMessage(message)) {
       await callback();
     }
   });

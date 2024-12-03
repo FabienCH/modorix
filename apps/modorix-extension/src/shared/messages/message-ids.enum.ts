@@ -4,7 +4,6 @@ export enum MessageIds {
   REQUEST_BLOCK_USER = 'requestBlockUser',
   USER_BLOCKED = 'userBlocked',
   REQUEST_RUN_BLOCKS_QUEUE = 'requestRunBlocksQueue',
-  LISTEN_X_HEADERS = 'listenXHeaders',
   SET_HEADERS = 'setHeaders',
   BLOCKS_QUEUE_UPDATE = 'blocksQueueUpdate',
   GET_BLOCKS_QUEUE_STATUS = 'getBlocksQueueStatus',

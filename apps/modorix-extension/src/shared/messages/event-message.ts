@@ -94,6 +94,10 @@ export function isBlocksQueueStatusUpdateMessage(message: Message<unknown>): mes
   return message.id === MessageIds.BLOCKS_QUEUE_STATUS_UPDATE;
 }
 
+export function isGetBlocksQueueStatusMessage(message: Message<unknown>): message is Message<never> {
+  return message.id === MessageIds.GET_BLOCKS_QUEUE_STATUS;
+}
+
 export function isUserBlockedSuccessData(data: UserBlockedMessageData): data is UserBlockedSuccessMessageData {
   return data.status === 'SUCCESS';
 }
